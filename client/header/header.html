@@ -1,0 +1,62 @@
+<template name="header">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">
+            <div class='site-title'>PureFusion</div>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {{#if currentUser}}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'brands'}}">Brands</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'posts'}}">Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'pages'}}">Pages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'funnels'}}">Funnels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'products'}}">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'sales'}}">Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'audience'}}">Audience</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'social'}}">Social</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'stats'}}">Stats</a>
+                </li>
+                {{/if}}
+            </ul>
+            <ul class="navbar-nav">
+                <form class="form-inline">
+                    <select id='brand-select' class="form-control mr-sm-2" type="text">
+                        <option value="all">All Brands</option>
+                        {{#each brand in brands}}
+                        <option value="{{brand._id}}">{{brand.name}}</option>
+                        {{/each}}
+                    </select>
+                </form>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'settings'}}">Settings</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{email}}</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a id='log-out' class="dropdown-item" href="/">Log Out</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</template>

@@ -1,0 +1,17 @@
+<template name="brands">
+    <div class='row'>
+        <div class='col-md-6'>
+            <h3>Brands</h3>
+        </div>
+    </div>
+    {{#autoForm collection="Brands" id="insertBrandForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}}
+        {{> afQuickField name='domain'}}
+        {{> afQuickField name='url'}}
+        {{> afQuickField name='logo'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Insert</button>
+    {{/autoForm}}
+    {{#each brands}} {{> brandListing}} {{/each}}
+</template>

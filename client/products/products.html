@@ -1,0 +1,33 @@
+<template name="products">
+    <div class='row'>
+        <div class='col-md-6'>
+            <h3>Products</h3>
+        </div>
+    </div>
+    <!-- {{#autoForm collection="Products" id="insertProductForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}}
+        {{> afQuickField name='shortName'}}
+        {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Insert</button>
+    {{/autoForm}} -->
+    {{> quickForm collection="Products" id="insertProductForm" type="insert"}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Checkout Link</th>
+                <th>Name</th>
+                <th>USD</th>
+                <th>EUR</th>
+                <th>Sessions</th>
+                <th>Sales</th>
+                <th>Conversions</th>
+                <th>Edit/Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each products}} {{> product}} {{/each}}
+        </tbody>
+    </table>
+</template>

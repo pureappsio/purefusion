@@ -1,0 +1,15 @@
+<template name='postEdit'>
+    <h3>Editing Post {{title}}</h3>
+    {{#autoForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
+    <fieldset>
+        {{> afQuickField name='title'}}
+        {{> afQuickField name='url'}}
+        {{> afQuickField name='content' type='textarea'}}
+    </fieldset>
+{{/autoForm}}
+    <div class='row'>
+        <div class="col-md-4">
+            <a class='btn btn-secondary btn-block' href='/posts'>Come Back</a>
+        </div>
+    </div>
+</template>

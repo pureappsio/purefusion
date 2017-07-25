@@ -5,6 +5,9 @@ Template.posts.helpers({
     },
     selectedBrand: function() {
         return Session.get('selectedBrand');
+    },
+    defaultPost: function() {
+        return { category: "general" };
     }
 
 });

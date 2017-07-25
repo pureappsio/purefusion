@@ -1,6 +1,6 @@
 <template name='postEdit'>
     <h3>Editing Post {{title}}</h3>
-    {{#autoForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
+    <!-- {{#autoForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
     <fieldset>
         {{> afQuickField name='title'}}
         {{> afQuickField name='url'}}
@@ -8,9 +8,11 @@
         {{> afQuickField name='category'}}
         {{> afQuickField name='creationDate'}}
         {{> afQuickField name='featuredPicture'}}
-        {{> afQuickField name='content' type='textarea'}}
+        {{> afQuickField name='content'}}
     </fieldset>
-{{/autoForm}}
+{{/autoForm}} -->
+    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
+    
     <div class='row'>
         <div class="col-md-4">
             <a class='btn btn-secondary btn-block' href='/posts'>Come Back</a>

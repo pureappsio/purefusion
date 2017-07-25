@@ -4,11 +4,12 @@
             <h3>Posts</h3>
         </div>
     </div>
-    {{#autoForm collection="Posts" id="insertPostForm" type="insert"}}
+    {{#autoForm collection="Posts" doc=defaultPost id="insertPostForm" type="insert"}}
     <fieldset>
         {{> afQuickField name='title'}}
         {{> afQuickField name='url'}}
         {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+        {{> afQuickField name='category'}}
     </fieldset>
     <button type="submit" class="btn btn-block btn-primary">Insert</button>
     {{/autoForm}}

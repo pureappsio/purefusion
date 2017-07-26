@@ -1,17 +1,26 @@
 <template name="posts">
-    <div class='row'>
-        <div class='col-md-6'>
-            <h3>Posts</h3>
-        </div>
-    </div>
+    <h3>Posts</h3> 
+
     {{#autoForm collection="Posts" doc=defaultPost id="insertPostForm" type="insert"}}
     <fieldset>
-        {{> afQuickField name='title'}}
-        {{> afQuickField name='url'}}
-        {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
-        {{> afQuickField name='category'}}
+        {{> afQuickField name='title'}} {{> afQuickField name='url'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}} {{> afQuickField name='category'}}
     </fieldset>
-    <button type="submit" class="btn btn-block btn-primary">Insert</button>
-    {{/autoForm}}
-    {{#each posts}} {{> postListing}} {{/each}}
+    <button type="submit" class="btn btn-block btn-primary">Create Post
+
+    </button>
+    {{/autoForm}} {{#each posts}} {{> postListing}} {{/each}}
+
+    <h3>Email Signup Boxes</h3>
+
+    {{#autoForm collection="Boxes" id="insertBoxForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='title'}} {{> afQuickField name='sequence'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Create Signup Box
+
+    </button>{{/autoForm}}
+
+    {{#each boxesElements}} {{> boxElement}} {{/each}}
+
+    {{> tags}}
 </template>

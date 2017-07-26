@@ -1,0 +1,12 @@
+<template name="tags">
+     <h3>Tags</h3>
+
+    {{#autoForm collection="Tags" id="insertTagForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Create Tag</button>
+    {{/autoForm}}
+
+    {{#each tags}} {{> tagDisplay}} {{/each}}
+</template>

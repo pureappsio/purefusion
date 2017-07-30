@@ -1,5 +1,5 @@
 Meteor.startup(function() {
 
-	console.log(Posts.find({}).fetch()[0]);
+	console.log(Brands.find({}).fetch());
 
 });

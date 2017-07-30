@@ -1,0 +1,13 @@
+<template name="categories">
+     <h3>Categories</h3>
+
+    {{#autoForm collection="Categories" id="insertCategoryForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}} 
+        {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Create Category</button>
+    {{/autoForm}}
+
+    {{#each categories}} {{> categoryDisplay}} {{/each}}
+</template>

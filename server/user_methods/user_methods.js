@@ -371,12 +371,11 @@ Meteor.methods({
         for (c in countryCodes) {
 
             // Localise HTML
-            var localisedHtml = Meteor.call('processHTMLAmazon', post.html['US'], countryCodes[c], localisations);
+            var localisedHtml = Meteor.call('processHTMLAmazon', post.html['US'], countryCodes[c], localisations, post.brandId);
 
             // Update post
             var html = post.html;
             html[countryCodes[c]] = localisedHtml;
-            // console.log(localisedHtml);
             Posts.update(postId, { $set: { html: html } });
 
         }
@@ -579,7 +578,7 @@ Meteor.methods({
             return url;
         }
     },
-    localiseAmazonLink: function(url, countryCode, loc) {
+    localiseAmazonLink: function(url, countryCode, loc, brandId) {
 
         // Check if it's an Amazon link
         if (url.indexOf("https://www.amazon.com/") != -1) {
@@ -588,11 +587,12 @@ Meteor.methods({
             var asin = Meteor.call('extractAsin', url);
             // console.log("Extracted ASIN: " + asin);
 
-            var result = Meteor.call('addAffiliateCode', asin, countryCode, loc);
+            var result = Meteor.call('addAffiliateCode', asin, countryCode, loc, brandId);
 
             return result;
 
         }
+
         // Check for a-fwd links
         else if (url.indexOf("http://a-fwd.com") != -1) {
 
@@ -602,7 +602,7 @@ Meteor.methods({
 
             var asin = url.substring(asinStart + 9, asinEnd);
 
-            var result = Meteor.call('addAffiliateCode', asin, countryCode, loc);
+            var result = Meteor.call('addAffiliateCode', asin, countryCode, loc, brandId);
 
             return result;
         } else {
@@ -664,43 +664,43 @@ Meteor.methods({
 
         if (countryCode == 'US') {
             var result = 'https://www.amazon.com/dp/' + asin;
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUS' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUS' }).value;
+            if (brand.affiliateUS) {
+                result += '?tag=' + brand.affiliateUS;
             }
         } else if (countryCode == 'FR') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateFR' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateFR' }).value;
+            if (brand.affiliateFR) {
+                result += '?tag=' + brand.affiliateFR;
             }
         } else if (countryCode == 'CA') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateCA' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateCA' }).value;
+            if (brand.affiliateCA) {
+                result += '?tag=' + brand.affiliateCA;
             }
         } else if (countryCode == 'GB') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUK' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUK' }).value;
+            if (brand.affiliateUK) {
+                result += '?tag=' + brand.affiliateUK;
             }
         } else if (countryCode == 'DE') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateDE' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateDE' }).value;
+            if (brand.affiliateDE) {
+                result += '?tag=' + brand.affiliateDE;
             }
         } else if (countryCode == 'IT') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateIT' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateIT' }).value;
+            if (brand.affiliateIT) {
+                result += '?tag=' + brand.affiliateIT;
             }
         } else if (countryCode == 'ES') {
             var result = Meteor.call('localiseAsin', asin, countryCode, localisations);
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateES' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateES' }).value;
+            if (brand.affiliateES) {
+                result += '?tag=' + brand.affiliateES;
             }
         } else {
             var result = 'https://www.amazon.com/dp/' + asin;
-            if (Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUS' })) {
-                result += '?tag=' + Metas.findOne({ userId: Meteor.user()._id, type: 'affiliateUS' }).value;
+            if (brand.affiliateUS) {
+                result += '?tag=' + brand.affiliateUS;
             }
         }
         return result;
@@ -738,7 +738,7 @@ Meteor.methods({
         return countryCode;
 
     },
-    processHTMLAmazon: function(rawHtml, countryCode, localisations) {
+    processHTMLAmazon: function(rawHtml, countryCode, localisations, brandId) {
 
         // Output
         var output = "";
@@ -755,7 +755,7 @@ Meteor.methods({
 
                 // Link
                 var link = Meteor.call('localiseAmazonLink',
-                    $(elem)[0].attribs.href, countryCode, localisations[$(elem)[0].attribs.href]);
+                    $(elem)[0].attribs.href, countryCode, localisations[$(elem)[0].attribs.href], brandId);
                 $(elem)[0].attribs.href = link;
 
                 // Tracking

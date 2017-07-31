@@ -328,6 +328,8 @@ Meteor.methods({
     },
     localisePost: function(postId) {
 
+        console.log(postId);
+
         // Get countries
         var countryCodes = Meteor.call('getCountryCodes');
 
@@ -384,7 +386,7 @@ Meteor.methods({
     getLocalisedHtml: function(post, location) {
 
         // console.log('Location: ' + location);
-        // console.log(post);
+        console.log(post);
 
         var frenchStoreCountries = ['FR', 'BE', 'LU'];
         var ukStoreCountries = ['LV', 'SE', 'CY', 'EE', 'UK', 'FI', 'NL', 'SK', 'GB', 'PL', 'IE', 'EL', 'LT', 'BG', 'RO', 'CZ', 'HU'];

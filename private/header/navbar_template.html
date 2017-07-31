@@ -1,0 +1,48 @@
+<nav style="{{backgroundColor}}" class="navbar navbar-toggleable-md {{navbarStyle}}">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">
+            <img alt="PurePress" src="{{logoLink}}">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto"></ul>
+            <ul class="navbar-nav">
+                {{#each menuElement in menuElements}} {{#if isDropdown menuElement}}
+                <!--  <li class="nav-item">
+                    <a href="{{menuElement.link}}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{menuElement.name}}</a>
+                    <ul class="dropdown-menu">
+                        {{#each subMenuElements menuElement}}
+                        <li><a href="{{link}}">{{name}}</a></li>
+                        {{/each}}
+                    </ul>
+                </li> -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{menuElement.link}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{menuElement.name}}</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {{#each subMenuElements menuElement}}
+                        <a class="dropdown-item" href="{{link}}">{{name}}</a>{{/each}}
+                    </div>
+                </li>
+                {{else}}
+                <li class='nav-item'>
+                    {{#if isTextLink menuElement}}
+                    <a class="nav-link" href="{{menuElement.link}}">{{menuElement.name}}</a>{{/if}}
+                </li>
+                {{/if}} {{/each}}
+            </ul>
+            {{#if areButtons menuElements}}
+            <form class="menu-form form-inline my-2 my-lg-0">
+                {{#each menuElement in menuElements}} {{#if isTextLink menuElement}} {{else}}
+                <a href='{{menuElement.link}}' class="btn btn-secondary small-outline">{{menuElement.name}}</a> {{/if}} {{/each}}
+            </form>
+            {{/if}}
+            <ul class="navbar-nav">
+                {{#each network in networks}}
+                <li class='nav-item nav-icons'><a class="nav-link" href="{{network.link}}"><span class="fa fa-{{network.type}}"></span></a></li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</nav>

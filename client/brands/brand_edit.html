@@ -1,6 +1,6 @@
 <template name="brandEdit">
     <h3>Editing Brand {{name}}</h3>
-    {{#autoForm collection="Brands" doc=this id="updateBrandForm" type="update" autosave=true}}
+    <!-- {{#autoForm collection="Brands" doc=this id="updateBrandForm" type="update" autosave=true}}
     <fieldset>
         {{> afQuickField name='name'}}
         {{> afQuickField name='domain'}}
@@ -10,7 +10,8 @@
         {{> afQuickField name='logo'}}
         {{> afQuickField name='favicon'}}
     </fieldset>
-{{/autoForm}}
+{{/autoForm}} -->
+{{> quickForm collection="Brands" doc=this id="updateBrandForm" type="update" autosave=true}}
     <div class='row voffset30'>
         <div class='col-md-3'>
             <a href='/admin/brands' class='btn btn-secondary btn-block'>Come Back</a>

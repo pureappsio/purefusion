@@ -1,0 +1,141 @@
+<div class='row'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='post-featured'><img class='img-fluid' src='{{postImage featuredPicture}}'></div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-title single-post-title'>{{title}}</div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-info post-info-single'>{{formatDate creationDate}} / by {{userName}}</div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{introduction}}}</div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        {{#if isAffiliateTheme 'default'}}
+        <table class='table table-custom'>
+            <thead>
+                <tr>
+                    <th>Rating</th>
+                    <th>Product</th>
+                    <th>Our Rating</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each element in elements}}
+                <tr>
+                    <td>
+                        <div class='affiliate-rank'>{{element.rank}}</div>
+                    </td>
+                    <td>
+                        <div class='affiliate-product'>
+                            <a href='{{element.link}}'>{{element.title}}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='affiliate-rating'>{{{rating element}}}</div>
+                    </td>
+                    <td><a href='{{element.link}}' class='affiliate-button btn btn-primary'>CHECK PRICES</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}} {{#if isAffiliateTheme 'picture'}}
+        <div id='desktop-table'>
+            <table class='table table-custom'>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Summary</th>
+                        <th>Our Rating</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each element in elements}}
+                    <tr>
+                        <td>
+                            <div class='affiliate-product'>
+                                <a href='{{element.link}}'>
+                                {{element.title}}
+                            </a></div>
+                            <a href='{{element.link}}'>
+                                <img class='affiliate-picture-table' src='{{elementImage element}}'>
+                            </a>
+                        </td>
+                        <td>
+                            <div class='affiliate-short'>{{{element.shortDescription}}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class='affiliate-rating'>{{{rating element}}}</div>
+                        </td>
+                        <td><a href='{{element.link}}' class='affiliate-button btn btn-primary'>CHECK PRICES</a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div id='mobile-table'>
+            {{#each element in elements}}
+            <div class='row affiliate-row'>
+                <div class='col-md-3 affiliate-product'>
+                    <div class='affiliate-product'>
+                        <a href='{{element.link}}'>
+                                {{element.title}}
+                            </a></div>
+                    <a href='{{element.link}}'>
+                        <img class='affiliate-picture-table' src='{{elementImage element}}'>
+                    </a>
+                </div>
+                <div class='col-md-3 affiliate-short'>
+                    {{{element.shortDescription}}}
+                </div>
+                <div class='col-md-3 affiliate-rating'>
+                    {{{rating element}}}
+                </div>
+                <div class='col-md-3'><a href='{{element.link}}' class='affiliate-button btn btn-block btn-primary'>CHECK PRICES</a></div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
+</div>
+{{#if hasMiddleContent}}
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{middle}}}</div>
+    </div>
+</div>
+{{/if}} {{#each element in elements}} {{#if hasDescription element}}
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='affiliate-title'><a href='{{element.link}}'>{{element.title}}</a></div>
+        <div class='post-content'>
+            <a href='{{element.link}}'><img class='affiliate-img' src='{{elementImage element}}'></a>{{{element.description}}}
+        </div>
+    </div>
+</div>
+{{/if}} {{/each}}
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{conclusion}}}</div>
+    </div>
+</div>

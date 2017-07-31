@@ -138,6 +138,35 @@ Meteor.methods({
         return answer.data[dataName];
 
     },
+    getBrandId: function(headers) {
+
+        var host = headers.host;
+        var hostnameArray = host.split(".");
+
+        if (hostnameArray.length == 3) {
+
+            var domain = hostnameArray[0];
+
+            if (domain == 'app') {
+                var domain = "admin"
+            }
+
+        } else {
+            var domain = "admin"
+        }
+
+        var brand = Meteor.call('getBrandDomain', domain);
+        return brand._id;
+    },
+    getBrandDomain: function(domain) {
+
+        if (domain == 'admin') {
+            return Brands.findOne({});
+        } else {
+            return Brands.findOne({ domain: domain });
+        }
+
+    },
     getUserId: function(headers) {
 
         var host = headers.host;
@@ -312,7 +341,7 @@ Meteor.methods({
             url: post.url,
             location: 'US',
             query: { preview: true },
-            userId: post.userId,
+            brandId: post.brandId,
             headers: {}
         });
 
@@ -626,9 +655,12 @@ Meteor.methods({
         }
 
     },
-    addAffiliateCode: function(asin, countryCode, localisations) {
+    addAffiliateCode: function(asin, countryCode, localisations, brandId) {
 
         // console.log('Adding affiliate code for country: ' + countryCode + ' and ASIN: ' + asin);
+
+        // Get brand
+        var brand = Brands.findOne(brandId); 
 
         if (countryCode == 'US') {
             var result = 'https://www.amazon.com/dp/' + asin;
@@ -867,7 +899,7 @@ Meteor.methods({
         }
 
     },
-    
+
     createUserAccount: function(data) {
 
         console.log(data);

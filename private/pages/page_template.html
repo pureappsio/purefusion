@@ -1,0 +1,439 @@
+{{#each element in elements}} {{#if isElementType element 'image'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <img class='img-fluid' src='{{elementImage element}}'>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'imagehalf'}}
+<div class='row element-container'>
+    <div class='col-md-4'></div>
+    <div class='col-md-4'>
+        <img class='img-fluid' src='{{elementImage element}}'>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'separator'}}
+<div class='row element-container voffset15'></div>
+{{/if}} {{#if isElementType element 'audiorecord'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-2'>
+        <button class='btn btn-success btn-block' id=startRecord><i class="fa fa-microphone" aria-hidden="true"></i> Start Recording</button>
+    </div>
+    <div class='col-md-2'>
+        <button class='btn btn-danger btn-block' id=stopRecord disabled><i class="fa fa-stop" aria-hidden="true"></i> Stop Recording</button>
+    </div>
+    <div class='col-md-2'>
+        <div id='recordTimer'>0 seconds</div>
+    </div>
+    <div class='col-md-2'>
+        <button class='btn btn-warning btn-block' id=replay disabled><i class="fa fa-play" aria-hidden="true"></i> Replay Recorded Audio</button>
+    </div>
+    <div class="hidden">
+        <audio id=recordedAudio></audio>
+        <a id=audioDownload></a>
+    </div>
+</div>
+<div class='row element-container voffset30'>
+    <div class='col-md-3'></div>
+    <div class='col-md-3'>
+        <input placeholder='Your name ...' type="text" id='record-name' class="form-control">
+    </div>
+    <div class='col-md-3'>
+        <input placeholder='Your email ...' type="text" id='record-email' class="form-control">
+    </div>
+</div>
+<div class='row element-container'>
+    <div class='col-md-3'></div>
+    <div class='col-md-6'>
+        <button class='btn btn-primary btn-lg btn-block' disabled id=submitRecord>
+            <i class="fa fa-paper-plane" aria-hidden="true"></i> Submit Recording
+        </button>
+        <div id="thankYouRecord">
+            Thank you!
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'latestposts'}}
+<div class='row'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10 latest-post-title'>{{#if langEN}}Latest Posts{{else}}Derniers Articles{{/if}}</div>
+</div>
+<div class='row row-posts'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='row'>
+            {{#each post in posts}}
+            <div class='col-md-4'>
+                <div class='post-page-container'>
+                    <a href='/{{post.url}}'>
+                        <div class='post-featured'><img class='img-fluid' src='{{postImage post.featuredPicture}}'></div>
+                    </a>
+                    <div class='post-title all-post-center all-post-title all-post-title-square'><a href='/{{post.url}}'>{{post.title}}</a></div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'bestposts'}}
+<div class='row'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10 latest-post-title'>{{#if langEN}}Some of our most popular content:{{else}}Nos meilleurs articles:{{/if}}</div>
+</div>
+<div class='row row-posts'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='row'>
+            {{#each post in bestPosts}}
+            <div class='col-md-4'>
+                <div class='post-page-container'>
+                    <a href='/{{post.url}}'>
+                        <div class='post-featured'><img class='img-fluid' src='{{postImage post.featuredPicture}}'></div>
+                    </a>
+                    <div class='post-title all-post-center all-post-title all-post-title-square'><a href='/{{post.url}}'>{{post.title}}</a></div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'text'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{element.content}}}</div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'signupbox'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-title signup-box-title'>{{element.title}}</div>
+    </div>
+</div>
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-5'>
+        <div class='signup-box-content'>{{{element.content}}}</div>
+        <div class='signup-button-container'>
+            <button data-toggle="modal" data-target="#myModal" class='signup-box-button btn btn-block btn-warning'>{{element.button}}</button>
+        </div>
+    </div>
+    <div class='col-md-3'>
+        <img class='img-fluid' src='{{elementImage element}}'>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header popup-title">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title popup-title" id="myModalLabel">{{#if langEN}}Get Your Free Resource Now!{{else}}Recevez votre ressource gratuite maintenant!{{/if}}</h4>
+            </div>
+            <div class="modal-body popup-content">
+                {{{signupPopupContent element}}}
+                <div class='popup-message'>{{#if langEN}}Simply enter your email below, and you’ll be on your way!{{else}}Pour continuer, entrez votre email ci-dessous!{{/if}}</div>
+                <form accept-charset="utf-8" action="https://email.schwartzindustries.com/subscribe" method="POST">
+                    <div class='popup-input-container'>
+                        <input id='email' name='email' type="email" class="form-control input-lg" placeholder="{{#if langEN}}Your email ...{{else}}Votre email ...{{/if}}">
+                    </div>
+                    <div class='popup-button-container'>
+                        <input value="{{#if langEN}}Click Here to Subscribe{{else}}Cliquez Ici Pour Vous Inscrire{{/if}}" type="submit" class="btn btn-block btn-lg btn-warning">
+                    </div>
+                    <input name="list" type="hidden" value="{{listId element}}" />
+                    <input name="origin" type="hidden" value="blog" />
+                    <input name="sequence" type="hidden" value="{{sequenceId element}}" /> {{#each tag in tags element}}
+                    <input name="tag" type="hidden" value="{{tag}}" /> {{/each}}
+                </form>
+                <div class='popup-disclaimer'>{{#if langEN}}We won’t send you spam. Unsubscribe at any time.{{else}}Je ne vous enverrai jamais de spam. Vous pouvez vous désincrire à tout moment.{{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'textimage'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <img class='img-left' src='{{elementImage element}}'>
+        <div class='post-content'>{{{element.content}}}</div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'resource'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    {{#if isImage element}}
+    <div class='col-md-2'>
+        <a href='{{element.link}}'><img class='img-fluid' src='{{elementImage element}}'></a>
+    </div>
+    <div class='col-md-6'>
+        <div class='resource-title'><a href='{{element.link}}'>{{element.title}}</a></div>
+        <div class='post-content'>{{{element.content}}}</div>
+    </div>
+    {{else}}
+    <div class='col-md-8'>
+        <div class='resource-title'><a href='{{element.link}}'>{{element.title}}</a></div>
+        <div class='post-content'>{{{element.content}}}</div>
+    </div>
+    {{/if}}
+</div>
+{{/if}} {{#if isElementType element 'fullpicture'}}
+<div class='row full-width-container vertical-align' style='color: white; background-image: url("{{elementImage element}}");'>
+    <!--     <div class='col-md-1'></div>
+ -->
+    <div class='col-md-12'>
+        <div class='full-width-title'>{{element.title}}</div>
+        <div class='full-width-button'>
+            <a href='{{element.link}}' class='btn btn-warning btn-lg'>
+                <div class='full-width-button'>{{element.button}}</div>
+            </a>
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'fullwidthpicture'}}
+<div class='row full-width-image'>
+    <div class='col-md-12 full-width-image-col'>
+        <img class='img-fluid' src='{{elementImage element}}'>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'title'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8 col-center'>
+        <div class='page-title'>{{{element.title}}}</div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'button'}}
+<div class='row element-container-center'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='full-width-button'>
+            <a href='{{element.link}}' class='btn btn-warning btn-lg'>
+                <div class='full-width-button'>{{element.button}}</div>
+            </a>
+        </div>
+    </div>
+</div>
+{{/if}}
+<!-- {{#if isElementType element 'rowstart'}}
+<div class='row element-container'>
+{{/if}}
+
+{{#if isElementType element 'rowend'}}
+</div>
+{{/if}} -->
+{{#if isElementType element 'featurebox'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='resource-title'><i class="fa fa-{{element.icon}}" aria-hidden="true"></i><a href='{{element.link}}'> {{element.title}}</a></div>
+        <div class='post-content'>{{{element.content}}}</div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'featureboxbutton'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='resource-title'><i class="fa fa-{{element.icon}}" aria-hidden="true"></i><a href='{{element.link}}'> {{element.title}}</a></div>
+        <div class='post-content'>{{{element.content}}}</div>
+        <div class='full-width-button'>
+            <a href='{{element.link}}' class='btn btn-warning'>
+                <div class='full-width-button'>{{element.button}}</div>
+            </a>
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'twopictures'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-4'>
+        <a href='{{element.linkOne}}'><img class='img-fluid' src='{{element.pictureOne}}'></a>
+    </div>
+    {{#if isPictureTwo element}}
+    <div class='col-md-4'>
+        <a href='{{element.linkTwo}}'><img class='img-fluid' src='{{element.pictureTwo}}'></a>
+    </div>{{/if}}
+</div>
+{{/if}} {{#if isElementType element 'store'}}
+<div class='row element-container'>
+    {{#each product in products}}
+    <div class='col-md-4 store-product'>
+        <div class='product-image'>
+            <a href='{{product.salesPageUrl}}?origin=direct'><img class='img-fluid' src='{{product.image}}'></a>
+        </div>
+        <div class='product-name'><a href='{{product.salesPageUrl}}?origin=direct'>{{product.name}}</a></div>
+    </div>
+    {{/each}}
+</div>
+{{/if}} {{#if isElementType element 'pricing'}}
+<div class='row voffset30 element-container'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='row'>
+            <div class='col-md-3'></div>
+            {{#each pricing in pricingElements}}
+            <div class='col-md-3'>
+                <div class='pricing-element'>
+                    <div class='pricing-name'>{{pricing.name}}</div>
+                    <div class='pricing-price'>{{pricing.price}}</div>
+                    <div class='pricing-button-container'>
+                        <a href='{{pricing.link}}' class='pricing-button btn btn-warning outline'>{{pricing.button}}</a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{#each structure in pricingData}}
+        <div class='row row-pricing-data'>
+            <div class='col-md-3 pricing-structure'>
+                <a data-toggle="tooltip" title="{{structure.explainer}}">
+                    <span class='pricing-structure-text'>{{structure.name}}</span>
+                </a>
+            </div>
+            {{#each data in structure.data}}
+            <div class='col-md-3 pricing-data'>
+                {{data}}
+            </div>
+            {{/each}}
+        </div>
+        {{/each}}
+        <div class='row voffset30'>
+            <div class='col-md-3'></div>
+            {{#each pricing in pricingElements}}
+            <div class='col-md-3 pricing-data'>
+                <div class='pricing-button-container'>
+                    <a href='{{pricing.link}}' class='pricing-button btn btn-warning outline'>{{pricing.button}}</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'portfolio'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Yield</th>
+                    <th>Monthly Income</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each portfolioElement in portfolio}}
+                <tr>
+                    <td>{{portfolioElement.type}}</td>
+                    <td>{{portfolioElement.value}}</td>
+                    <td>{{portfolioElement.yield}}</td>
+                    <td>{{portfolioElement.income}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <div class='post-content'>The current value of my investment portfolio (Stocks, real estate, Peer-to-Peer lending) is <b> {{total.passiveValue}} Euros</b>, producing an estimated monthly income of <b>{{total.passiveMonthlyIncome}} Euros</b>, yielding at <b>{{total.passiveYield}}%</b> annually. My current total net worth is <b>{{total.value}} Euros</b>. This portfolio is updated live, as I update it anytime I make a new addition to the portfolio.</div>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'portfoliodetail'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    {{#if isStock element.portfolioType}}
+                    <th>Ticker</th>
+                    {{/if}}
+                    {{#if isRe element.portfolioType}}
+                    <th>Platform</th>
+                    {{/if}}
+                    <th>Name</th>
+                    {{#if isStock element.portfolioType}}
+                    <th>Shares</th>
+                    {{/if}}
+                    {{#if isRe element.portfolioType}}
+                    <th>Location</th>
+                    {{/if}}
+                    <th>Value</th>
+                    <th>Yield</th>
+                    <th>Income</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each position in positions element.portfolioType}}
+                <tr>
+                    {{#if isStock element.portfolioType}}
+                    <td>{{position.ticker}}</td>
+                    {{/if}}
+
+                    {{#if isRe element.portfolioType}}
+                    <td><a href='{{position.platform.link}}'>{{position.platform.name}}</a></td>
+                    {{/if}}
+
+                    {{#if isP2p element.portfolioType}}
+                    <td><a href='{{position.platform.link}}'>{{position.name}}</a></td>
+                    {{else}}
+                    <td>{{position.name}}</td>
+                    {{/if}}
+
+                    {{#if isStock element.portfolioType}}
+                    <td>{{position.qty}}</td>
+                    {{/if}}
+                    {{#if isRe element.portfolioType}}
+                    <td>{{position.city}} ({{position.country}})</td>
+                    {{/if}}
+                    <td>{{formatMoney position.value}}</td>
+                    <td>{{position.positionYield}}</td>
+                    <td>{{position.income}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{/if}} {{#if isElementType element 'emailsignup'}}
+<div class='row element-container'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='signup-container'>
+            <div class='signup-title'>{{#if langEN}}Do you want to learn more?{{else}}Vous voulez en savoir plus?{{/if}}</div>
+            <div class='signup-content'>{{{signupBoxContent element}}}</div>
+            <div class='signup-button-container'>
+                <button data-toggle="modal" data-target="#myModal" class='signup-button btn btn-warning'>{{#if langEN}}Get Started!{{else}}En Savoir Plus{{/if}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Signup Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header popup-title">
+                <h5 class="modal-title popup-title" id="myModalLabel">{{#if langEN}}Get Your Free Resource Now!{{else}}Recevez votre ressource gratuite maintenant!{{/if}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body popup-content">
+                {{{signupPopupContent element}}}
+                <div class='popup-message'>{{#if langEN}}Simply enter your email below, and you’ll be on your way!{{else}}Pour continuer, entrez votre email ci-dessous!{{/if}}</div>
+                <form accept-charset="utf-8" action="https://{{integrationUrl}}/subscribe" method="POST">
+                    <div class='popup-input-container'>
+                        <input id='email' name='email' type="email" class="form-control input-lg" placeholder="{{#if langEN}}Your email ...{{else}}Votre email ...{{/if}}">
+                    </div>
+                    <div class='popup-button-container'>
+                        <input value="{{#if langEN}}Click Here to Subscribe{{else}}Cliquez Ici Pour Vous Inscrire{{/if}}" type="submit" class="btn btn-block btn-lg btn-warning">
+                    </div>
+                    <input name="list" type="hidden" value="{{listId element}}" />
+                    <input name="origin" type="hidden" value="blog" />
+                    <input name="sequence" type="hidden" value="{{sequenceId element}}" /> {{#each tag in tags element}}
+                    <input name="tag" type="hidden" value="{{tag}}" /> {{/each}}
+                </form>
+                <div class='popup-disclaimer'>{{#if langEN}}We won’t send you spam. Unsubscribe at any time.{{else}}Je ne vous enverrai jamais de spam. Vous pouvez vous désincrire à tout moment.{{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/if}} {{/each}}

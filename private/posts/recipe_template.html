@@ -1,0 +1,72 @@
+<div class='row'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='post-featured'><img class='img-fluid' src='{{postImage featuredPicture}}'></div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-title single-post-title'>{{title}}</div>
+    </div>
+</div>
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-info post-info-single'>{{formatDate creationDate}} / by {{userName}}</div>
+    </div>
+</div>
+<!-- Introduction -->
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{introduction}}}</div>
+    </div>
+</div>
+<!-- Ingredients -->
+<div class='row step-row-title'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <h2>{{#if langEN}}Ingredients{{else}}Ingrédients{{/if}}</h2>
+    </div>
+</div>
+{{#each ingredient in ingredients}}
+<div class='row step-row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>
+
+            <div class='ingredient-order'>+</div> 
+
+            <div class='ingredient-content'>{{{ingredient.description}}}</div>
+        </div>
+    </div>
+</div>
+{{/each}}
+<!-- Steps -->
+<div class='row step-row-title'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <h2>{{#if langEN}}Directions{{else}}Préparation{{/if}}</h2>
+    </div>
+</div>
+{{#each step in steps}}
+<div class='row step-row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-1 step-order-container'><div class='step-order'>{{step.order}}</div> </div>
+    <div class='col-md-7'>
+        <div class='post-content'>
+
+            <div class='step-content'>{{{step.description}}}</div>
+
+            </div>
+    </div>
+</div>
+{{/each}}
+<!-- Conclusion -->
+<div class='row'>
+    <div class='col-md-2'></div>
+    <div class='col-md-8'>
+        <div class='post-content'>{{{conclusion}}}</div>
+    </div>
+</div>

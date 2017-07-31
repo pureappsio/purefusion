@@ -1,0 +1,345 @@
+<head>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+  {{#if description}}
+  <meta name="description" content="{{description}}">
+  <meta name="robots" content="noodp"> {{/if}}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{title}}"> 
+  {{#if description}}
+  <meta property="og:description" content="{{description}}"> {{/if}} 
+  {{#if featuredPicture}}
+  <meta property="og:image" content="{{featuredPicture}}">
+  <meta property="og:image:width" content="2620">
+  <meta property="og:image:height" content="1000">
+  {{/if}} 
+  {{#if url}}
+  <meta property="og:url" content="{{url}}"> {{/if}}
+  <meta property="og:site_name" content="{{brandName}}"> 
+  {{#if creationDate}}
+  <meta property="article:published_time" content="{{creationDate}}"> {{/if}}
+  <meta property="og:updated_time" content="{{updatedTime}}"> 
+
+  {{#if twitterLinked}}
+  <meta name="twitter:card" content="summary"> 
+  {{#if description}}
+    <meta name="twitter:description" content="{{description}}"> 
+  {{/if}}
+  <meta name="twitter:title" content="{{title}}">
+  <meta name="twitter:site" content="{{twitterHandle}}">
+  <meta name="twitter:creator" content="{{twitterHandle}}"> 
+  {{/if}}
+
+  <title>{{title}}</title>
+     
+     <style type="text/css">
+      {{css}}
+    </style>
+
+    
+    <style type="text/css">
+    {{navStyle}}
+    </style>
+
+    {{#if useChat}}
+
+<!-- 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+<script>
+  var socket = io('http://localhost:8080');
+  socket.on('connect', function() {
+
+    console.log('Connected!');
+
+  });
+  socket.on('message', function(data) { console.log(data); });
+  // socket.on('disconnect', function(){});
+</script> -->
+
+  <!-- Start of LiveChat (www.livechatinc.com) code -->
+<!-- <script type="text/javascript">
+window.__lc = window.__lc || {};
+window.__lc.license = 7653841;
+(function() {
+  var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
+  lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
+})();
+</script> -->
+<!-- End of LiveChat code -->
+
+  {{/if}}
+
+<!--   <script async defer src="//assets.pinterest.com/js/pinit.js"></script>
+ -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '{{trackingCode}}', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- <script>
+var trackOutboundLink = function(url) {
+   ga('send', 'event', 'outbound', 'click', url, {
+     'transport': 'beacon',
+     'hitCallback': function(){document.location = url;}
+   });
+}
+</script> -->
+
+<!-- Facebook Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '{{pixelId}}');
+  fbq('track', 'PageView');
+
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id={{pixelId}}&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- DO NOT MODIFY -->
+  <!-- End Facebook Pixel Code -->
+     
+  <link rel="icon" type="image/png" href="{{favicon}}" />
+
+  <link rel="alternate" type="application/rss+xml" title="{{brandName}}" href="/feed/rss" />
+
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/c8ca318797.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+  <script type="text/javascript">
+    
+    history.pushState(null, "", location.href.split("?")[0]);
+
+  </script>
+
+  {{#if recorder}}
+  <script type="text/javascript">
+  $(document).ready(function() {
+
+    var data = {};
+
+    navigator.mediaDevices.getUserMedia({
+            audio: true
+        })
+        .then(stream => {
+            rec = new MediaRecorder(stream);
+            rec.ondataavailable = e => {
+                audioChunks.push(e.data);
+                if (rec.state == "inactive") {
+
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    console.log(blob);
+
+                     var reader = new FileReader();
+                    reader.onload = function() {
+                      var dataUrl = reader.result;
+                      var base64 = dataUrl.split(',')[1];
+                      data.recording = base64;
+                    };
+                    reader.readAsDataURL(blob);
+
+                    recordedAudio.src = URL.createObjectURL(blob);
+                    recordedAudio.controls = true;
+                    audioDownload.href = recordedAudio.src;
+                    audioDownload.download = 'mp3';
+                    audioDownload.innerHTML = 'download';
+                }
+            }
+        })
+        .catch(e => console.log(e));
+
+    timer = null;
+    count = 0;
+
+    startRecord.onclick = e => {
+        startRecord.disabled = true;
+        stopRecord.disabled = false;
+        audioChunks = [];
+        count = 0;
+        timer = setInterval(myTimer, 1000);
+        rec.start();
+    }
+    stopRecord.onclick = e => {
+        startRecord.disabled = false;
+        stopRecord.disabled = true;
+        submitRecord.disabled = false;
+        replay.disabled = false;
+        clearInterval(timer);
+        timer = null;
+        rec.stop();
+    }
+    replay.onclick = e => {
+        startRecord.disabled = false;
+        stopRecord.disabled = true;
+        recordedAudio.play();
+    }
+    submitRecord.onclick = e => {
+
+        data.name = $('#record-name').val();
+        data.email = $('#record-email').val();
+
+        $.ajax({
+            url: "{{appUrl}}api/recordings",
+            type: "POST",
+            crossDomain: true,
+            data: data,
+            dataType: "json"
+          });
+
+        $('#thankYouRecord').show();
+        $('#thankYouRecord').fadeOut(1000);
+    }
+
+    function myTimer() {
+        var d = new Date();
+        count = count + 1;
+        document.getElementById("recordTimer").innerHTML = count + ' seconds';
+    }
+
+  });
+</script>
+{{/if}}
+
+  <script type="text/javascript">
+
+  $(document).ready(function() {
+
+    $("a.social_share_link").on("click", function(event) {
+       event.preventDefault();
+       var share_link = $(this).prop('href');
+
+       window.open(share_link, "_blank",  "width=600,height=500");
+
+       data = {
+            url: "{{url}}",
+            date: new Date(),
+            type: 'socialShare',
+            link: share_link
+        }
+
+         $.ajax({
+            url: "{{appUrl}}api/stats",
+            type: "POST",
+            crossDomain: true,
+            data: data,
+            dataType: "json"
+          });
+
+    });
+
+   $("a.social_share_icon_link").on("click", function(event) {
+
+    var share_link = $(this).prop('href');
+
+      data = {
+            url: "{{url}}",
+            date: new Date(),
+            type: 'socialShare',
+            link: share_link
+        }
+
+         $.ajax({
+            url: "{{appUrl}}api/stats",
+            type: "POST",
+            crossDomain: true,
+            data: data,
+            dataType: "json"
+          });
+
+    });
+    
+    $( ".action" ).click(function() {
+
+      console.log('Click');
+
+          data = {
+            url: "{{url}}",
+            date: new Date(),
+            type: 'subscribe'
+        }
+
+         $.ajax({
+            url: "{{appUrl}}api/stats",
+            type: "POST",
+            crossDomain: true,
+            data: data,
+            dataType: "json"
+          });
+
+    });
+
+    $( ".affiliate-click" ).click(function() {
+
+      console.log('Affiliate lick');
+
+          data = {
+            url: "{{url}}",
+            date: new Date(),
+            type: 'affiliateClick',
+            link: $(this).attr('href')
+        }
+
+         $.ajax({
+            url: "{{appUrl}}api/stats",
+            type: "POST",
+            crossDomain: true,
+            data: data,
+            dataType: "json"
+          });
+
+    });
+
+  });
+  </script>
+
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+        $('pre').each(function(i, block) {
+            hljs.highlightBlock(block);
+        });
+    });
+
+  </script>
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+    });
+</script>
+
+<!-- <script type="text/javascript">
+
+   $(window).on('beforeunload', function() {
+   $.ajax({
+            url: "{{appUrl}}api/leaving",
+            type: "GET",
+            async: false
+          });
+});
+
+  </script> -->
+
+</head>

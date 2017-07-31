@@ -1,0 +1,53 @@
+<!-- Exit Modal -->
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $("body").mousemove(function(event) {
+
+        if (event.pageY inferior 10) {
+
+            // Send data
+            $.ajax({
+                url: "{{appUrl}}api/modal",
+                type: "GET",
+                crossDomain: true
+            }).done(function(data) {
+               
+                if (data.displayModal == true) {
+                    $('#exitModal').modal('show');
+                }
+
+            });
+
+        }
+
+    });
+
+});
+</script>
+<div class="modal" id="exitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header popup-title">
+                <h5 class="modal-title popup-title">{{displayTitle}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body popup-content">
+                {{{boxContent}}}
+                <div class='popup-message'>{{signupMessage}}</div>
+                <form accept-charset="utf-8" action="https://{{integrationUrl}}/subscribe" method="POST">
+                    <div class='popup-input-container'>
+                        <input id='email' name='email' type="email" class="form-control input-lg" placeholder="{{#if langEN}}Your email ...{{else}}Votre email ...{{/if}}">
+                    </div>
+                    <div class='popup-button-container'>
+                        <input value="{{buttonText}}" type="submit" class="btn btn-block btn-lg btn-warning">
+                    </div>
+                    <input name="list" type="hidden" value="{{listId}}" />
+                    <input name="origin" type="hidden" value="blog" />
+                    <input name="sequence" type="hidden" value="{{sequenceId}}" />
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>

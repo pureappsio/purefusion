@@ -4,7 +4,7 @@ Meteor.methods({
 
     areAffiliateClicks: function() {
 
-        var clicks = Stats.find({ type: 'affiliateClick' }).count();
+        var clicks = Events.find({ type: 'affiliateClick' }).count();
         console.log(clicks);
 
         if (clicks > 0) {
@@ -44,10 +44,10 @@ Meteor.methods({
             Meteor.call('updateStatistic', 'sales', sales);
         }
 
-        // Summary stats
-        var allVisits = Stats.find({ type: 'visit', date: { $gte: limitDate } }).count();
+        // Summary Events
+        var allVisits = Events.find({ type: 'visit', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'allVisits', allVisits);
-        var allVisitsPast = Stats.find({ type: 'visit', date: { $gte: beforeDate, $lte: limitDate } }).count();
+        var allVisitsPast = Events.find({ type: 'visit', date: { $gte: beforeDate, $lte: limitDate } }).count();
 
         if (allVisitsPast != 0) {
             variation = ((allVisits - allVisitsPast) / allVisitsPast * 100).toFixed(2);
@@ -57,34 +57,34 @@ Meteor.methods({
 
         Meteor.call('updateStatistic', 'visitsVariation', variation);
 
-        var totalAffiliate = Stats.find({ type: 'affiliateClick', date: { $gte: limitDate } }).count();
+        var totalAffiliate = Events.find({ type: 'affiliateClick', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'totalAffiliate', totalAffiliate);
 
-        var totalMobile = Stats.find({ type: 'visit', date: { $gte: limitDate }, browser: 'mobile' }).count();
+        var totalMobile = Events.find({ type: 'visit', date: { $gte: limitDate }, browser: 'mobile' }).count();
         Meteor.call('updateStatistic', 'totalMobile', totalMobile);
 
-        var totalSubscribed = Stats.find({ type: 'subscribe', date: { $gte: limitDate } }).count();
+        var totalSubscribed = Events.find({ type: 'subscribe', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'totalSubscribed', totalSubscribed);
 
         // Origin
-        var social = Stats.find({ origin: 'social', date: { $gte: limitDate } }).count();
+        var social = Events.find({ origin: 'social', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'social', social);
-        var ads = Stats.find({ origin: 'ads', date: { $gte: limitDate } }).count();
+        var ads = Events.find({ origin: 'ads', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'ads', ads);
-        var organic = Stats.find({ origin: 'organic', date: { $gte: limitDate } }).count();
+        var organic = Events.find({ origin: 'organic', date: { $gte: limitDate } }).count();
         Meteor.call('updateStatistic', 'organic', organic);
 
         // Social
         var socialNetworks = ['facebook', 'youtube', 'twitter', 'pinterest', 'instagram'];
         for (n in socialNetworks) {
-            var facebook = Stats.find({ medium: socialNetworks[n] }).count();
+            var facebook = Events.find({ medium: socialNetworks[n] }).count();
             Meteor.call('updateStatistic', socialNetworks[n], facebook);
         }
 
         // Countries
-        var countriesStats = Meteor.call('getCountryStats');
-        Meteor.call('updateStatistic', 'countries', countriesStats[0]);
-        Meteor.call('updateStatistic', 'countriesSessions', countriesStats[1]);
+        var countriesEvents = Meteor.call('getCountryEvents');
+        Meteor.call('updateStatistic', 'countries', countriesEvents[0]);
+        Meteor.call('updateStatistic', 'countriesSessions', countriesEvents[1]);
 
         // Best posts
         var convertingPosts = Meteor.call('getBestConvertingPosts');
@@ -124,7 +124,7 @@ Meteor.methods({
         Meteor.call('updateStatistic', 'affiliateClick', affiliateClicks);
 
         var endDate = new Date();
-        console.log('Time to update stats: ' + (endDate.getTime() - now.getTime()) + ' ms')
+        console.log('Time to update Events: ' + (endDate.getTime() - now.getTime()) + ' ms')
 
     },
     updateStatistic: function(statisticType, statisticValue) {
@@ -163,7 +163,7 @@ Meteor.methods({
         var now = new Date();
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        return Stats.find({ type: 'affiliateClick', date: { $gte: limitDate } }).count();
+        return Events.find({ type: 'affiliateClick', date: { $gte: limitDate } }).count();
 
     },
     getAllVisits: function() {
@@ -172,7 +172,7 @@ Meteor.methods({
         var now = new Date();
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        return Stats.find({ type: 'visit', date: { $gte: limitDate } }).count();
+        return Events.find({ type: 'visit', date: { $gte: limitDate } }).count();
 
     },
     getMobileVisits: function() {
@@ -181,7 +181,7 @@ Meteor.methods({
         var now = new Date();
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        return Stats.find({ type: 'visit', date: { $gte: limitDate }, browser: 'mobile' }).count();
+        return Events.find({ type: 'visit', date: { $gte: limitDate }, browser: 'mobile' }).count();
 
     },
     getSubscribed: function() {
@@ -190,7 +190,7 @@ Meteor.methods({
         var now = new Date();
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        return Stats.find({ type: 'subscribe', date: { $gte: limitDate } }).count();
+        return Events.find({ type: 'subscribe', date: { $gte: limitDate } }).count();
 
     },
     harmonizeDates: function() {
@@ -198,18 +198,18 @@ Meteor.methods({
         console.log('Harmozing dates... ')
 
         // Get all affiliate clicks
-        var affiliateClicks = Stats.find({ type: 'affiliateClick' }).fetch();
+        var affiliateClicks = Events.find({ type: 'affiliateClick' }).fetch();
         for (i in affiliateClicks) {
             var newDate = new Date(affiliateClicks[i].date);
-            Stats.update(affiliateClicks[i]._id, { $set: { date: newDate } });
+            Events.update(affiliateClicks[i]._id, { $set: { date: newDate } });
         }
         // console.log(affiliateClicks);
 
         // Get all subscribed
-        var subscribed = Stats.find({ type: 'subscribe' }).fetch();
+        var subscribed = Events.find({ type: 'subscribe' }).fetch();
         for (i in subscribed) {
             var newDate = new Date(subscribed[i].date);
-            Stats.update(subscribed[i]._id, { $set: { date: newDate } });
+            Events.update(subscribed[i]._id, { $set: { date: newDate } });
         }
         console.log(subscribed);
 
@@ -358,15 +358,17 @@ Meteor.methods({
     insertStat: function(stat) {
 
         // Insert
+        console.log('New event: ');
         console.log(stat);
-        Stats.insert(stat);
+        Events.insert(stat);
 
     },
     insertSession: function(parameters) {
 
         var stat = {
             type: parameters.type,
-            date: new Date()
+            date: new Date(),
+            brandId: parameters.brandId
         };
 
         // Page or post
@@ -401,7 +403,7 @@ Meteor.methods({
         if (parameters.link && parameters.type == 'affiliateClick') {
 
             // Asin
-            var asin = Meteor.call('extractAsinStats', parameters.link);
+            var asin = Meteor.call('extractAsinEvents', parameters.link);
             if (asin != 'none') {
                 stat.asin = asin;
                 stat.locale = Meteor.call('extractLocale', parameters.link);
@@ -555,7 +557,7 @@ Meteor.methods({
 
         // Calculate visits
         for (i in posts) {
-            posts[i].visits = Stats.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
+            posts[i].visits = Events.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
         }
 
         goodPosts = [];
@@ -586,7 +588,7 @@ Meteor.methods({
 
         // Calculate visits
         for (i in pages) {
-            pages[i].visits = Stats.find({ date: { $gte: limitDate }, type: 'visit', pageId: pages[i]._id }).count();
+            pages[i].visits = Events.find({ date: { $gte: limitDate }, type: 'visit', pageId: pages[i]._id }).count();
         }
 
         goodPages = [];
@@ -624,7 +626,7 @@ Meteor.methods({
                 postsIds.push(posts[p]._id);
             }
 
-            boxes[i].visits = Stats.find({ date: { $gte: limitDate }, type: 'visit', postId: { $in: postsIds } }).count();
+            boxes[i].visits = Events.find({ date: { $gte: limitDate }, type: 'visit', postId: { $in: postsIds } }).count();
         }
 
         goodBoxes = [];
@@ -638,7 +640,7 @@ Meteor.methods({
 
         // Calculate conversions
         for (i in goodBoxes) {
-            subscriptions = Stats.find({ date: { $gte: limitDate }, type: 'subscribe', boxId: goodBoxes[i]._id }).count();
+            subscriptions = Events.find({ date: { $gte: limitDate }, type: 'subscribe', boxId: goodBoxes[i]._id }).count();
             goodBoxes[i].conversion = Meteor.call('calculateConversion', subscriptions, goodBoxes[i].visits);
         }
 
@@ -662,9 +664,9 @@ Meteor.methods({
         // Calculate conversions
         for (i in posts) {
 
-            if (Stats.findOne({ type: 'subscribe', postId: posts[i]._id }) && Stats.findOne({ type: 'visit', postId: posts[i]._id })) {
-                var subscriptions = Stats.find({ date: { $gte: limitDate }, type: 'subscribe', postId: posts[i]._id }).count();
-                var visits = Stats.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
+            if (Events.findOne({ type: 'subscribe', postId: posts[i]._id }) && Events.findOne({ type: 'visit', postId: posts[i]._id })) {
+                var subscriptions = Events.find({ date: { $gte: limitDate }, type: 'subscribe', postId: posts[i]._id }).count();
+                var visits = Events.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
 
                 if (visits > 10) {
                     posts[i].conversion = (subscriptions / visits * 100).toFixed(0);
@@ -706,9 +708,9 @@ Meteor.methods({
         // Calculate conversions
         for (i in posts) {
 
-            if (Stats.findOne({ date: { $gte: limitDate }, type: 'affiliateClick', postId: posts[i]._id }) && Stats.findOne({ type: 'visit', postId: posts[i]._id })) {
-                var affiliateClicks = Stats.find({ type: 'affiliateClick', postId: posts[i]._id }).count();
-                var visits = Stats.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
+            if (Events.findOne({ date: { $gte: limitDate }, type: 'affiliateClick', postId: posts[i]._id }) && Events.findOne({ type: 'visit', postId: posts[i]._id })) {
+                var affiliateClicks = Events.find({ type: 'affiliateClick', postId: posts[i]._id }).count();
+                var visits = Events.find({ date: { $gte: limitDate }, type: 'visit', postId: posts[i]._id }).count();
                 if (visits > 10) {
                     posts[i].conversion = (affiliateClicks / visits * 100).toFixed(0);
                 } else {
@@ -792,12 +794,12 @@ Meteor.methods({
         return [A, B];
 
     },
-    getCountryStats: function() {
+    getCountryEvents: function() {
 
         // Get sessions
         var now = new Date();
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        var sessions = Stats.find({ country: { $exists: true }, date: { $gte: limitDate } }).fetch();
+        var sessions = Events.find({ country: { $exists: true }, date: { $gte: limitDate } }).fetch();
 
         var countries = [];
         for (i in sessions) {
@@ -808,7 +810,7 @@ Meteor.methods({
 
         countriesSessions = [];
         for (c in countries) {
-            countriesSessions.push(Stats.find({ country: countries[c], date: { $gte: limitDate } }).count());
+            countriesSessions.push(Events.find({ country: countries[c], date: { $gte: limitDate } }).count());
         }
 
         // Slice
@@ -895,16 +897,16 @@ Meteor.methods({
         var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
         // Get sessions
-        var facebookVisits = Stats.find({ type: 'visit', medium: 'facebook', date: { $gte: limitDate } }).count();
-        var youtubeVisits = Stats.find({ type: 'visit', medium: 'youtube', date: { $gte: limitDate } }).count();
-        var twitterVisits = Stats.find({ type: 'visit', medium: 'twitter', date: { $gte: limitDate } }).count();
-        var organicVisits = Stats.find({ type: 'visit', origin: 'organic', date: { $gte: limitDate } }).count();
+        var facebookVisits = Events.find({ type: 'visit', medium: 'facebook', date: { $gte: limitDate } }).count();
+        var youtubeVisits = Events.find({ type: 'visit', medium: 'youtube', date: { $gte: limitDate } }).count();
+        var twitterVisits = Events.find({ type: 'visit', medium: 'twitter', date: { $gte: limitDate } }).count();
+        var organicVisits = Events.find({ type: 'visit', origin: 'organic', date: { $gte: limitDate } }).count();
 
         // Get clicks
-        var facebookClicks = Stats.find({ type: type, medium: 'facebook', date: { $gte: limitDate } }).count();
-        var youtubeClicks = Stats.find({ type: type, medium: 'youtube', date: { $gte: limitDate } }).count();
-        var twitterClicks = Stats.find({ type: type, medium: 'twitter', date: { $gte: limitDate } }).count();
-        var organicClicks = Stats.find({ type: type, origin: 'organic', date: { $gte: limitDate } }).count();
+        var facebookClicks = Events.find({ type: type, medium: 'facebook', date: { $gte: limitDate } }).count();
+        var youtubeClicks = Events.find({ type: type, medium: 'youtube', date: { $gte: limitDate } }).count();
+        var twitterClicks = Events.find({ type: type, medium: 'twitter', date: { $gte: limitDate } }).count();
+        var organicClicks = Events.find({ type: type, origin: 'organic', date: { $gte: limitDate } }).count();
 
         // Get conversions
         var facebook = (facebookClicks / facebookVisits * 100).toFixed(2);
@@ -1043,7 +1045,7 @@ Meteor.methods({
     },
     getSessions: function(type) {
 
-        return Stats.aggregate(
+        return Events.aggregate(
             [
                 { $match: { type: type } }, {
                     $group: {
@@ -1071,7 +1073,7 @@ Meteor.methods({
             var conversion = Metas.findOne({ type: 'affiliateConversion' }).value;
 
             // Get all clicks
-            var clicks = Stats.find({ type: 'affiliateClick', asin: { $exists: true }, locale: { $in: countriesList } }).fetch();
+            var clicks = Events.find({ type: 'affiliateClick', asin: { $exists: true }, locale: { $in: countriesList } }).fetch();
             console.log('Affiliate clicks:' + clicks.length);
 
             // Find all ASINs
@@ -1129,8 +1131,8 @@ Meteor.methods({
                             earnings = earnings / rates[asinClickData.currency];
                         }
 
-                        // Update stats
-                        Stats.update(clicks[c]._id, { $set: { earnings: earnings } });
+                        // Update Events
+                        Events.update(clicks[c]._id, { $set: { earnings: earnings } });
 
                         // Insert
                         clickEarnings.push({
@@ -1320,9 +1322,9 @@ Meteor.methods({
         return data;
 
     },
-    resetStats: function() {
+    resetEvents: function() {
 
-        Stats.remove({});
+        Events.remove({});
 
     },
     calculateConversion: function(result, base) {

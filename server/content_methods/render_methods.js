@@ -66,14 +66,14 @@ Meteor.methods({
         Posts.update({}, { $set: { cached: false } }, { multi: true });
 
     },
-    returnFooter: function(userId) {
+    returnFooter: function(brandId) {
 
         if (Meteor.settings.useCache == true) {
 
-            if (Caches.findOne({ element: 'footer', userId: userId })) {
+            if (Caches.findOne({ element: 'footer', brandId: brandId })) {
 
                 // Check status of cache
-                var cache = Caches.findOne({ element: 'footer', userId: userId });
+                var cache = Caches.findOne({ element: 'footer', brandId: brandId });
 
                 if (cache.cached == true) {
 
@@ -84,10 +84,10 @@ Meteor.methods({
 
                     // Render
                     // console.log('Updating footer cache');
-                    html = Meteor.call('renderFooter', userId);
+                    html = Meteor.call('renderFooter', brandId);
 
                     // Update cache
-                    Caches.update({ element: 'footer', userId: userId }, { $set: { html: html, cached: true } });
+                    Caches.update({ element: 'footer', brandId: brandId }, { $set: { html: html, cached: true } });
 
                     return html;
 
@@ -97,10 +97,10 @@ Meteor.methods({
 
                 // Render
                 // console.log('Creating footer cache');
-                html = Meteor.call('renderFooter', userId);
+                html = Meteor.call('renderFooter', brandId);
 
                 // Create cache
-                Caches.insert({ userId: userId, element: 'footer', html: html, cached: true });
+                Caches.insert({ brandId: brandId, element: 'footer', html: html, cached: true });
 
                 return html;
 
@@ -112,7 +112,7 @@ Meteor.methods({
         }
 
     },
-    renderFooter: function(userId) {
+    renderFooter: function(brandId) {
 
         // Compile header
         SSR.compileTemplate('footer', Assets.getText('footer/footer_template.html'));
@@ -124,15 +124,21 @@ Meteor.methods({
     },
     returnHeader: function(parameters) {
 
+        console.log('Header parameters: ');
+        console.log(parameters);
+
         // Compile header
         SSR.compileTemplate('header', Assets.getText('header/header_template.html'));
+
+        // Brand
+        var brand = Brands.findOne(parameters.brandId);
 
         // Load css
         var css = Assets.getText('main.css');
 
-        if (Metas.findOne({ userId: parameters.userId, type: 'theme' })) {
+        if (Metas.findOne({ brandId: parameters.brandId, type: 'theme' })) {
 
-            var value = Metas.findOne({ userId: parameters.userId, type: 'theme' }).value;
+            var value = Metas.findOne({ brandId: parameters.brandId, type: 'theme' }).value;
 
             if (value == 'black') {
                 var navStyle = Assets.getText('nav_dark.css');
@@ -147,15 +153,15 @@ Meteor.methods({
         }
 
         // Load GA tracking code
-        if (Metas.findOne({ userId: parameters.userId, type: 'analytics' })) {
-            var trackingCode = Metas.findOne({ userId: parameters.userId, type: 'analytics' }).value;
+        if (Metas.findOne({ brandId: parameters.brandId, type: 'analytics' })) {
+            var trackingCode = Metas.findOne({ brandId: parameters.brandId, type: 'analytics' }).value;
         } else {
             trackingCode = "";
         }
 
         // Load FB tracking pixel
-        if (Metas.findOne({ userId: parameters.userId, type: 'pixelId' })) {
-            var pixelId = Metas.findOne({ userId: parameters.userId, type: 'pixelId' }).value;
+        if (Metas.findOne({ brandId: parameters.brandId, type: 'pixelId' })) {
+            var pixelId = Metas.findOne({ brandId: parameters.brandId, type: 'pixelId' }).value;
         } else {
             pixelId = "";
         }
@@ -177,7 +183,7 @@ Meteor.methods({
             },
             twitterLinked: function() {
 
-                if (Networks.findOne({ userId: parameters.userId, type: 'twitter' })) {
+                if (Networks.findOne({ brandId: parameters.brandId, type: 'twitter' })) {
 
                     return true;
 
@@ -188,9 +194,9 @@ Meteor.methods({
             },
             twitterHandle: function() {
 
-                if (Networks.findOne({ userId: parameters.userId, type: 'twitter' })) {
+                if (Networks.findOne({ brandId: parameters.brandId, type: 'twitter' })) {
 
-                    var link = Networks.findOne({ userId: parameters.userId, type: 'twitter' }).link;
+                    var link = Networks.findOne({ brandId: parameters.brandId, type: 'twitter' }).link;
 
                     var handleIndex = link.indexOf('twitter.com/') + 'twitter.com/'.length;
 
@@ -260,16 +266,10 @@ Meteor.methods({
             },
             title: function() {
 
-                var title = 'PurePress';
-
-                if (Metas.findOne({ userId: parameters.userId, type: "brandName" })) {
-                    var brandName = Metas.findOne({ userId: parameters.userId, type: "brandName" }).value;
-
-                    if (parameters.title) {
-                        title = parameters.title;
-                    } else {
-                        title = brandName;
-                    }
+                if (parameters.title) {
+                    title = parameters.title;
+                } else {
+                    title = brand.name;
                 }
 
                 return title;
@@ -277,19 +277,13 @@ Meteor.methods({
             },
             brandName: function() {
 
-                var brandName = 'PurePress';
-
-                if (Metas.findOne({ userId: parameters.userId, type: "brandName" })) {
-                    brandName = Metas.findOne({ userId: parameters.userId, type: "brandName" }).value;
-                }
-
-                return brandName;
+                return brand.name;
 
             },
             favicon: function() {
-                if (Metas.findOne({ userId: parameters.userId, type: "favicon" })) {
-                    var faviconId = Metas.findOne({ userId: parameters.userId, type: "favicon" }).value;
-                    var image = Images.findOne(faviconId);
+
+                if (brand.favicon) {
+                    var image = Images.findOne(brand.favicon);
                     return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
                 } else {
                     return '';
@@ -311,14 +305,14 @@ Meteor.methods({
         return headerHtml;
 
     },
-    returnNavbar: function(userId) {
+    returnNavbar: function(brandId) {
 
         if (Meteor.settings.useCache == true) {
 
-            if (Caches.findOne({ element: 'navbar', userId: userId })) {
+            if (Caches.findOne({ element: 'navbar', brandId: brandId })) {
 
                 // Check status of cache
-                var navCache = Caches.findOne({ userId: userId, element: 'navbar' });
+                var navCache = Caches.findOne({ brandId: brandId, element: 'navbar' });
 
                 if (navCache.cached == true) {
 
@@ -329,10 +323,10 @@ Meteor.methods({
 
                     // Render
                     // console.log('Updating navbar cache');
-                    html = Meteor.call('renderNavbar', userId);
+                    html = Meteor.call('renderNavbar', brandId);
 
                     // Update cache
-                    Caches.update({ userId: userId, element: 'navbar' }, { $set: { html: html, cached: true } });
+                    Caches.update({ brandId: brandId, element: 'navbar' }, { $set: { html: html, cached: true } });
 
                     return html;
 
@@ -342,10 +336,10 @@ Meteor.methods({
 
                 // Render
                 // console.log('Creating navbar cache');
-                html = Meteor.call('renderNavbar', userId);
+                html = Meteor.call('renderNavbar', brandId);
 
                 // Create cache
-                Caches.insert({ userId: userId, element: 'navbar', html: html, cached: true });
+                Caches.insert({ brandId: brandId, element: 'navbar', html: html, cached: true });
 
                 return html;
 
@@ -353,14 +347,17 @@ Meteor.methods({
 
         } else {
             // console.log('Rendering navbar without caching');
-            return Meteor.call('renderNavbar', userId);
+            return Meteor.call('renderNavbar', brandId);
         }
 
     },
-    renderNavbar: function(userId) {
+    renderNavbar: function(brandId) {
 
         // Compile navbar
         SSR.compileTemplate('navbar', Assets.getText('header/navbar_template.html'));
+
+        // Get brand
+        var brand = Brands.findOne(brandId);
 
         // Helpers
         Template.navbar.helpers({
@@ -396,24 +393,23 @@ Meteor.methods({
 
             },
             menuElements: function() {
-                return Menus.find({ userId: userId, parent: { $exists: false } }, { sort: { order: 1 } });
+                return Menus.find({ brandId: brandId, parent: { $exists: false } }, { sort: { order: 1 } });
             },
             isDropdown: function(menuElement) {
 
-                if (Menus.findOne({ userId: userId, parent: menuElement._id })) {
+                if (Menus.findOne({ brandId: brandId, parent: menuElement._id })) {
                     return true;
                 } else {
                     return false;
                 }
             },
             subMenuElements: function(menuElement) {
-                return Menus.find({ userId: userId, parent: menuElement._id });
+                return Menus.find({ brandId: brandId, parent: menuElement._id });
             },
             logoLink: function() {
 
-                if (Metas.findOne({ userId: userId, type: "logo" })) {
-                    var logoId = Metas.findOne({ userId: userId, type: "logo" }).value;
-                    var image = Images.findOne(logoId);
+                if (brand.logo) {
+                    var image = Images.findOne(brand.logo);
                     return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
 
                 } else {
@@ -422,13 +418,13 @@ Meteor.methods({
 
             },
             networks: function() {
-                return Networks.find({ userId: userId }, { sort: { order: 1 } });
+                return brand.networks;
             },
             backgroundColor: function() {
 
                 // Check style
-                if (Metas.findOne({ userId: userId, type: 'theme' })) {
-                    var theme = Metas.findOne({ userId: userId, type: 'theme' }).value;
+                if (Metas.findOne({ brandId: brandId, type: 'theme' })) {
+                    var theme = Metas.findOne({ brandId: brandId, type: 'theme' }).value;
 
                     if (theme == 'black') {
                         return 'background-color: #000000;';
@@ -443,8 +439,8 @@ Meteor.methods({
             navbarStyle: function() {
 
                 // Check style
-                if (Metas.findOne({ userId: userId, type: 'theme' })) {
-                    var theme = Metas.findOne({ userId: userId, type: 'theme' }).value;
+                if (Metas.findOne({ brandId: brandId, type: 'theme' })) {
+                    var theme = Metas.findOne({ brandId: brandId, type: 'theme' }).value;
 
                     if (theme == 'black') {
                         return 'navbar-light navbar-inverse';
@@ -465,24 +461,27 @@ Meteor.methods({
     },
     renderAllPosts: function(parameters) {
 
-        console.log(parameters);
+        // console.log(parameters);
+
+        // Get brand
+        var brand = Brands.findOne(parameters.brandId);
 
         // Render header & navbar
         if (parameters.categoryId !== undefined) {
 
             var categoryName = Categories.findOne(parameters.categoryId).name;
 
-            headerHtml = Meteor.call('returnHeader', { title: categoryName, userId: parameters.userId });
+            headerHtml = Meteor.call('returnHeader', { title: categoryName, brandId: parameters.brandId });
 
         } else {
 
-            headerHtml = Meteor.call('returnHeader', { title: 'Blog', userId: parameters.userId });
+            headerHtml = Meteor.call('returnHeader', { title: 'Blog', brandId: parameters.brandId });
 
         }
 
         // Footer
-        navbarHtml = Meteor.call('returnNavbar', parameters.userId);
-        footerHtml = Meteor.call('returnFooter', parameters.userId);
+        navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
+        footerHtml = Meteor.call('returnFooter', parameters.brandId);
 
         // Insert stat
         if (parameters.url) {
@@ -493,13 +492,13 @@ Meteor.methods({
                 postType: 'page',
                 query: parameters.query,
                 headers: parameters.headers,
-                userId: parameters.userId
+                brandId: parameters.brandId
             });
         }
 
         // Get theme
-        if (Metas.findOne({ type: 'blogTheme', userId: parameters.userId })) {
-            var theme = Metas.findOne({ type: 'blogTheme', userId: parameters.userId }).value;
+        if (Metas.findOne({ type: 'blogTheme', brandId: parameters.brandId })) {
+            var theme = Metas.findOne({ type: 'blogTheme', brandId: parameters.brandId }).value;
 
             if (theme == 'square') {
                 var nbPosts = 9;
@@ -523,9 +522,9 @@ Meteor.methods({
         pages = [];
         var pagesLimit = 8;
         if (parameters.categoryId !== undefined) {
-            nbPages = Math.ceil(Posts.find({ userId: parameters.userId, postCategory: parameters.categoryId, status: 'published' }).count() / nbPosts);
+            nbPages = Math.ceil(Posts.find({ brandId: parameters.brandId, postCategory: parameters.categoryId, status: 'published' }).count() / nbPosts);
         } else {
-            nbPages = Math.ceil(Posts.find({ userId: parameters.userId, status: 'published' }).count() / nbPosts);
+            nbPages = Math.ceil(Posts.find({ brandId: parameters.brandId, status: 'published' }).count() / nbPosts);
         }
 
         if (nbPages > pagesLimit) {
@@ -538,7 +537,11 @@ Meteor.methods({
 
         // Get posts
         var currentDate = new Date();
-        var postQuery = { userId: parameters.userId, status: 'published', creationDate: { $lte: currentDate } };
+        var postQuery = {
+            brandId: parameters.brandId,
+            status: 'published',
+            creationDate: { $lte: currentDate }
+        };
 
         if (parameters.categoryId !== undefined) {
             postQuery.postCategory = parameters.categoryId;
@@ -575,7 +578,7 @@ Meteor.methods({
                 } else {
 
                     // Get Meta
-                    var meta = Metas.findOne({ type: 'blogPage', userId: parameters.userId });
+                    var meta = Metas.findOne({ type: 'blogPage', brandId: parameters.brandId });
 
                     // Get blog page
                     var blogPage = Pages.findOne(meta.value);
@@ -626,13 +629,12 @@ Meteor.methods({
                 return localLocale.format('LL');
             },
             userName: function() {
-                return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                return brand.userName;
             },
             langEN: function() {
 
-                if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                    if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                if (brand.language) {
+                    if (brand.language == 'fr') {
                         return false;
                     } else {
                         return true;
@@ -648,10 +650,10 @@ Meteor.methods({
         var postHtml = SSR.render('allPosts');
 
         // Add exit intent?
-        if (Metas.findOne({ type: 'exitStatus', userId: parameters.userId })) {
+        if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
 
             // Check value
-            var exitStatus = Metas.findOne({ type: 'exitStatus', userId: parameters.userId }).value;
+            var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
 
             if (exitStatus == 'on') {
                 var exitHtml = Meteor.call('renderExitModal', {
@@ -682,8 +684,11 @@ Meteor.methods({
         var query = parameters.query;
         var headers = parameters.headers;
 
+        // Brand
+        var brand = Brands.findOne(parameters.brandId);
+
         // Find post or page
-        if (Posts.findOne({ url: postUrl, userId: parameters.userId }) || Pages.findOne({ url: postUrl, userId: parameters.userId })) {
+        if (Posts.findOne({ url: postUrl, brandId: parameters.brandId }) || Pages.findOne({ url: postUrl, brandId: parameters.brandId })) {
 
             // Get Meteor URL
             var websiteUrl = Meteor.absoluteUrl();
@@ -702,13 +707,13 @@ Meteor.methods({
             //     }
             // }
 
-            if (Posts.findOne({ url: postUrl, userId: parameters.userId })) {
-                var post = Posts.findOne({ url: postUrl, userId: parameters.userId });
+            if (Posts.findOne({ url: postUrl, brandId: parameters.brandId })) {
+                var post = Posts.findOne({ url: postUrl, brandId: parameters.brandId });
             }
 
             // Look for pages
-            if (Pages.findOne({ url: postUrl, userId: parameters.userId })) {
-                var post = Pages.findOne({ url: postUrl, userId: parameters.userId });
+            if (Pages.findOne({ url: postUrl, brandId: parameters.brandId })) {
+                var post = Pages.findOne({ url: postUrl, brandId: parameters.brandId });
             }
 
             // Insert stat
@@ -724,59 +729,22 @@ Meteor.methods({
                 postType: postType,
                 query: query,
                 headers: headers,
-                userId: parameters.userId
+                brandId: parameters.brandId
             });
 
             // Calling another page?
-            if (post.type == 'purepages') {
-
-                // Get page
-                query.location = location;
-
-                var startGetPage = new Date();
-                var page = Meteor.call('getPurePage', post.purePageId, query);
-                var endGetPage = new Date();
-                console.log('Time to grab purepage: ', (endGetPage.getTime() - startGetPage.getTime()) + ' ms');
-
-                // Choose header
-                if (page.model == 'saas') {
-
-                    // Render header & navbar
-                    var headerParameters = { userId: parameters.userId, title: page.title, url: Meteor.absoluteUrl() + postUrl };
-                    if (Meteor.settings.useChat == true) {
-                        headerParameters.useChat = true;
-                    }
-
-                    headerHtml = Meteor.call('returnHeader', headerParameters);
-
-                    navbarHtml = Meteor.call('returnNavbar', parameters.userId);
-                    footerHtml = Meteor.call('returnFooter', parameters.userId);
-
-                    return headerHtml + "<body>" + navbarHtml + "<div>" + page.html + "</div>" + footerHtml + "</body>";
-
-                } else {
-
-                    // Get header
-                    var startGetPage = new Date();
-                    var header = Meteor.call('getPurePageHeader', post.purePageId);
-                    var endGetPage = new Date();
-                    console.log('Time to grab header purepage: ', (endGetPage.getTime() - startGetPage.getTime()) + ' ms');
-                    return header.html + "<body><div class='container-fluid main-container'>" + page.html + "</div></body>";
-
-                }
-
-            } else if (post.type == 'category') {
+            if (post.type == 'category') {
 
                 if (query.page) {
                     return Meteor.call('renderAllPosts', {
-                        userId: parameters.userId,
+                        brandId: parameters.brandId,
                         page: query.page,
                         categoryId: post.categoryId,
                         url: post.url
                     });
                 } else {
                     return Meteor.call('renderAllPosts', {
-                        userId: parameters.userId,
+                        brandId: parameters.brandId,
                         page: 1,
                         categoryId: post.categoryId,
                         url: post.url
@@ -787,7 +755,7 @@ Meteor.methods({
 
                 // Render header & navbar
                 var headerParameters = {
-                    userId: parameters.userId,
+                    brandId: parameters.brandId,
                     title: post.title,
                     url: Meteor.absoluteUrl() + postUrl
                 };
@@ -809,8 +777,8 @@ Meteor.methods({
 
                 headerHtml = Meteor.call('returnHeader', headerParameters);
 
-                navbarHtml = Meteor.call('returnNavbar', parameters.userId);
-                footerHtml = Meteor.call('returnFooter', parameters.userId);
+                navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
+                footerHtml = Meteor.call('returnFooter', parameters.brandId);
 
                 // Check if cached
                 // var countryCode = Meteor.call('getCountryCodeLocation', location);
@@ -843,7 +811,7 @@ Meteor.methods({
                                 var socialShare = Meteor.call('renderSocialShare', {
                                     postUrl: websiteUrl + postUrl,
                                     post: post,
-                                    userId: parameters.userId
+                                    brandId: parameters.brandId
                                 });
 
                                 postHtml = socialShare + postHtml;
@@ -862,12 +830,12 @@ Meteor.methods({
                         }
 
                         // Add disqus?
-                        if (Metas.findOne({ type: 'disqus', userId: parameters.userId })) {
-                            if (Metas.findOne({ type: 'disqus', userId: parameters.userId }).value != "") {
+                        if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
+                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
                                 parameters = {
                                     url: post.url,
                                     websiteUrl: websiteUrl,
-                                    userId: parameters.userId
+                                    brandId: parameters.brandId
                                 };
                                 var commentHtml = Meteor.call('renderDisqus', parameters);
                                 postHtml += commentHtml;
@@ -877,10 +845,10 @@ Meteor.methods({
                     }
 
                     // Add exit intent?
-                    if (Metas.findOne({ type: 'exitStatus', userId: parameters.userId })) {
+                    if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
 
                         // Check value
-                        var exitStatus = Metas.findOne({ type: 'exitStatus', userId: parameters.userId }).value;
+                        var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
 
                         if (exitStatus == 'on') {
                             var exitHtml = Meteor.call('renderExitModal', {
@@ -1088,16 +1056,13 @@ Meteor.methods({
 
                             integrationUrl: function() {
 
-                                if (Integrations.findOne({ type: 'puremail' })) {
-                                    return Integrations.findOne({ type: 'puremail' }).url;
-                                }
+                                return Meteor.absoluteUrl();
 
                             },
                             langEN: function() {
 
-                                if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                                    if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                                if (brand.language) {
+                                    if (brand.language == 'fr') {
                                         return false;
                                     } else {
                                         return true;
@@ -1136,7 +1101,7 @@ Meteor.methods({
 
                             },
                             userName: function() {
-                                return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                                return brand.userName;
                             },
                             signupBoxContent: function(element) {
                                 if (element.type == 'emailsignup' || element.type == 'signupbox') {
@@ -1255,9 +1220,8 @@ Meteor.methods({
 
                                 langEN: function() {
 
-                                    if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                                        if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                                    if (brand.language) {
+                                        if (brand.language == 'fr') {
                                             return false;
                                         } else {
                                             return true;
@@ -1279,7 +1243,7 @@ Meteor.methods({
                                     return moment(date).format('MMMM Do YYYY');
                                 },
                                 userName: function() {
-                                    return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                                    return brand.userName;
                                 },
                                 isEmailBox: function() {
                                     if (this.signupBox) {
@@ -1303,8 +1267,8 @@ Meteor.methods({
                         } else if (post.category == 'affiliate') {
 
                             // Get theme
-                            if (Metas.findOne({ type: 'affiliateTheme', userId: parameters.userId })) {
-                                var selectedTheme = Metas.findOne({ type: 'affiliateTheme', userId: parameters.userId }).value;
+                            if (Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId })) {
+                                var selectedTheme = Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId }).value;
                             } else {
                                 var selectedTheme = 'default';
                             }
@@ -1317,9 +1281,8 @@ Meteor.methods({
 
                                 langEN: function() {
 
-                                    if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                                        if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                                    if (brand.language) {
+                                        if (brand.language == 'fr') {
                                             return false;
                                         } else {
                                             return true;
@@ -1341,7 +1304,7 @@ Meteor.methods({
                                     return moment(date).format('MMMM Do YYYY');
                                 },
                                 userName: function() {
-                                    return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                                    return brand.userName;
                                 },
 
                                 elements: function() {
@@ -1491,9 +1454,8 @@ Meteor.methods({
                                 },
                                 langEN: function() {
 
-                                    if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                                        if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                                    if (brand.language) {
+                                        if (brand.language == 'fr') {
                                             return false;
                                         } else {
                                             return true;
@@ -1514,7 +1476,7 @@ Meteor.methods({
                                     return localLocale.format('LL');
                                 },
                                 userName: function() {
-                                    return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                                    return brand.userName;
                                 },
                                 tags: function() {
                                     if (Boxes.findOne(this.signupBox)) {
@@ -1565,9 +1527,8 @@ Meteor.methods({
                                 },
                                 langEN: function() {
 
-                                    if (Metas.findOne({ type: 'language', userId: parameters.userId })) {
-
-                                        if (Metas.findOne({ type: 'language', userId: parameters.userId }).value == 'fr') {
+                                    if (brand.language) {
+                                        if (brand.language == 'fr') {
                                             return false;
                                         } else {
                                             return true;
@@ -1588,7 +1549,7 @@ Meteor.methods({
                                     return localLocale.format('LL');
                                 },
                                 userName: function() {
-                                    return Metas.findOne({ type: 'userName', userId: parameters.userId }).value;
+                                    return brand.userName;
                                 },
                                 tags: function() {
                                     if (Boxes.findOne(this.signupBox)) {
@@ -1626,9 +1587,9 @@ Meteor.methods({
                         // }
 
                         if (query.origin) {
-                            Pages.update({ url: postUrl, userId: parameters.userId }, { $set: { cached: false, html: rawHtml } })
+                            Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: false, html: rawHtml } })
                         } else {
-                            Pages.update({ url: postUrl, userId: parameters.userId }, { $set: { cached: true, html: rawHtml } })
+                            Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: true, html: rawHtml } })
                         }
 
                         postHtml = rawHtml;
@@ -1647,7 +1608,7 @@ Meteor.methods({
 
                         // Update
                         html['US'] = renderedHtml;
-                        Posts.update({ url: postUrl, userId: parameters.userId }, { $set: { cached: true, html: html } })
+                        Posts.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: true, html: html } }, { selector: { category: post.category } });
 
                         // Get localised HTML
                         var postHtml = Meteor.call('getLocalisedHtml', { html: html }, location);
@@ -1681,8 +1642,8 @@ Meteor.methods({
                         }
 
                         // Add disqus?
-                        if (Metas.findOne({ type: 'disqus', userId: parameters.userId })) {
-                            if (Metas.findOne({ type: 'disqus', userId: parameters.userId }).value != "") {
+                        if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
+                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
                                 parameters = {
                                     url: post.url,
                                     websiteUrl: websiteUrl,
@@ -1698,10 +1659,10 @@ Meteor.methods({
                 }
 
                 // Add exit intent?
-                if (Metas.findOne({ type: 'exitStatus', userId: parameters.userId })) {
+                if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
 
                     // Check value
-                    var exitStatus = Metas.findOne({ type: 'exitStatus', userId: parameters.userId }).value;
+                    var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
 
                     if (exitStatus == 'on') {
                         var exitHtml = Meteor.call('renderExitModal', {
@@ -1721,8 +1682,8 @@ Meteor.methods({
 
             // Render header & navbar
             headerHtml = Meteor.call('returnHeader', {});
-            navbarHtml = Meteor.call('returnNavbar', parameters.userId);
-            footerHtml = Meteor.call('returnFooter', parameters.userId);
+            navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
+            footerHtml = Meteor.call('returnFooter', parameters.brandId);
 
             return headerHtml + "<body>" + navbarHtml + footerHtml + "</body>";
         }

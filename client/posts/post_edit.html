@@ -11,13 +11,13 @@
         {{> afQuickField name='content'}}
     </fieldset>
 {{/autoForm}} -->
-    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update"}}
+    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
 
-    {{#if isRecipe}}
+  <!--   {{#if isRecipe}}
   
 
     {{/if}}
-    
+     -->
     <div class='row'>
         <div class="col-md-4">
             <a class='btn btn-secondary btn-block' href='/admin/posts'>Come Back</a>

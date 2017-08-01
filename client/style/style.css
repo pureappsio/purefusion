@@ -8,6 +8,12 @@ h3 {
     margin-top: 15px !important;
 }
 
+.badge {
+
+    font-size: 18px !important;
+
+}
+
 .section-selector {
     cursor: pointer;
 }

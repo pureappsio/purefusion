@@ -5,8 +5,8 @@
         <div class="col-md-3">{{url}}</div>
         <div class="col-md-2">
             {{#if areBadLinks}}
-            <span class="label label-{{statusBadLinks}}">{{badLinks}}</span> {{/if}}
-            <span class="label label-{{statusLabel}}">{{statusMessage}}</span> {{#each tagsName}} {{> tagDisplay}} {{/each}}
+            <span class="badge badge-{{statusBadLinks}}">{{badLinks}}</span> {{/if}}
+            <span class="badge badge-{{statusLabel}}">{{statusMessage}}</span> {{#each tagsName}} {{> tagDisplay}} {{/each}}
         </div>
         <div class="col-md-1">
             <button class='btn btn-danger delete-post' data-toggle="modal" data-target="#deleteConfirm-{{_id}}"><i class="fa fa-trash delete" aria-hidden="true"></i></button>

@@ -208,29 +208,7 @@ Meteor.methods({
         console.log(Meteor.user());
 
     },
-    setUser: function() {
 
-        console.log('Setting user ids');
-
-        Posts.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Pages.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Elements.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Metas.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Menus.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Caches.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Networks.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Boxes.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Categories.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Products.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Pricing.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Tags.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Visitors.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Recordings.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Stats.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Statistics.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-        Integrations.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
-
-    },
     updateConversionRates: function() {
 
         var answer = HTTP.get('http://api.fixer.io/latest');
@@ -378,7 +356,7 @@ Meteor.methods({
             // Update post
             var html = post.html;
             html[countryCodes[c]] = localisedHtml;
-            Posts.update(postId, { $set: { html: html } });
+            Posts.update(postId, { $set: { html: html, cached: false } }, { selector: { category: post.category } });
 
         }
 
@@ -662,7 +640,7 @@ Meteor.methods({
         // console.log('Adding affiliate code for country: ' + countryCode + ' and ASIN: ' + asin);
 
         // Get brand
-        var brand = Brands.findOne(brandId); 
+        var brand = Brands.findOne(brandId);
 
         if (countryCode == 'US') {
             var result = 'https://www.amazon.com/dp/' + asin;

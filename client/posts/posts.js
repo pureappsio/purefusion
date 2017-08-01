@@ -7,7 +7,7 @@ Template.posts.helpers({
         return Session.get('selectedBrand');
     },
     defaultPost: function() {
-        return { category: "general" };
+        return { category: "general", html: { US: "Post" } };
     },
     boxesElements: function() {
         return Boxes.find({ brandId: Session.get('selectedBrand') });

@@ -175,11 +175,17 @@ Meteor.methods({
                 return parameters.post.title;
             },
             description: function() {
-                var html = cheerio.load(parameters.post.excerpt);
-                return html.text();
+
+                if (parameters.post.excerpt) {
+                    var html = cheerio.load(parameters.post.excerpt);
+                    return html.text();
+                }
+
             },
             imageUrl: function() {
-                return Images.findOne(parameters.post.featuredPicture).link();
+                if (parameters.post.featuredPicture) {
+                    return Images.findOne(parameters.post.featuredPicture).link();
+                }
             },
             postUrl: function() {
                 return parameters.postUrl;

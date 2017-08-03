@@ -38,9 +38,7 @@ Meteor.methods({
             },
             integrationUrl: function() {
 
-                if (Integrations.findOne({ type: 'puremail' })) {
-                    return Integrations.findOne({ type: 'puremail' }).url;
-                }
+                return Meteor.absoluteUrl();
 
             },
             signupBoxTitle: function() {
@@ -66,8 +64,8 @@ Meteor.methods({
 
                 }
             },
-            listId: function() {
-                return Integrations.findOne({ type: 'puremail' }).list;
+            brandId: function() {
+                return post.brandId;
             },
             sequenceId: function(element) {
                 if (Boxes.findOne(post.signupBox)) {
@@ -95,11 +93,11 @@ Meteor.methods({
         // Helpers
         Template.modal.helpers({
 
-            listId: function() {
-                return Integrations.findOne({ type: 'puremail' }).list;
+            brandId: function() {
+                return parameters.brandId;
             },
             integrationUrl: function() {
-                return Integrations.findOne({ type: 'puremail' }).url;
+                return Meteor.absoluteUrl();
             },
             origin: function() {
 

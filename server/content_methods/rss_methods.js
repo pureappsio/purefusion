@@ -2,20 +2,23 @@ import Images from '/lib/images.collection.js';
 
 Meteor.methods({
 
-    renderRSS: function(userId) {
+    renderRSS: function(brandId) {
+
+        // Get brand
+        var brand = Brands.findOne(brandId);
 
         // Get Metas
-        var websiteTitle = Metas.findOne({ type: 'brandName', userId: userId }).value;
-        if (Metas.findOne({ type: 'description', userId: userId })) {
-            var websiteDescription = Metas.findOne({ type: 'description', userId: userId }).value;
+        var websiteTitle = brand.name;
+        if (brand.description) {
+            var websiteDescription = brand.description;
 
         } else {
             var websiteDescription = "Just a PurePress site";
         }
 
-        if (Metas.findOne({ type: 'siteUrl', userId: userId })) {
-            console.log(Metas.findOne({ type: 'siteUrl', userId: userId }).value);
-            var siteUrl = 'https://' + Metas.findOne({ type: 'siteUrl', userId: userId }).value + '/';
+        if (brand.url) {
+            console.log(brand.url);
+            var siteUrl = 'https://' + brand.url + '/';
 
         } else {
             var siteUrl = Meteor.absoluteUrl();
@@ -39,7 +42,7 @@ Meteor.methods({
 
         // Items
         var currentDate = new Date();
-        var postQuery = { status: 'published', userId: userId, creationDate: { $lte: currentDate } };
+        var postQuery = { status: 'published', brandId: brandId, creationDate: { $lte: currentDate } };
 
         var posts = Posts.find(postQuery);
 
@@ -64,22 +67,22 @@ Meteor.methods({
 
     },
 
-    renderPodcastRSS: function(userId) {
+    renderPodcastRSS: function(brandId) {
 
         // Check if podcast exist
-        if (Metas.findOne({ type: 'podcastTitle', userId: userId })) {
+        if (Metas.findOne({ type: 'podcastTitle', brandId: brandId })) {
 
             // Get Metas
-            var podcastTitle = Metas.findOne({ type: 'podcastTitle', userId: userId }).value;
-            var podcastDescription = Metas.findOne({ type: 'podcastDescription', userId: userId }).value;
+            var podcastTitle = Metas.findOne({ type: 'podcastTitle', brandId: brandId }).value;
+            var podcastDescription = Metas.findOne({ type: 'podcastDescription', brandId: brandId }).value;
 
-            var itunesSummary = Metas.findOne({ type: 'itunesSummary', userId: userId }).value;
-            var itunesAuthor = Metas.findOne({ type: 'itunesAuthor', userId: userId }).value;
-            var itunesImage = Metas.findOne({ type: 'itunesImage', userId: userId }).value;
-            var itunesSubtitle = Metas.findOne({ type: 'itunesSubtitle', userId: userId }).value;
+            var itunesSummary = Metas.findOne({ type: 'itunesSummary', brandId: brandId }).value;
+            var itunesAuthor = Metas.findOne({ type: 'itunesAuthor', brandId: brandId }).value;
+            var itunesImage = Metas.findOne({ type: 'itunesImage', brandId: brandId }).value;
+            var itunesSubtitle = Metas.findOne({ type: 'itunesSubtitle', brandId: brandId }).value;
 
-            if (Metas.findOne({ type: 'siteUrl', userId: userId })) {
-                var siteUrl = 'https://' + Metas.findOne({ type: 'siteUrl', userId: userId }).value + '/';
+            if (Metas.findOne({ type: 'siteUrl', brandId: brandId })) {
+                var siteUrl = 'https://' + Metas.findOne({ type: 'siteUrl', brandId: brandId }).value + '/';
 
             } else {
                 var siteUrl = Meteor.absoluteUrl();
@@ -121,7 +124,7 @@ Meteor.methods({
             xml += '</itunes:category>';
 
             // Items
-            var posts = Posts.find({ status: 'published', category: 'podcast', userId: userId });
+            var posts = Posts.find({ status: 'published', category: 'podcast', brandId: brandId });
 
             posts.forEach(function(post) {
 

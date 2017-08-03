@@ -1,0 +1,11 @@
+<template name='sequenceEdit'>
+    <h3>Editing Sequence {{name}}</h3>
+   
+    {{> quickForm collection="Sequences" doc=this id="updateSequencesForm" type="update" autosave=true}}
+
+    <div class='row'>
+        <div class="col-md-4">
+            <a class='btn btn-secondary btn-block' href='/admin/audience'>Come Back</a>
+        </div>
+    </div>
+</template>

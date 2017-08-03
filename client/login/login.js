@@ -4,7 +4,7 @@ Template.login.events({
 
         Meteor.loginWithPassword($('#email').val(), $('#password').val(), function() {
 
-            Router.go('/brands');
+            Router.go('/admin/brands');
 
         });
 

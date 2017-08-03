@@ -1,0 +1,10 @@
+<template name="menus">
+    <h3>Menus</h3> {{#autoForm collection="Menus" id="insertMenuForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}} {{> afQuickField name='type'}} {{> afQuickField name='order'}} {{> afQuickField name='style'}} {{> afQuickField name='link'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Create Menu</button>
+    {{/autoForm}} 
+
+    {{#each menus}} {{> menuListing}} {{/each}}
+</template>

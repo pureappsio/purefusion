@@ -9,7 +9,7 @@ Meteor.methods({
 
         // Get elements
         var menuElement = Menus.findOne(menuId);
-        var elements = Menus.find({ userId: menuElement.userId, order: { $exists: true } }, { sort: { order: -1 } }).fetch();
+        var elements = Menus.find({ brandId: menuElement.brandId, order: { $exists: true } }, { sort: { order: -1 } }).fetch();
         console.log('Elements: ' + elements.length);
 
         if ((change == -1 && menuElement.order != 1) || (change == 1 && menuElement.order != elements.length)) {
@@ -20,7 +20,7 @@ Meteor.methods({
             Menus.update(menuId, { $inc: { order: change } });
 
             // Update other element
-            Menus.update({ userId: menuElement.userId, order: menuElement.order + change }, { $inc: { order: -1 * change } });
+            Menus.update({ brandId: menuElement.brandId, order: menuElement.order + change }, { $inc: { order: -1 * change } });
 
             // Flush cache
             Meteor.call('flushCache');
@@ -32,35 +32,35 @@ Meteor.methods({
         }
 
     },
-    createMenuElement: function(element) {
+    // createMenuElement: function(element) {
 
-        if (element.parent) {
+    //     if (element.parent) {
 
-            // Insert
-            Menus.insert(element);
+    //         // Insert
+    //         Menus.insert(element);
 
-            // Flush cache
-            Meteor.call('flushCache');
+    //         // Flush cache
+    //         Meteor.call('flushCache');
 
-        } else {
+    //     } else {
 
-            // Get order
-            var elements = Menus.find({ userId: element.userId, order: { $exists: true } }, { sort: { order: -1 } }).fetch();
+    //         // Get order
+    //         var elements = Menus.find({ userId: element.userId, order: { $exists: true } }, { sort: { order: -1 } }).fetch();
 
-            if (elements.length == 0) {
-                element.order = 1;
-            } else {
-                element.order = elements[0].order + 1;
-            }
+    //         if (elements.length == 0) {
+    //             element.order = 1;
+    //         } else {
+    //             element.order = elements[0].order + 1;
+    //         }
 
-            // Insert
-            Menus.insert(element);
+    //         // Insert
+    //         Menus.insert(element);
 
-            // Flush cache
-            Meteor.call('flushCache');
+    //         // Flush cache
+    //         Meteor.call('flushCache');
 
-        }
-    },
+    //     }
+    // },
     removeMenuElement: function(elementId) {
 
         // Remove

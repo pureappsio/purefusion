@@ -15,11 +15,13 @@ Tracker.autorun(function() {
     Meteor.subscribe('userBoxes');
     Meteor.subscribe('userCategories');
 
-
     Meteor.subscribe('userPricing');
     Meteor.subscribe('userTags');
+
+    Meteor.subscribe('userSequences');
+    Meteor.subscribe('userSubscribers');
     
     Meteor.subscribe('userRecordings');
 
-    Meteor.subscribe('userIntegrations');
+    // Meteor.subscribe('userIntegrations');
 });

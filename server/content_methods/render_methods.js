@@ -63,7 +63,10 @@ Meteor.methods({
         Pages.update({}, { $set: { cached: false } }, { multi: true });
 
         // Posts
-        Posts.update({}, { $set: { cached: false } }, { multi: true });
+        var posts = Posts.find({}).fetch();
+        for (i in posts) {
+            Posts.update(posts[i]._id, { $set: { cached: false } }, { selector: { category: posts[i].category }});
+        }
 
     },
     returnFooter: function(brandId) {
@@ -160,8 +163,8 @@ Meteor.methods({
         }
 
         // Load FB tracking pixel
-        if (Metas.findOne({ brandId: parameters.brandId, type: 'pixelId' })) {
-            var pixelId = Metas.findOne({ brandId: parameters.brandId, type: 'pixelId' }).value;
+        if (Metas.findOne({ type: 'pixelId' })) {
+            var pixelId = Metas.findOne({ type: 'pixelId' }).value;
         } else {
             pixelId = "";
         }
@@ -575,14 +578,10 @@ Meteor.methods({
 
                     return url;
 
-                } else {
-
-                    // Get Meta
-                    var meta = Metas.findOne({ type: 'blogPage', brandId: parameters.brandId });
+                } else if (brand.blogPage) {
 
                     // Get blog page
-                    var blogPage = Pages.findOne(meta.value);
-
+                    var blogPage = Pages.findOne(brand.blogPage);
                     return blogPage.url;
 
                 }
@@ -1608,7 +1607,10 @@ Meteor.methods({
 
                         // Update
                         html['US'] = renderedHtml;
-                        Posts.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: true, html: html } }, { selector: { category: post.category } });
+                        Posts.update({ 
+                            url: postUrl, 
+                            brandId: parameters.brandId 
+                        }, { $set: { cached: true, html: html } }, { selector: { category: post.category } });
 
                         // Get localised HTML
                         var postHtml = Meteor.call('getLocalisedHtml', { html: html }, location);

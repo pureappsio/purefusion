@@ -64,9 +64,17 @@ Meteor.publish("userPricing", function() {
     return Pricing.find({});
 });
 
-Meteor.publish("userIntegrations", function() {
-    return Integrations.find({});
+Meteor.publish("userSequences", function() {
+    return Sequences.find({});
 });
+
+Meteor.publish("userSubscribers", function() {
+    return Subscribers.find({});
+});
+
+// Meteor.publish("userIntegrations", function() {
+//     return Integrations.find({});
+// });
 
 Meteor.publish("userVisitors", function() {
     return Visitors.find({});

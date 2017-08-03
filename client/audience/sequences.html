@@ -1,0 +1,13 @@
+<template name="sequences">
+     <h3>Sequences</h3>
+
+    {{#autoForm collection="Sequences" id="insertSequenceForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}}
+        {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Create Sequence</button>
+    {{/autoForm}}
+
+    {{#each sequences}} {{> sequence}} {{/each}}
+</template>

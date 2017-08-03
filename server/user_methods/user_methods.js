@@ -169,23 +169,26 @@ Meteor.methods({
     },
     getUserId: function(headers) {
 
-        var host = headers.host;
-        var hostnameArray = host.split(".");
+        if (headers) {
 
-        if (hostnameArray.length == 3) {
+            var host = headers.host;
+            var hostnameArray = host.split(".");
 
-            var domain = hostnameArray[0];
+            if (hostnameArray.length == 3) {
 
-            if (domain == 'app') {
+                var domain = hostnameArray[0];
+
+                if (domain == 'app') {
+                    var domain = "admin"
+                }
+
+            } else {
                 var domain = "admin"
             }
 
-        } else {
-            var domain = "admin"
+            var user = Meteor.call('getUserDomain', domain);
+            return user._id;
         }
-
-        var user = Meteor.call('getUserDomain', domain);
-        return user._id;
 
     },
     getUserDomain: function(domain) {

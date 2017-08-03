@@ -1,0 +1,79 @@
+<template name='subscriberDetails'>
+    <div class='row'>
+        <div class='col-md-3'>
+            <h3>General Details</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Subscriber email:</div>
+        <div class='col-md-3'>{{subscriber.email}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Subscriber ID:</div>
+        <div class='col-md-3'>{{subscriber._id}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Last updated:</div>
+        <div class='col-md-4'>{{lastActive}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Delivered: {{numberDelivered}}</div>
+        <div class='col-md-3'>Opened: {{numberOpened}}</div>
+        <div class='col-md-3'>Clicks: {{numberClicked}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Number products bought:</div>
+        <div class='col-md-1'>{{nb_products}}</div>
+    </div>
+    <!--     <div class='row'>
+        <div class='col-md-3'>Products:</div>
+        <div class='col-md-3'>{{products}}</div>
+    </div> -->
+    {{#if interests}}
+    <div class='row'>
+        <div class='col-md-3'>Interests:</div>
+        <div class='col-md-3'>{{#each tags}}{{> interest}}{{/each}}</div>
+    </div>
+    {{/if}}
+    <div class='row'>
+        <div class='col-md-3'>Origin:</div>
+        <div class='col-md-3'>{{subscriber.origin}}</div>
+    </div>
+    {{#if offers}}
+    <div class='row'>
+        <div class='col-md-3'>Offers:</div>
+        <div class='col-md-3'>{{#each offers}}{{> offerSubscriber}}{{/each}}</div>
+    </div>
+    {{/if}}
+    <div class='row'>
+        <div class='col-md-3'>Status:</div>
+        <div class='col-md-3'>{{subscriber.status}}</div>
+        <div class='col-md-3'>Activity:</div>
+        <div class='col-md-3'><span class="badge badge-{{activityStatus}}">{{activity}}</span></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <h3>Sequences</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Current sequence:</div>
+        <div class='col-md-3'>{{sequenceName}}</div>
+        <div class='col-md-2'>Current email in sequence:</div>
+        <div class='col-md-1'>{{sequenceEmailNumber}}</div>
+        <div class='col-md-3'>
+            <button id='move-sequence' class='btn btn-warning btn-block'>Move to Next Email in Sequence</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Assign new sequence:</div>
+        <div class='col-md-2'>
+            <select id='sequences' class="form-control"></select>
+        </div>
+        <div class='col-md-2'>
+            <button id='assign-sequence' class='btn btn-success btn-block'>Assign Sequence</button>
+        </div>
+    </div>
+    {{#if mailHistory}}
+    <h3>Email History</h3> {{#each mailHistory}} {{> historyElement}} {{/each}} {{/if}}
+</template>

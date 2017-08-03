@@ -26,14 +26,14 @@
                 <div class='popup-message'>
                     {{#if langEN}}Simply enter your email below, and you’ll be on your way!{{else}}Pour continuer, entrez votre email ci-dessous!{{/if}}
                 </div>
-                <form accept-charset="utf-8" action="https://{{integrationUrl}}/subscribe" method="POST">
+                <form accept-charset="utf-8" action="{{integrationUrl}}api/subscribe" method="POST">
                     <div class='popup-input-container'>
                         <input id='email' name='email' type="email" class="action form-control input-lg" placeholder="{{#if langEN}}Your email ...{{else}}Votre email ...{{/if}}">
                     </div>
                     <div class='popup-button-container'>
                         <input value="{{#if langEN}}Click Here to Subscribe{{else}}Cliquez Ici Pour Vous Inscrire{{/if}}" type="submit" class="action btn btn-block btn-lg btn-warning">
                     </div>
-                    <input name="list" type="hidden" value="{{listId}}" />
+                    <input name="brand" type="hidden" value="{{brandId}}" />
                     <input name="origin" type="hidden" value="{{origin}}" />
                     <input name="sequence" type="hidden" value="{{sequenceId}}" /> {{#each tag in tags}}
                     <input name="tag" type="hidden" value="{{tag}}" /> {{/each}}

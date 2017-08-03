@@ -1,5 +1,9 @@
 <template name="editProduct">
+
     <h3>Editing Product {{name}}</h3>
+
+    {{> quickForm collection="Products" doc=this id="updateProductForm" type="update" autosave=true}}
+
     <div class='row voffset30'>
         <div class='col-md-4'>
             <a href='/admin/products' class='btn btn-block btn-secondary'>Come Back</a>

@@ -138,6 +138,27 @@ Meteor.methods({
         return answer.data[dataName];
 
     },
+    getVisitorBrand: function(document) {
+
+        var hostnameArray = document.location.hostname.split(".");
+
+        if (hostnameArray.length == 3) {
+
+            var domain = hostnameArray[0];
+
+            if (domain == 'app') {
+                var domain = "admin"
+            }
+
+        } else {
+            var domain = "admin"
+        }
+
+        var brand = Meteor.call('getBrandDomain', domain);
+
+        return brand;
+
+    },
     getBrandId: function(headers) {
 
         var host = headers.host;
@@ -785,12 +806,12 @@ Meteor.methods({
 
         return output;
     },
-    setList: function(list) {
+    // setList: function(list) {
 
-        // Update
-        Integrations.update({ type: 'puremail' }, { $set: { list: list } });
+    //     // Update
+    //     Integrations.update({ type: 'puremail' }, { $set: { list: list } });
 
-    },
+    // },
 
     setBrand: function(brand) {
 
@@ -799,48 +820,48 @@ Meteor.methods({
 
     },
 
-    getEmailLists: function() {
+    // getEmailLists: function() {
 
-        // Get integration
-        if (Integrations.findOne({ type: 'puremail' })) {
+    //     // Get integration
+    //     if (Integrations.findOne({ type: 'puremail' })) {
 
-            var integration = Integrations.findOne({ type: 'puremail' });
+    //         var integration = Integrations.findOne({ type: 'puremail' });
 
-            // Get lists
-            var url = "https://" + integration.url + "/api/lists?key=" + integration.key;
+    //         // Get lists
+    //         var url = "https://" + integration.url + "/api/lists?key=" + integration.key;
 
-            try {
-                var answer = HTTP.get(url);
-                return answer.data.lists;
+    //         try {
+    //             var answer = HTTP.get(url);
+    //             return answer.data.lists;
 
-            } catch (e) {
-                return [];
-            }
+    //         } catch (e) {
+    //             return [];
+    //         }
 
-        } else {
-            return [];
-        }
+    //     } else {
+    //         return [];
+    //     }
 
-    },
-    getListSequences: function() {
+    // },
+    // getListSequences: function() {
 
-        // Get integration
-        if (Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
+    //     // Get integration
+    //     if (Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
 
-            // Get integration
-            var integration = Integrations.findOne({ type: 'puremail' });
+    //         // Get integration
+    //         var integration = Integrations.findOne({ type: 'puremail' });
 
-            // Get sequences
-            var url = "https://" + integration.url + "/api/sequences?key=" + integration.key;
-            url += '&list=' + integration.list;
-            var answer = HTTP.get(url);
-            return answer.data.sequences;
+    //         // Get sequences
+    //         var url = "https://" + integration.url + "/api/sequences?key=" + integration.key;
+    //         url += '&list=' + integration.list;
+    //         var answer = HTTP.get(url);
+    //         return answer.data.sequences;
 
-        } else {
-            return [];
-        }
+    //     } else {
+    //         return [];
+    //     }
 
-    },
+    // },
     createUsers: function() {
 
         // Create admin user

@@ -1,0 +1,323 @@
+<template name="checkoutPayment">
+    <div class='row checkout-mobile'>
+        <div class='col-12'>
+            <div class='row'>
+                <div class='col-7'>
+                    <a id='show-summary' data-toggle="collapse" href="#ordersummary">Show order summary</a>
+                </div>
+                <div class='col-5 mobile-checkout-price'><span>{{startCurrency}}{{total}} {{endCurrency}}{{monthly}}</span></div>
+            </div>
+            <div class='row'>
+                <div class='col-12'>
+                    <div class="collapse" id="ordersummary">
+                        <div class='checkout-collapse'>
+                            <!-- <div class='checkout-collapse-items'> -->
+                            {{#each products}} {{> checkoutMobileItem}} {{/each}} {{#if useTaxes}}
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span>{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span>{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            {{/if}}
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    Total: {{startCurrency}}{{total}}{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            <!--  </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='checkout-desktop'>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+                    {{#if isPhysicalProduct}}
+                    <th>{{#if langEN}}Quantity{{else}}Quantité{{/if}}</th>
+                    <th class='col-right'>{{#if langEN}}Total Price{{else}}Total{{/if}}</th>
+                    {{else}}
+                    <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+                    {{/if}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each products}} {{> checkoutItem}} {{/each}}
+            </tbody>
+        </table>
+        <div class='row voffset15'></div>
+        {{#if useTaxes}}
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span>{{endCurrency}}{{monthly}}
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span>{{endCurrency}}{{monthly}}
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    Total: {{startCurrency}}{{total}}{{endCurrency}}{{monthly}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        {{#if isSimpleTheme}}
+        <div class='col-8'>
+            <input class='form-control mb-2 mr-sm-2 mb-sm-0' type='text' id='discount-code' placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}'>
+        </div>
+        <div class='col-4'>
+            <button id='apply-discount' class='btn btn-block btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+        </div>
+        <span id='discount-message'></span> {{else}}
+        <div class='col-md-8'>
+            <input placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}' class='form-control' type='text' id='discount-code'>
+        </div>
+        <div class='col-md-4'>
+            <button id='apply-discount' class='btn btn-block btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+        </div>
+        {{/if}}
+    </div>
+    {{#if paypalBraintree}}
+    <div class='row voffset30'>
+        <div class='col-md-12'>
+            <h2>{{#if langEN}}Payment Method{{else}}Moyen de Paiement{{/if}}</h2></div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-12'>
+            <label class="radio-inline payment-radio">
+                <input type="radio" class='radios-inline' name="inlineRadioOptions" id="paypal-option" value="option1" checked="checked"> <img height='32' class='img-radio' src='/paypal_ret.png'>
+            </label>
+            <label class="radio-inline payment-radio">
+                <input type="radio" class='radios-inline' name="inlineRadioOptions" id="card-option" value="option2"> <img height='32' class='img-radio' src='/cards_ret.png'>
+            </label>
+        </div>
+    </div>
+    {{/if}}
+    <form role="form">
+        {{#if cardPayment}}
+        <div class='row voffset30'>
+            <div class='col-md-12'>
+                <h2>{{#if langEN}}Contact Details{{else}}Informations Personelles{{/if}}</h2></div>
+        </div>
+        <div class='row'>
+            <div class='col-md-12'>
+                <div id='email-group' class="form-group">
+                    <label class='checkout-label' for="email">Email</label>
+                    <input class='form-control input-lg' type='text' id='email' placeholder="{{#if langEN}}Email{{else}}Courriel{{/if}}">
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div id='first-name-group' class="form-group">
+                    <label class='checkout-label' for="first-name">{{#if langEN}}First Name{{else}}Prénom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='first-name' placeholder="{{#if langEN}}First name{{else}}Prénom{{/if}}">
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div id='last-name-group' class="form-group">
+                    <label class='checkout-label' for="last-name">{{#if langEN}}Last Name{{else}}Nom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='last-name' placeholder="{{#if langEN}}Last name{{else}}Nom{{/if}}">
+                </div>
+            </div>
+        </div>
+        {{/if}} {{#if isPhysicalProduct}}
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class="form-group">
+                    <label class='checkout-label' for="street-address">{{#if langEN}}Street Address{{else}}Adresse{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-address' placeholder="Street Address">
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label class='checkout-label' for="zip">{{#if langEN}}ZIP Code{{else}}Code Postal{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-zip' placeholder="Postal code">
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label class='checkout-label' for="city">{{#if langEN}}City{{else}}Ville{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-city' placeholder="City">
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label class='checkout-label' for="country">{{#if langEN}}Country{{else}}Pays{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-country' placeholder="Country">
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label class='checkout-label' for="phone">{{#if langEN}}Phone Number{{else}}Numéro de Téléphone{{/if}}</label>
+                    <input class='form-control input-lg' type='tel' id='phone' placeholder="Phone">
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </form>
+    {{#if cardPayment}}
+    <div class='row'>
+        <div class='col-md-12'>
+            <h2>{{#if langEN}}Payment Information{{else}}Informations de Paiement{{/if}}</h2></div>
+    </div>
+    {{/if}}
+    <form id='braintree-form'>
+        <div class='row'>
+            <div class='col-md-12'>
+                <div id="dropin"></div>
+            </div>
+        </div>
+        {{#if stripePayment}}
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="card-element">
+                        Credit or debit card
+                    </label>
+                    <div id="card-element" class="form-control">
+                        <!-- a Stripe Element will be inserted here. -->
+                    </div>
+                    <!-- Used to display form errors -->
+                    <div id="card-errors"></div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <div id='braintree-hosted'>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <div class="form-group">
+                        <label class='control-label' for="card-number">{{#if langEN}}Card Number{{else}}Numéro de carte bancaire{{/if}}</label>
+                        <div id="card-number" class="form-control"></div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class='col-md-8'>
+                    <div class="form-group">
+                        <label class='control-label' for="expiration-date">{{#if langEN}}Expiration Date{{else}}Date d'expiration{{/if}}</label>
+                        <div id="expiration-date" class="form-control"></div>
+                    </div>
+                </div>
+                <div class='col-md-4'>
+                    <div class="form-group">
+                        <label class='control-label' for="expiration-date">{{#if langEN}}CVV{{else}}Code CVV{{/if}}</label>
+                        <div id="cvv" class="form-control"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{#if dataIssue}}
+        <div class='row voffset15'>
+            <div class='col-md-3'></div>
+            <div class='col-md-6 bg-danger'>{{#if langEN}}Please verify your data.{{else}}Veuillez vérifier vos informations.{{/if}}</div>
+        </div>
+        {{/if}}
+        <div class='row voffset30'>
+            {{#if isSimpleTheme}}
+            <div class='col-md-3'></div>
+            <div class='col-md-3 col-6 total-name'>Total:</div>
+            <div class='col-md-3 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span>{{endCurrency}}{{monthly}}</div>
+            {{else}}
+            <div class='col-md-1'></div>
+            <div class='col-md-5 col-6 total-name'>Total:</div>
+            <div class='col-md-5 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span>{{endCurrency}}{{monthly}}</div>
+            {{/if}}
+        </div>
+        <div class='row'>
+            {{#if isSimpleTheme}}
+            <div class='col-md-3'></div>
+            <div class='col-md-6'>
+                {{#if cardPayment}}
+                <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}Complete order{{else}}Placer ma commande{{/if}}</button>
+                {{else}}
+                <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}Checkout with Paypal{{else}}Payer avec Paypal{{/if}}</button>
+                {{/if}}
+            </div>
+            {{else}}
+            <div class='col-md-1'></div>
+            <div class='col-md-10'>
+                {{#if cardPayment}}
+                <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}Complete order{{else}}Placer ma commande{{/if}}</button>
+                {{else}}
+                <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}Checkout with Paypal{{else}}Payer avec Paypal{{/if}}</button>
+                {{/if}}
+            </div>
+            {{/if}}
+        </div>
+    </form>
+    {{#if paymentStatus}}
+    <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>{{#if langEN}}Please wait ...{{else}}Veuillez patienter ...{{/if}}</div>
+    </div>
+    {{/if}}
+    <div class='row voffset15'>
+        {{#if isSimpleTheme}}
+        <div class='col-md-4'></div>
+        <div class='col-md-4'>
+            {{#if paypalBraintree}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else if braintreeUi}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos.png'> {{/if}}
+        </div>
+        {{else}}
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            {{#if paypalBraintree}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else if braintreeUi}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos.png'> {{/if}}
+        </div>
+        {{/if}}
+    </div>
+    {{#if isSimpleTheme}}
+    <div class='row voffset20'>
+        <div class='col-md-6'>
+            <div class='info-title'>
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{#if langEN}}30 Day Guarantee{{else}}Garantie 30 Jours{{/if}}
+            </div>
+            <div class='voffset15'>
+                {{#if langEN}}No question asked 30 day refund guaranteed. If you are unhappy for any reason, get your money back by simply sending us an email.{{else}} Si vous achetez un produit et n'êtes pas satisfait, envoyez nous un email sous 30 jours pour un remboursement intégral.{{/if}}
+            </div>
+        </div>
+        <div class='col-md-6'>
+            <div class='info-title'>
+                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
+            </div>
+            <div class='voffset15'>
+                {{#if langEN}} {{#if paypalBraintree}} All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers. {{else if stripePayment}} All orders are processed via Stripe, which is a very secure network. Your payment information is never stored in any way on our servers. {{else}} All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers. {{/if}} {{else}} {{#if paypalBraintree}} Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{else}} Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{/if}} {{/if}}
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</template>

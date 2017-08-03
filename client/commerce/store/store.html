@@ -1,0 +1,29 @@
+<template name="store">
+    <div class='row main-row'>
+        <div class='col-md-12 main-col-store'>
+            {{> storeHeader}}
+            {{#if useStoreFront}}
+            <div class='row heading-row'>
+                <div class='col-md-1'></div>
+                <div class='col-md-10 front-store-col'>
+                    <div class='store-front-title'>{{getMeta "storeFrontHeadline"}}</div>
+                    <div class='store-front-text'>{{{getMeta "storeFrontText"}}}</div>
+                </div>
+            </div>
+            {{/if}}
+            <div class='row voffset15'>
+                <div class='col-md-4'></div>
+                <div class='col-md-4 store-title'>
+                    FEATURED PRODUCTS
+                </div>
+            </div>
+            {{#each storeProductRow in products}}
+            <div class='row main-row-store'>
+                {{#each storeProductRow}} {{> storeProduct}} {{/each}}
+            </div>
+            {{/each}}
+            {{> storeFooter}}
+        </div>
+    </div>
+    {{> exitIntentModal}}
+</template>

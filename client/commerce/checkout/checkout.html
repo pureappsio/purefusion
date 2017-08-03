@@ -1,0 +1,28 @@
+<template name="checkout">
+    <div class='row main-row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8 main-col'>
+            <div class='row row-checkout-title'>
+                <div class='col-md-4'>
+                    <img class='img-fluid' src='{{mainPicture}}'>
+                </div>
+                <div class='col-md-8 help-title'>{{#if langEN}}Need help?{{else}}Besoin d'aide?{{/if}} {{brandEmail}}</div>
+            </div>
+            <div class='row voffset50'>
+                {{#if isSimpleTheme}}
+                <div class='col-md-12'>
+                    {{> checkoutPayment}}
+                </div>
+                {{else}}
+                <div class='col-md-6'>
+                    {{> checkoutProductDetails}}
+                </div>
+                <div class='col-md-6'>
+                    {{> checkoutPayment}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    {{> exitIntentModal}}
+</template>

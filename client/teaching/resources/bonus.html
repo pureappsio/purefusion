@@ -1,0 +1,11 @@
+<template name="bonus">
+    <div class='row'>
+        <div class='col-md-2'>{{type}}</div>
+        <div class='col-md-6'><a href="{{url}}">{{name}}</a></div>
+        {{#if isAppUser}}
+        <div class='col-md-1'>
+            <i class="fa fa-trash fa-delete delete-bonus" aria-hidden="true"></i>
+        </div>
+        {{/if}}
+    </div>
+</template>

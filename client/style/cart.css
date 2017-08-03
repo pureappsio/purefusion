@@ -1,0 +1,148 @@
+/*.main-col-cart {
+  overflow: hidden;
+}*/
+
+#show-summary:hover {
+    text-decoration: none !important;
+}
+
+.btn-cart {
+    margin-top: 10px !important;
+    font-size: 14px !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+}
+
+.cart-title {
+    font-size: 30px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.cart-picture {
+    max-width: 75px !important;
+    float: left !important;
+    margin-right: 15px !important;
+}
+
+.modal {
+    text-align: center;
+    padding: 0!important;
+}
+
+.cart-row {
+    margin-bottom: 25px !important;
+}
+
+@media (max-width: 576px) {
+    .cart-table {
+        display: none !important;
+    }
+}
+
+@media (min-width: 576px) {
+    .cart-mobile {
+        display: none !important;
+    }
+}
+
+.modal-title {
+    font-size: 30px;
+}
+
+.modal-body {
+    font-size: 22px;
+}
+
+/*.modal:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}*/
+
+.intent-discount {
+    text-align: center;
+    font-size: 26px;
+    border: 5px dashed black;
+}
+
+td {
+    vertical-align: middle !important;
+}
+
+.qty-input {
+    width: 130px !important;
+}
+
+.cart-col {
+    text-align: right;
+    font-size: 40px;
+    vertical-align: middle;
+    margin-top: 17px;
+}
+
+.header-link {
+    margin-right: 20px;
+    color: gray;
+}
+
+.header-link:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.header-link:active {
+    text-decoration: none;
+}
+
+.header-link:visited {
+    text-decoration: none;
+}
+
+.store-center-col {
+    text-align: center;
+    font-size: 30px;
+    vertical-align: middle;
+    margin-top: 23px;
+}
+
+.cart-icon {
+    font-size: 30px;
+    color: black;
+}
+
+.cart-icon:hover {
+    color: gray;
+}
+
+.store-product-link {
+    text-decoration: none;
+}
+
+.sold-out {
+    text-decoration: line-through;
+}
+
+.sold-out-message {
+    color: black;
+}
+
+.sold-out-picture {
+    filter: opacity(50%);
+}
+
+.store-product-image:hover {
+    filter: opacity(33%);
+}

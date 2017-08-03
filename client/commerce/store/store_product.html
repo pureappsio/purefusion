@@ -1,0 +1,24 @@
+<template name="storeProduct">
+    <div class='store-product col-md-{{productsLine}}'>
+        <div class='store-product-image-container'>
+            <a href='/products/{{shortName}}'>
+                <img class='store-product-image {{soldOutPicture}} img-fluid' src='{{imageLink}}'>
+            </a>
+        </div>
+        <div class='store-product-name'>{{name}}</div>
+        <div class='store-product-price'>
+
+            <span class='{{soldOut}}'>{{startCurrency}}{{getDiscountPrice price "store" _id}}{{endCurrency}}</span> 
+
+            {{#if basePrice}}
+            <span class='base-price'>{{startCurrency}}{{getPrice basePrice _id}}{{endCurrency}}</span> 
+            {{/if}}
+
+            {{#if discount}}
+            <span class='base-price'>{{startCurrency}}{{getPrice price _id}}{{endCurrency}}</span> 
+            {{/if}}
+
+            <span class='sold-out-message'>{{soldOutMessage}}</span>
+        </div>
+    </div>
+</template>

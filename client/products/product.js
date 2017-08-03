@@ -48,17 +48,13 @@ Template.product.helpers({
 
     storeLink: function() {
 
-        if (Meteor.user().role == 'admin') {
-            return Meteor.absoluteUrl();
-        } else {
-            var hostnameArray = document.location.hostname.split(".");
-            if (hostnameArray.length == 2) {
-                return 'http://' + Meteor.user().domain + '.' + hostnameArray[0] + '.' + hostnameArray[1] + '/';
+        // var hostnameArray = document.location.hostname.split(".");
+        // if (hostnameArray.length == 2) {
+        //     return 'http://' + Meteor.user().domain + '.' + hostnameArray[1] + '/';
 
-            } else if (hostnameArray.length == 3) {
-                return 'http://' + Meteor.user().domain + '.' + hostnameArray[1] + '.' + hostnameArray[2] + '/';
-            }
-        }
+        // } else if (hostnameArray.length == 3) {
+        //     return 'http://' + Meteor.user().domain + '.' + hostnameArray[2] + '/';
+        // }
 
     },
 

@@ -1,0 +1,446 @@
+/*.product-listing-picture {
+    max-height: 50px;
+    margin-right: 5px !important;
+}
+
+.paypal-button-content span {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+#questions-modal {
+    display: none;
+}
+
+.messenger-text {
+    vertical-align: middle;
+}
+
+.messenger-icon {
+    height: 30px;
+    margin-right: 10px;
+    padding: 0;
+}
+
+#coupon-submit {
+    margin-top: 10px;
+}
+
+#coupon-modal {
+    display: none;
+}
+
+.fa-delete {
+    color: gray;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.fa-delete:hover {
+    color: red;
+}
+
+.fa-edit {
+    padding-top: 3px;
+    color: gray;
+    cursor: pointer;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.fa-edit:hover {
+    color: blue;
+}
+
+.stats-indicator {
+    font-size: 40px;
+}
+
+.stats-variation {
+    font-size: 20px;
+}
+
+.navbar-brand {
+    padding: 0px;
+}
+
+.navbar-brand>img {
+    max-width: 225px;
+}
+
+.navbar-toggler {
+    margin-top: 23px !important;
+    min-height: 40px !important;
+}
+
+.nav-item {
+    font-size: 22px !important;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.nav-icons {
+    padding-top: 4px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.col-center {
+    text-align: center;
+}
+
+.base-price {
+    text-decoration: line-through;
+    color: red;
+}
+
+.base-price-detail {
+    color: red;
+}
+
+.col-right-total {
+    margin-right: 12px;
+}
+
+#spinner {
+    text-align: center;
+    opacity: 1;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+}
+
+.heading-row {
+    color: white;
+    background-color: black;
+    min-height: 300px;
+    padding-top: 70px;
+    padding-bottom: 40px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.front-store-col {
+    text-align: center;
+}
+
+.store-front-title {
+    font-size: 50px;
+}
+
+.store-front-text {
+    font-size: 26px;
+}
+
+.footer-title {
+    font-size: 16px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    text-align: center;
+    color: darkgray;
+}
+
+.store-product-details-row {
+    background-color: white !important;
+}
+
+.main-col-store {
+    background-color: white !important;
+}
+
+.main-row {
+    height: 100%;
+}
+
+.store-title {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.braintree-hosted-fields-focused {
+    border: 1px solid #0275d8;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.braintree-hosted-fields-focused.focused-invalid {
+    border: 1px solid #ebcccc;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(100, 100, 0, .6);
+}
+
+.row {
+    margin-top: 5px;
+    vertical-align: middle;
+}
+
+.sale-icon {}
+
+#braintree-hosted {
+    display: none;
+}
+
+.radios-inline {
+    top: 4px;
+}
+
+.sales-description-title {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.sales-description-element {
+    margin-bottom: 20px;
+}
+
+#card-number {
+    height: 45px;
+}
+
+#expiration-date {
+    height: 45px;
+}
+
+#cvv {
+    height: 45px;
+}
+
+.main-col-cart {
+    min-height: 800px;
+    height: auto !important;
+}
+
+.main-col-confirm {
+    min-height: 800px;
+    height: auto !important;
+}
+
+.main-col-fail {
+    min-height: 600px;
+    height: auto !important;
+    height: 600px;
+}
+
+.edit-product {
+    margin: 10px;
+}
+
+.main-row-store {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+    margin: 10px;
+}
+
+.store-product {
+    margin-bottom: 25px;
+}
+
+.store-product-image {
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.store-product-image-container {
+    margin-bottom: 10px;
+}
+
+.store-product-name {
+    text-align: center;
+    font-size: 28px;
+}
+
+.store-product-price {
+    text-align: center;
+    font-size: 24px;
+    color: gray;
+}
+
+.store-product-details {
+    margin: 5px;
+}
+
+.product-detail-title {
+    font-size: 30px;
+    margin: 0;
+    padding: 0;
+    margin-top: -10px;
+}
+
+.product-detail-description {
+    text-align: justify;
+    margin-top: 15px;
+}
+
+.product-detail-button {
+    margin-top: 20px;
+}
+
+.product-detail-price {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.col-centered {
+    text-align: center;
+}
+
+.bt-drop-in-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.site-title {
+    color: black;
+    font-size: 20px;
+}
+
+.info-title {
+    margin-top: 30px;
+    color: black;
+    font-size: 24px;
+}
+
+.column-sort {
+    cursor: pointer;
+}
+
+.icon-small {
+    font-size: 14px;
+}
+
+.column-title {
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    background-color: #EEEEEE;
+}
+
+.col-right {
+    text-align: right;
+}
+
+.float-right {
+    float: right;
+}
+
+.column-bold {
+    font-weight: bold;
+}
+
+.bg-green {
+    background-color: #80CC99;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+.voffset30 {
+    margin-top: 30px;
+}
+
+.voffset50 {
+    margin-top: 50px;
+}
+
+.voffset200 {
+    margin-top: 200px;
+}
+
+.voffset15 {
+    margin-top: 15px;
+}
+
+body {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #EEEEEE !important;
+}
+
+.main-row {
+    margin: 0;
+    padding: 0;
+    background-color: #EEEEEE;
+}
+
+.container-fluid {
+    margin: 0;
+    padding: 0;
+    background-color: white !important;
+}
+
+.main-col {
+    background-color: white;
+    padding-bottom: 50px;
+}
+
+#purchase {
+    font-weight: bold;
+    font-size: 28px;
+}
+
+#purchase-paypal {
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.total-name {
+    font-size: 28px;
+}
+
+.total-amount {
+    font-size: 28px;
+    text-align: right;
+}
+
+.checkout-title {
+    font-size: 28px;
+    text-align: left;
+}
+
+@media (min-width: 1024px) {
+    .row-checkout-title {
+        position: relative;
+    }
+    .help-title {
+        text-align: right;
+        right: 0;
+        position: absolute;
+        margin-top: 70px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .help-title {
+        display: none;
+    }
+}
+
+.purchase-confirmed {
+    font-size: 24px;
+}
+
+.download-link {
+    font-size: 24px;
+    text-align: center;
+}
+
+#product-id {
+    display: none;
+}
+
+.admin-panel {
+    padding: 10px;
+    background-color: white;
+}*/

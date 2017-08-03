@@ -4,8 +4,21 @@ import Images from '/lib/images.collection.js';
 
 // Tracker
 Tracker.autorun(function() {
+
+    // General
     Meteor.subscribe('userBrands');
+
+    // Content
     Meteor.subscribe('userPosts');
+
+    // Courses
+    Meteor.subscribe('userModules');
+    Meteor.subscribe('userLessons');
+    Meteor.subscribe('userElements');
+    Meteor.subscribe('userResources');
+    Meteor.subscribe('userBonuses');
+
+    // Products
     Meteor.subscribe('userProducts');
 
     Meteor.subscribe('userPages');

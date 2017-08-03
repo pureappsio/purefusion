@@ -1,8 +1,8 @@
 Meteor.startup(function() {
 
-	console.log(Brands.find({}).fetch()[0]);
-	console.log(Menus.find({}).fetch());
-	console.log(Subscribers.find({}).fetch());
+	// console.log(Brands.find({}).fetch()[0]);
+	// console.log(Menus.find({}).fetch());
+	console.log(Products.find({}).fetch());
 
 	// Flush cashe
     Meteor.call('flushCache');

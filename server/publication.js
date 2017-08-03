@@ -14,6 +14,23 @@ Meteor.publish("userBoxes", function() {
     return Boxes.find({});
 });
 
+// Courses
+Meteor.publish("userModules", function() {
+    return Modules.find({});
+});
+
+Meteor.publish("userLessons", function() {
+    return Lessons.find({});
+});
+
+Meteor.publish("userBonuses", function() {
+    return Bonuses.find({});
+});
+
+Meteor.publish("userResources", function() {
+    return Resources.find({});
+});
+
 // Products
 Meteor.publish("userProducts", function() {
     return Products.find({});

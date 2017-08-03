@@ -4,22 +4,24 @@
             <h3>Products</h3>
         </div>
     </div>
-    <!-- {{#autoForm collection="Products" id="insertProductForm" type="insert"}}
+    {{#autoForm collection="Products" id="insertProductForm" type="insert"}}
     <fieldset>
         {{> afQuickField name='name'}}
         {{> afQuickField name='shortName'}}
+        {{> afQuickField name='price'}}
+        {{> afQuickField name='type'}}
+        {{> afQuickField name='show'}}
         {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
     </fieldset>
-    <button type="submit" class="btn btn-block btn-primary">Insert</button>
-    {{/autoForm}} -->
-    {{> quickForm collection="Products" id="insertProductForm" type="insert"}} 
+    <button type="submit" class="btn btn-block btn-primary">Insert Product</button>
+    {{/autoForm}}
+    <!-- {{> quickForm collection="Products" id="insertProductForm" type="insert"}}  -->
     <table class="table">
         <thead>
             <tr>
                 <th>Checkout Link</th>
                 <th>Name</th>
-                <th>USD</th>
-                <th>EUR</th>
+                <th>Price</th>
                 <th>Sessions</th>
                 <th>Sales</th>
                 <th>Conversions</th>

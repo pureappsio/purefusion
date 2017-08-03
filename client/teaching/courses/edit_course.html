@@ -1,0 +1,37 @@
+<template name="editCourse">
+    <h3>Editing Course: {{name}}</h3>
+    <div class='row voffset30'>
+        <div class='col-md-3'>
+            <label>Course name</label>
+            <input id='course-name' type='text' class='form-control' value={{name}}>
+        </div>
+        <div class='col-md-3'>
+            <label>Upload new course picture:</label>
+            {{> uploadForm fileId="coursePicture"}}
+        </div>
+        <div class='col-md-3'>
+            <label>Course Sales Page URL:</label>
+            <input id='course-sales-page' type='text' class='form-control' value={{salesPage}}>
+        </div>
+        <div class='col-md-3'>
+            <label>Free/Paid content:</label>
+            <select class='form-control' id='access'>
+                <option value='paid'>Paid Content</option>
+                <option value='free'>Free Content</option>
+            </select>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-3'></div>
+        <div class='col-md-2'>
+            <button id='edit-course' class='btn btn-lg btn-block btn-primary'>Edit Course</button>
+            <div class='confirmation-message'>Course saved!</div>
+        </div>
+        <div class='col-md-2'>
+            <a href='/' class='btn btn-block btn-lg btn-warning'>Come Back</a>
+        </div>
+        <div class='col-md-2'>
+            <button class='btn btn-danger btn-lg btn-block delete'>Delete</button>
+        </div>
+    </div>
+</template>

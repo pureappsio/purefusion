@@ -1596,7 +1596,7 @@ Meteor.methods({
                     } else {
 
                         // Process for affiliate links
-                        var renderedHtml = Meteor.call('rawProcessHTMLAmazon', rawHtml);
+                        var renderedHtml = Meteor.call('rawProcessHTMLAmazon', rawHtml, parameters.brandId);
 
                         // Get cache & HTML
                         if (post.html) {

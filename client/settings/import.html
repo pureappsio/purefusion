@@ -1,0 +1,27 @@
+<template name="importData">
+    <div class='row'>
+        <div class='col-md-4'>
+            <h3>Import</h3></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'>
+            <select class='form-control' id='import-type'>
+                <option value='purepress'>PurePress</option>
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Url ...' class='form-control' id='url'>
+        </div>
+        <div class='col-md-2'>
+            <input type='text' placeholder='Key ...' class='form-control' id='key'>
+        </div>
+        <div class='col-md-2'>
+            <select class='form-control' id='import-brand'>
+                {{#each brand in brands}} <option value="{{brand._id}}">{{brand.name}}</option> {{/each}}
+            </select>
+        </div>
+        <div class='col-md-2'>
+            <button id='import-data' class='btn btn-block btn-primary'>Import Data</button>
+        </div>
+    </div>
+</template>

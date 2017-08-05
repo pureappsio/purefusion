@@ -5,129 +5,134 @@ import Images from '/lib/images.collection.js';
 
 Meteor.methods({
 
-    importPurePress: function() {
+    importData: function(data) {
+
+        console.log(data);
+
+        // Press
+        if (data.type == 'purepress') {
+            Meteor.call('importPurePress', data);
+        }
+
+    },
+    importPurePress: function(data) {
 
         console.log('Importing from PurePress');
 
-        // Get integration
-        if (Integrations.findOne({ type: 'purepress' })) {
-
-            // Integration
-            var integration = Integrations.findOne({ type: 'purepress' });
-
-            // Posts
-            console.log('Importing posts');
-            var posts = Meteor.call('getPureData', integration, 'posts');
-            for (i in posts) {
-                posts[i].userId = Meteor.user()._id;
-                Posts.insert(posts[i]);
-            }
-
-            // Pages
-            console.log('Importing pages');
-            var pages = Meteor.call('getPureData', integration, 'pages');
-            for (i in pages) {
-                pages[i].userId = Meteor.user()._id;
-                Pages.insert(pages[i]);
-            }
-
-            // Metas
-            console.log('Importing metas');
-            var metas = Meteor.call('getPureData', integration, 'metas');
-            for (i in metas) {
-                metas[i].userId = Meteor.user()._id;
-                Meteor.call('insertMeta', metas[i]);
-            }
-
-            // Elements
-            console.log('Importing elements');
-            var elements = Meteor.call('getPureData', integration, 'elements');
-            for (i in elements) {
-                elements[i].userId = Meteor.user()._id;
-                Elements.insert(elements[i]);
-            }
-
-            // Networks
-            console.log('Importing networks');
-            var networks = Meteor.call('getPureData', integration, 'networks');
-            for (i in networks) {
-                networks[i].userId = Meteor.user()._id;
-                Networks.insert(networks[i]);
-            }
-
-            // Images
-            console.log('Importing images');
-            var images = Meteor.call('getPureData', integration, 'files');
-            for (i in images) {
-                images[i].userId = Meteor.user()._id;
-                Images.collection.insert(images[i]);
-            }
-
-            // Menus
-            console.log('Importing menus');
-            var menus = Meteor.call('getPureData', integration, 'menus');
-            for (i in menus) {
-                menus[i].userId = Meteor.user()._id;
-                Menus.insert(menus[i]);
-            }
-
-            // Boxes
-            console.log('Importing boxes');
-            var boxes = Meteor.call('getPureData', integration, 'boxes');
-            for (i in boxes) {
-                boxes[i].userId = Meteor.user()._id;
-                Boxes.insert(boxes[i]);
-            }
-
-            // Categories
-            console.log('Importing categories');
-            var categories = Meteor.call('getPureData', integration, 'categories');
-            for (i in categories) {
-                categories[i].userId = Meteor.user()._id;
-                Categories.insert(categories[i]);
-            }
-
-            // Pricing
-            console.log('Importing pricing');
-            var pricing = Meteor.call('getPureData', integration, 'pricing');
-            for (i in pricing) {
-                pricing[i].userId = Meteor.user()._id;
-                Pricing.insert(pricing[i]);
-            }
-
-            // Tags
-            console.log('Importing tags');
-            var tags = Meteor.call('getPureData', integration, 'tags');
-            for (i in tags) {
-                tags[i].userId = Meteor.user()._id;
-                Tags.insert(tags[i]);
-            }
-
-            // Recordings
-            console.log('Importing recordings');
-            var recordings = Meteor.call('getPureData', integration, 'recordings');
-            for (i in recordings) {
-                recordings[i].userId = Meteor.user()._id;
-                Recordings.insert(recordings[i]);
-            }
-
-            // Stats
-            console.log('Importing stats');
-            var stats = Meteor.call('getPureData', integration, 'stats');
-            for (i in stats) {
-                stats[i].userId = Meteor.user()._id;
-                Stats.insert(stats[i]);
-            }
-
-            // Statistics
-            console.log('Importing statistics');
-            var statistics = Meteor.call('getPureData', integration, 'statistics');
-            for (i in statistics) {
-                statistics[i].userId = Meteor.user()._id;
-                Statistics.insert(statistics[i]);
-            }
-
+        // Integration
+        var integration = {
+            url: data.url,
+            key: data.key
         }
+
+        // Posts
+        console.log('Importing posts');
+        var posts = Meteor.call('getPureData', integration, 'posts');
+        for (i in posts) {
+            posts[i].brandId = data.brandId;
+            Posts.insert(posts[i], { selector: { category: posts[i].category }});
+        }
+
+        // Pages
+        console.log('Importing pages');
+        var pages = Meteor.call('getPureData', integration, 'pages');
+        for (i in pages) {
+            pages[i].brandId = data.brandId;
+            Pages.insert(pages[i]);
+        }
+
+        // Metas
+        console.log('Importing metas');
+        var metas = Meteor.call('getPureData', integration, 'metas');
+        for (i in metas) {
+            metas[i].brandId = data.brandId;
+            Meteor.call('insertMeta', metas[i]);
+        }
+
+        // Elements
+        console.log('Importing elements');
+        var elements = Meteor.call('getPureData', integration, 'elements');
+        for (i in elements) {
+            elements[i].brandId = data.brandId;
+            console.log(elements[i]);
+            Elements.insert(elements[i], { selector: { type: elements[i].type }});
+        }
+
+        // Images
+        console.log('Importing images');
+        var images = Meteor.call('getPureData', integration, 'files');
+        for (i in images) {
+            images[i].brandId = data.brandId;
+            Images.collection.insert(images[i]);
+        }
+
+        // Menus
+        console.log('Importing menus');
+        var menus = Meteor.call('getPureData', integration, 'menus');
+        for (i in menus) {
+            menus[i].brandId = data.brandId;
+            Menus.insert(menus[i]);
+        }
+
+        // Boxes
+        console.log('Importing boxes');
+        var boxes = Meteor.call('getPureData', integration, 'boxes');
+        for (i in boxes) {
+            boxes[i].brandId = data.brandId;
+            Boxes.insert(boxes[i]);
+        }
+
+        // Categories
+        console.log('Importing categories');
+        var categories = Meteor.call('getPureData', integration, 'categories');
+        for (i in categories) {
+            categories[i].brandId = data.brandId;
+            Categories.insert(categories[i]);
+        }
+
+        // Pricing
+        console.log('Importing pricing');
+        var pricing = Meteor.call('getPureData', integration, 'pricing');
+        for (i in pricing) {
+            pricing[i].brandId = data.brandId;
+            Pricing.insert(pricing[i]);
+        }
+
+        // Tags
+        console.log('Importing tags');
+        var tags = Meteor.call('getPureData', integration, 'tags');
+        for (i in tags) {
+            tags[i].brandId = data.brandId;
+            Tags.insert(tags[i]);
+        }
+
+        // Recordings
+        console.log('Importing recordings');
+        var recordings = Meteor.call('getPureData', integration, 'recordings');
+        for (i in recordings) {
+            recordings[i].brandId = data.brandId;
+            Recordings.insert(recordings[i]);
+        }
+
+        // Stats
+        console.log('Importing stats');
+        var stats = Meteor.call('getPureData', integration, 'stats');
+        for (i in stats) {
+            stats[i].brandId = data.brandId;
+            Events.insert(stats[i]);
+        }
+
+        // Statistics
+        console.log('Importing statistics');
+        var statistics = Meteor.call('getPureData', integration, 'statistics');
+        for (i in statistics) {
+            statistics[i].brandId = data.brandId;
+            Statistics.insert(statistics[i]);
+        }
+
+        // Localise
+        Meteor.call('localisteAllPosts', data.brandId);
+        Meteor.call('flushCache');
 
     },
     getPureData: function(integration, dataName) {
@@ -325,6 +330,15 @@ Meteor.methods({
 
         } else {
             return {};
+        }
+
+    },
+    localisteAllPosts(brandId) {
+
+        var posts = Posts.find({brandId: brandId}).fetch();
+
+        for (i in posts) {
+            Meteor.call('localisePost', posts[i]._id);
         }
 
     },
@@ -556,14 +570,14 @@ Meteor.methods({
         }
 
     },
-    processAmazonLink: function(url) {
+    processAmazonLink: function(url, brandId) {
 
         // Check if it's an Amazon link
         if (url.indexOf("https://www.amazon.com/") != -1) {
 
             // Extract ASIN
             var asin = Meteor.call('extractAsin', url);
-            var result = Meteor.call('addAffiliateCode', asin, 'US');
+            var result = Meteor.call('addAffiliateCode', asin, 'US', {}, brandId);
             return result;
 
         }
@@ -575,7 +589,7 @@ Meteor.methods({
 
             var asin = url.substring(asinStart + 9, asinStart + 19);
 
-            var result = Meteor.call('addAffiliateCode', asin, 'US')
+            var result = Meteor.call('addAffiliateCode', asin, 'US', {}, brandId)
 
             return result;
         } else {
@@ -776,7 +790,7 @@ Meteor.methods({
 
         return output;
     },
-    rawProcessHTMLAmazon: function(rawHtml) {
+    rawProcessHTMLAmazon: function(rawHtml, brandId) {
 
         // Output
         var output = "";
@@ -790,7 +804,7 @@ Meteor.methods({
             if (Meteor.call('isAmazonLink', $(elem)[0].attribs.href)) {
 
                 // Link
-                var link = Meteor.call('processAmazonLink', $(elem)[0].attribs.href);
+                var link = Meteor.call('processAmazonLink', $(elem)[0].attribs.href, brandId);
                 $(elem)[0].attribs.href = link;
 
                 // Tracking

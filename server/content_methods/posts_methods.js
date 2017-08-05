@@ -78,24 +78,25 @@ Meteor.methods({
         Tags.remove(tagId);
 
         // Remove from all posts
-        console.log(Posts.find({ tags: tagId }).count());
-        Posts.update({ tags: tagId }, { $pull: { tags: tagId } }, { multi: true });
-        console.log(Posts.find({ tags: tagId }).count());
-
-    },
-    localiseAllPosts: function() {
-
-        console.log('Started localising all posts');
-
-        var posts = Posts.find({ userId: Meteor.user()._id }).fetch();
-
-        for (p in posts) {
-            Meteor.call('localisePost', posts[p]._id);
+        var posts = Posts.find({ tags: tagId }).fetch();
+        for (i in posts) {
+            Posts.update(posts[i]._id, { $pull: { tags: tagId } }, { selector: { category: posts[i].category }});
         }
 
-        console.log('Localising posts finished');
-
     },
+    // localiseAllPosts: function() {
+
+    //     console.log('Started localising all posts');
+
+    //     var posts = Posts.find({ userId: Meteor.user()._id }).fetch();
+
+    //     for (p in posts) {
+    //         Meteor.call('localisePost', posts[p]._id);
+    //     }
+
+    //     console.log('Localising posts finished');
+
+    // },
     isLocalised: function(postId) {
 
         var post = Posts.findOne(postId);

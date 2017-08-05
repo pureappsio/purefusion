@@ -2,7 +2,21 @@ Meteor.startup(function() {
 
 	// console.log(Brands.find({}).fetch()[0]);
 	// console.log(Menus.find({}).fetch());
-	console.log(Products.find({}).fetch());
+	// console.log(Products.find({}).fetch());
+
+    // Clean
+    // Posts.remove({});
+    // Pages.remove({});
+    // Elements.remove({});
+    // Images.remove({});
+    // Menus.remove({});
+    // Boxes.remove({});
+    // Categories.remove({});
+    // Pricing.remove({});
+    // Tags.remove({});
+    // Recordings.remove({});
+    // Events.remove({});
+    // Statistics.remove({});
 
 	// Flush cashe
     Meteor.call('flushCache');

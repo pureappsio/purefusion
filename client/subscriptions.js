@@ -36,5 +36,8 @@ Tracker.autorun(function() {
     
     Meteor.subscribe('userRecordings');
 
+    Meteor.subscribe('userEvents');
+    Meteor.subscribe('userVisitors');
+
     // Meteor.subscribe('userIntegrations');
 });

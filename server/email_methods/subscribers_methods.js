@@ -453,6 +453,15 @@ Meteor.methods({
                 stat.location = subscriber.location;
             }
 
+            if (data.boxId) {
+                stat.boxId = data.boxId;
+            }
+            if (data.postId) {
+                stat.postId = data.postId;
+            }
+
+            console.log('New event');
+            console.log(stat);
             Events.insert(stat);
 
             if (data.confirmed || (brand.skipConfirmation == 'enabled')) {

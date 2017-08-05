@@ -22,6 +22,16 @@ Meteor.methods({
                 }
 
             },
+            boxId: function(){
+
+                if (post.signupBox) {
+                    return post.signupBox;
+                }
+
+            },
+            postId: function() {
+                return post._id;
+            },
             langEN: function() {
 
                 if (Metas.findOne({ userId: post.userId, type: 'language' })) {

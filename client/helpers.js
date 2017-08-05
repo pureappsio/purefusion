@@ -9,3 +9,8 @@ Template.registerHelper("adminUser", function() {
 Template.registerHelper("getMeta", function(meta) {
     return Metas.findOne({ type: meta, userId: Meteor.user()._id }).value;
 });
+
+
+Template.registerHelper("formatDate", function(date) {
+    return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+});

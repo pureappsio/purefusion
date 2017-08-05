@@ -2,6 +2,11 @@ var countriesList = ['US', 'FR', 'CA', 'UK', 'DE', 'IT', 'ES'];
 
 Meteor.methods({
 
+    getEvents: function(brandId) {
+
+        return Events.find({ brandId: brandId }, { sort: { date: -1 }, limit: 50 }).fetch();
+
+    },
     areAffiliateClicks: function() {
 
         var clicks = Events.find({ type: 'affiliateClick' }).count();
@@ -275,7 +280,7 @@ Meteor.methods({
             visitor.country = 'US';
         }
         visitor.date = new Date();
-        visitor.userId = parameters.userId;
+        visitor.brandId = parameters.brandId;
 
         // Check for referer
         if (!query.origin) {
@@ -403,7 +408,7 @@ Meteor.methods({
         if (parameters.link && parameters.type == 'affiliateClick') {
 
             // Asin
-            var asin = Meteor.call('extractAsinEvents', parameters.link);
+            var asin = Meteor.call('extractAsinStats', parameters.link);
             if (asin != 'none') {
                 stat.asin = asin;
                 stat.locale = Meteor.call('extractLocale', parameters.link);

@@ -34,6 +34,8 @@
                         <input value="{{#if langEN}}Click Here to Subscribe{{else}}Cliquez Ici Pour Vous Inscrire{{/if}}" type="submit" class="action btn btn-block btn-lg btn-warning">
                     </div>
                     <input name="brand" type="hidden" value="{{brandId}}" />
+                    <input name="boxId" type="hidden" value="{{boxId}}" />
+                    <input name="postId" type="hidden" value="{{postId}}" />
                     <input name="origin" type="hidden" value="{{origin}}" />
                     <input name="sequence" type="hidden" value="{{sequenceId}}" /> {{#each tag in tags}}
                     <input name="tag" type="hidden" value="{{tag}}" /> {{/each}}

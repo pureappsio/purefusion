@@ -11,7 +11,7 @@ Template.header.events({
 
 Template.header.onRendered(function() {
 
-    if (Session.get('selectedBrand')) {
+    if (Session.get('selectedBrand') ) {
 
         $('#brand-select').val(Session.get('selectedBrand'));
 

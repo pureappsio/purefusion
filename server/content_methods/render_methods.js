@@ -127,8 +127,8 @@ Meteor.methods({
     },
     returnHeader: function(parameters) {
 
-        console.log('Header parameters: ');
-        console.log(parameters);
+        // console.log('Header parameters: ');
+        // console.log(parameters);
 
         // Compile header
         SSR.compileTemplate('header', Assets.getText('header/header_template.html'));
@@ -235,6 +235,11 @@ Meteor.methods({
 
                     return pictureUrl;
                 }
+
+            },
+            brandId: function() {
+
+                return parameters.brandId;
 
             },
             url: function() {
@@ -488,7 +493,9 @@ Meteor.methods({
 
         // Insert stat
         if (parameters.url) {
+
             var page = Pages.findOne({ url: parameters.url });
+            
             Meteor.call('insertSession', {
                 type: 'visit',
                 postId: page._id,
@@ -675,7 +682,7 @@ Meteor.methods({
     },
     renderPost: function(parameters) {
 
-        console.log(parameters);
+        // console.log(parameters);
 
         // Parameters
         var postUrl = parameters.url;

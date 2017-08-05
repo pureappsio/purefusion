@@ -231,6 +231,7 @@ var trackOutboundLink = function(url) {
        window.open(share_link, "_blank",  "width=600,height=500");
 
        data = {
+            brandId: "{{brandId}}",
             url: "{{url}}",
             date: new Date(),
             type: 'socialShare',
@@ -252,6 +253,7 @@ var trackOutboundLink = function(url) {
     var share_link = $(this).prop('href');
 
       data = {
+            brandId: "{{brandId}}",
             url: "{{url}}",
             date: new Date(),
             type: 'socialShare',
@@ -268,36 +270,38 @@ var trackOutboundLink = function(url) {
 
     });
     
-    $( ".action" ).click(function() {
+    // $( ".action" ).click(function() {
 
-      console.log('Click');
+    //   console.log('Click');
 
-          data = {
-            url: "{{url}}",
-            date: new Date(),
-            type: 'subscribe'
-        }
+    //       data = {
+    //         brandId: "{{brandId}}",
+    //         url: "{{url}}",
+    //         date: new Date(),
+    //         type: 'subscribe'
+    //     }
 
-         $.ajax({
-            url: "{{appUrl}}api/stats",
-            type: "POST",
-            crossDomain: true,
-            data: data,
-            dataType: "json"
-          });
+    //      $.ajax({
+    //         url: "{{appUrl}}api/stats",
+    //         type: "POST",
+    //         crossDomain: true,
+    //         data: data,
+    //         dataType: "json"
+    //       });
 
-    });
+    // });
 
     $( ".affiliate-click" ).click(function() {
 
       console.log('Affiliate lick');
 
           data = {
+            brandId: "{{brandId}}",
             url: "{{url}}",
             date: new Date(),
             type: 'affiliateClick',
             link: $(this).attr('href')
-        }
+         }
 
          $.ajax({
             url: "{{appUrl}}api/stats",

@@ -89,6 +89,10 @@ Meteor.publish("userSubscribers", function() {
     return Subscribers.find({});
 });
 
+Meteor.publish("userEvents", function() {
+    return Events.find({}, {sort: {date: -1}, limit: 50});
+});
+
 // Meteor.publish("userIntegrations", function() {
 //     return Integrations.find({});
 // });

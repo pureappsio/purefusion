@@ -12,7 +12,7 @@ Template.signup.events({
 
             Meteor.loginWithPassword($('#email').val(), $('#password').val(), function(err, data) {
 
-                Router.go('/brands');
+                Router.go('/admin/brands');
 
             });
 

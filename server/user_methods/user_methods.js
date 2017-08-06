@@ -161,7 +161,9 @@ Meteor.methods({
         var host = headers.host;
         var hostnameArray = host.split(".");
 
-        if (hostnameArray.length == 3) {
+        console.log(hostnameArray);
+
+        if (hostnameArray.length == 2 || hostnameArray.length == 3) {
 
             var domain = hostnameArray[0];
 

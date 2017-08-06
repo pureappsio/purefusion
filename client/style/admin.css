@@ -8,10 +8,27 @@ h3 {
     margin-top: 15px !important;
 }
 
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
 .badge {
 
     font-size: 18px !important;
 
+}
+
+.stats-variation {
+    font-size: 25px;
+}
+
+.stats-title {
+    text-align: center;
+    font-size: 50px;
 }
 
 .section-selector {

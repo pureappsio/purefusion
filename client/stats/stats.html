@@ -4,4 +4,37 @@
             <h3>Statistics</h3>
         </div>
     </div>
+    <div class='row voffset15 justify-content-center'>
+        <div class='col-md-2 col-center'>
+            <div>Last 30 Days Page Views</div>
+            <div class='stats-title'>{{allVisits}}
+                <span class="stats-variation {{variationColor visitsVariation}}">
+                <i class="fa fa-arrow-circle-o-{{variationDirection visitsVariation}}" aria-hidden="true"></i> {{visitsVariation}}
+            </span></div>
+        </div>
+        <div class='col-md-2 col-center'>
+            <div>Current Visitors</div>
+            <div class='stats-title'>{{liveVisitors}}</div>
+        </div>
+        <div class='col-md-2 col-center'>
+            <div>Mobile Page Views</div>
+            <div class='stats-title'>{{mobile}}</div>
+        </div>
+        {{#if areAffiliates}}
+        <div class='col-md-2 col-center'>
+            <div>Affiliate Earnings</div>
+            <div class='stats-title'>{{affEarnings}}</div>
+        </div>
+        {{/if}} {{#if areSales}}
+        <div class='col-md-2 col-center'>
+            <div>Sales</div>
+            <div class='stats-title'>{{sales}}</div>
+        </div>
+        {{/if}} {{#if areConversions}}
+        <div class='col-md-2 col-center'>
+            <div>List Conversions</div>
+            <div class='stats-title'>{{listConversions}}</div>
+        </div>
+        {{/if}}
+    </div>
 </template>

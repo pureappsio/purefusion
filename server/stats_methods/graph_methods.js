@@ -1,8 +1,39 @@
 Meteor.methods({
 
-    getGraphSessions: function(type) {
+    updateGraph: function(graphType, graphValue, brandId) {
 
-        var sessions = Meteor.call('getSessions', type);
+        if (Graphs.findOne({ type: graphType, brandId: brandId })) {
+
+            // Update
+            console.log('Updating graph ' + graphType);
+            Graphs.update({ type: graphType, brandId: brandId }, {
+                $set: {
+                    value: graphValue,
+                    date: new Date()
+                }
+            });
+
+
+        } else {
+
+            // Insert new
+            console.log('New graph ' + graphType);
+
+            var statistic = {
+                type: graphType,
+                value: graphValue,
+                brandId: brandId,
+                date: new Date()
+            }
+
+            Graphs.insert(statistic);
+
+        }
+
+    },
+    getGraphSessions: function(type, brandId) {
+
+        var sessions = Meteor.call('getSessions', type, brandId);
 
         data = [];
 
@@ -13,7 +44,6 @@ Meteor.methods({
             dataPoint.y = parseInt(sessions[i].count);
             var date = sessions[i]._id.year + '-' + sessions[i]._id.month + '-' + sessions[i]._id.day;
             dataPoint.x = new Date(date);
-
             data.push(dataPoint);
 
         }
@@ -21,12 +51,12 @@ Meteor.methods({
         // Sort
         data.sort(date_sort);
 
-        return data;
+        Meteor.call('updateGraph', type, data, brandId);
 
     },
-    getGraphData: function(type) {
+    getGraphData: function(type, brandId) {
 
-        var sessions = Statistics.findOne({ type: type }).value;
+        var sessions = Statistics.findOne({ brandId: brandId, type: type }).value;
 
         if (type == 'visit') {
 
@@ -44,7 +74,7 @@ Meteor.methods({
             };
         }
 
-        if (type == 'subscribe') {
+        if (type == 'subscribed') {
 
             var data = {
                 datasets: [{

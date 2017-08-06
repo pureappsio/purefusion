@@ -2,7 +2,7 @@ Meteor.startup(function() {
 
 	// console.log(Brands.find({}).fetch()[0]);
 	// console.log(Menus.find({}).fetch());
-	// console.log(Products.find({}).fetch());
+	// console.log(Statistics.find({type: 'visit'}).fetch());
 
     // Clean
     // Posts.remove({});

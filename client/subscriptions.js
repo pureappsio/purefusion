@@ -38,6 +38,8 @@ Tracker.autorun(function() {
 
     Meteor.subscribe('userEvents');
     Meteor.subscribe('userVisitors');
+    Meteor.subscribe('userGraphs');
+    Meteor.subscribe('userStatistics');
 
     // Meteor.subscribe('userIntegrations');
 });

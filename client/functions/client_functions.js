@@ -1,3 +1,19 @@
+getBrandId = function() {
+
+    if (Session.get('selectedBrand')) {
+
+        if (Session.get('selectedBrand') == 'all') {
+            return { $exists: true };
+        } else {
+            return Session.get('selectedBrand');
+        }
+
+    } else {
+        return { $exists: true };
+    }
+
+}
+
 setDiscount = function(query) {
 
     if (query.discount) {

@@ -105,6 +105,10 @@ Meteor.publish("userStatistics", function() {
     return Statistics.find({});
 });
 
+Meteor.publish("userGraphs", function() {
+    return Graphs.find({});
+});
+
 // Meteor.publish('files.images.all', function() {
 //     return Images.find().cursor;
 // });

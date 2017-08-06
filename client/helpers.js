@@ -14,3 +14,20 @@ Template.registerHelper("getMeta", function(meta) {
 Template.registerHelper("formatDate", function(date) {
     return moment(date).format('MMMM Do YYYY, h:mm:ss a');
 });
+
+Template.registerHelper("variationColor", function(variation) {
+    variation = parseInt(variation);
+    if (variation > 0) {
+        return 'green';
+    } else {
+        return 'red';
+    }
+});
+Template.registerHelper("variationDirection", function(variation) {
+    variation = parseInt(variation);
+    if (variation > 0) {
+        return 'up';
+    } else {
+        return 'down';
+    }
+});

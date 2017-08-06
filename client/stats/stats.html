@@ -32,9 +32,117 @@
         </div>
         {{/if}} {{#if areConversions}}
         <div class='col-md-2 col-center'>
-            <div>List Conversions</div>
-            <div class='stats-title'>{{listConversions}}</div>
+            <div>New Subscribers</div>
+            <div class='stats-title'>{{subscribers}}<span class="stats-variation {{variationColor subscribersVariation}}">
+                <i class="fa fa-arrow-circle-o-{{variationDirection subscribersVariation}}" aria-hidden="true"></i> {{subscribersVariation}}
+            </span></div>
         </div>
         {{/if}}
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-12 col-center'>
+            <canvas id='views-chart' height="100"></canvas>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-4 col-center'>
+            <canvas id='origin-chart' height="200"></canvas>
+        </div>
+        <div class='col-md-4 col-center'>
+            <canvas id='social-chart' height="200"></canvas>
+        </div>
+        <div class='col-md-4 col-center'>
+            <canvas id='countries-chart' height="200"></canvas>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-4 col-center'>
+            <canvas id='category-chart' height="200"></canvas>
+        </div>
+        <div class='col-md-8 col-center'>
+            <canvas id='tags-chart' height="95"></canvas>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class="col-md-6">
+            <h3>Most Visited Posts</h3> {{#each posts}} {{> postStats}} {{/each}}
+        </div>
+        <div class="col-md-6">
+            <h3>Most Visited Pages</h3> {{#each pages}} {{> postStats}} {{/each}}
+        </div>
+    </div>
+    <!--     {{#if areConversions}}
+ -->
+    <div class='row voffset30'>
+        <div class="col-md-4">
+            <h3>Email List Conversions</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12 col-center'>
+            <canvas id='subscribed-chart' height="100"></canvas>
+        </div>
+    </div>
+    <div class="row voffset30">
+        <div class='col-md-4 col-center'>
+            <canvas id='list-conversions' height="250"></canvas>
+        </div>
+        <div class='col-md-4 col-center'>
+            <canvas id='box-conversions' height="250"></canvas>
+        </div>
+        <div class='col-md-4 col-center'>
+            <h3>Most Converting Posts</h3> {{#each postsWithBox}} {{> postStats}} {{/each}}
+        </div>
+    </div>
+    <!-- {{/if}} -->
+    {{#if areAffiliates}}
+    <div class='row'>
+        <div class="col-md-6">
+            <h3>Affiliate Conversions</h3>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-8 col-center'>
+            <canvas id='affiliate-chart' height="150"></canvas>
+        </div>
+        <div class='col-md-4 col-center'>
+            <canvas id='affiliate-conversions' height="250"></canvas>
+        </div>
+    </div>
+    <div class="row voffset30">
+        <div class='col-md-6'>
+            <h3>Most Converting Posts</h3> {{#each affiliatePosts}} {{> postStats}} {{/each}}
+        </div>
+        <div class='col-md-6'>
+            <h3>Revenue per Post</h3> {{#each postsEarnings}} {{> postStats}} {{/each}}
+        </div>
+    </div>
+     {{/if}}
+    <div class='row'>
+        <div class="col-md-6">
+            <h3>Social Shares</h3>
+        </div>
+    </div>
+    <div class="row voffset30">
+        <div class='col-md-6'>
+            <h3>Most Shared Posts</h3> {{#each postsShared}} {{> postStatsSocial}} {{/each}}
+        </div>
+    </div>
+    {{#if arePodcasts}}
+    <h3>Podcast Statistics</h3>
+    <div class='row row-title'>
+        <div class='col-md-6'>
+            Title
+        </div>
+        <div class='col-md-1'>
+            Views
+        </div>
+    </div>
+    {{#each podcastEpisodes}} {{> podcastEpisode}} {{/each}} {{/if}}
+    <div class='row voffset30'>
+        <div class='col-md-4'></div>
+        <div class='col-md-4'>
+            <button class='btn btn-block btn-primary' id='harmonize'>Refresh Statistics Now</button>
+        </div>
     </div>
 </template>

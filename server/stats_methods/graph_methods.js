@@ -33,7 +33,7 @@ Meteor.methods({
     },
     getGraphSessions: function(type, brandId) {
 
-        var sessions = Meteor.call('getSessions', type, brandId);
+        var sessions = Statistics.findOne({ type: type + 'aggregate', brandId: brandId }).value;
 
         data = [];
 
@@ -56,70 +56,73 @@ Meteor.methods({
     },
     getGraphData: function(type, brandId) {
 
-        var sessions = Statistics.findOne({ brandId: brandId, type: type }).value;
+        if (brandId != 'all') {
 
-        if (type == 'visit') {
+            var sessions = Graphs.findOne({ brandId: brandId, type: type }).value;
 
-            var data = {
-                datasets: [{
-                    label: 'Views',
-                    fill: false,
-                    data: sessions,
-                    pointHoverBackgroundColor: "darkblue",
-                    pointHoverBorderColor: "darkblue",
-                    pointBorderColor: "darkblue",
-                    backgroundColor: "darkblue",
-                    borderColor: "darkblue"
-                }]
-            };
+            if (type == 'visit') {
+
+                var data = {
+                    datasets: [{
+                        label: 'Views',
+                        fill: false,
+                        data: sessions,
+                        pointHoverBackgroundColor: "darkblue",
+                        pointHoverBorderColor: "darkblue",
+                        pointBorderColor: "darkblue",
+                        backgroundColor: "darkblue",
+                        borderColor: "darkblue"
+                    }]
+                };
+            }
+
+            if (type == 'subscribed') {
+
+                var data = {
+                    datasets: [{
+                        label: 'List Subscriptions',
+                        fill: false,
+                        data: sessions,
+                        pointHoverBackgroundColor: "red",
+                        pointHoverBorderColor: "red",
+                        pointBorderColor: "red",
+                        backgroundColor: "red",
+                        borderColor: "red"
+                    }]
+                };
+            }
+
+            if (type == 'affiliateClick') {
+
+                var affiliateEarnings = Statistics.findOne({ type: 'amazonEarnings' }).value;
+
+                var data = {
+                    datasets: [{
+                        label: 'Affiliate Clicks',
+                        fill: false,
+                        data: sessions,
+                        yAxisID: 'A',
+                        pointHoverBackgroundColor: "orange",
+                        pointHoverBorderColor: "orange",
+                        pointBorderColor: "orange",
+                        backgroundColor: "orange",
+                        borderColor: "orange"
+                    }, {
+                        label: 'Affiliate Earnings',
+                        fill: false,
+                        data: affiliateEarnings,
+                        yAxisID: 'B',
+                        pointHoverBackgroundColor: "red",
+                        pointHoverBorderColor: "red",
+                        pointBorderColor: "red",
+                        backgroundColor: "red",
+                        borderColor: "red"
+                    }]
+                };
+            }
+            return data;
+
         }
-
-        if (type == 'subscribed') {
-
-            var data = {
-                datasets: [{
-                    label: 'List Subscriptions',
-                    fill: false,
-                    data: sessions,
-                    pointHoverBackgroundColor: "red",
-                    pointHoverBorderColor: "red",
-                    pointBorderColor: "red",
-                    backgroundColor: "red",
-                    borderColor: "red"
-                }]
-            };
-        }
-
-        if (type == 'affiliateClick') {
-
-            var affiliateEarnings = Statistics.findOne({ type: 'amazonEarnings' }).value;
-
-            var data = {
-                datasets: [{
-                    label: 'Affiliate Clicks',
-                    fill: false,
-                    data: sessions,
-                    yAxisID: 'A',
-                    pointHoverBackgroundColor: "orange",
-                    pointHoverBorderColor: "orange",
-                    pointBorderColor: "orange",
-                    backgroundColor: "orange",
-                    borderColor: "orange"
-                }, {
-                    label: 'Affiliate Earnings',
-                    fill: false,
-                    data: affiliateEarnings,
-                    yAxisID: 'B',
-                    pointHoverBackgroundColor: "red",
-                    pointHoverBorderColor: "red",
-                    pointBorderColor: "red",
-                    backgroundColor: "red",
-                    borderColor: "red"
-                }]
-            };
-        }
-
-        return data;
 
     },
     getConvGraphData: function(type) {

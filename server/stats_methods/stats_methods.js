@@ -172,6 +172,7 @@ Meteor.methods({
         Meteor.call('updateBasicStat', 'posts', 'visit', brandId);
         Meteor.call('updateVariationStat', { metric: 'visit', brandId: brandId });
         Meteor.call('updateVariationStat', { metric: 'visit', brandId: brandId, browser: 'mobile' });
+        Meteor.call('updateAggregateStat', { metric: 'visit', brandId: brandId });
 
         Meteor.call('updateVariationStat', { metric: 'visit', brandId: brandId, origin: 'social' });
         Meteor.call('updateVariationStat', { metric: 'visit', brandId: brandId, origin: 'organic' });
@@ -189,6 +190,7 @@ Meteor.methods({
         Meteor.call('getEstimatedAmazonEarnings', brandId)
         Meteor.call('updateVariationStat', { metric: 'affiliateClick', brandId: brandId });
         Meteor.call('getConvData', 'affiliateClick', brandId);
+        Meteor.call('updateAggregateStat', { metric: 'affiliateClick', brandId: brandId });
 
         // Sales
 
@@ -197,11 +199,28 @@ Meteor.methods({
         Meteor.call('updateConversionStat', 'boxes', 'subscribed', 'visit', brandId);
         Meteor.call('updateVariationStat', { metric: 'subscribed', brandId: brandId });
         Meteor.call('getConvData', 'subscribed', brandId);
+        Meteor.call('updateAggregateStat', { metric: 'subscribed', brandId: brandId });
 
         // Graphs
         Meteor.call('getGraphSessions', 'visit', brandId);
         Meteor.call('getGraphSessions', 'subscribed', brandId);
         Meteor.call('getGraphSessions', 'affiliateClick', brandId);
+
+    },
+    updateAggregateStat: function(parameters) {
+
+        // Dates
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        // Aggregate
+        var aggregate = Meteor.call('getSessions', parameters.metric, limitDate, parameters.brandId);
+
+        // Stat name
+        var statName = parameters.metric + 'aggregate';
+
+        // Update
+        Meteor.call('updateStatistic', statName, aggregate, parameters.brandId);
 
     },
     updateVariationStat: function(parameters) {
@@ -526,11 +545,11 @@ Meteor.methods({
         Meteor.call('updateStatistic', statName, data);
 
     },
-    getSessions: function(type) {
+    getSessions: function(type, limitDate, brandId) {
 
         return Events.aggregate(
             [
-                { $match: { type: type } }, {
+                { $match: { type: type, brandId: brandId, date: { $gte: limitDate } } }, {
                     $group: {
                         _id: {
                             "year": {

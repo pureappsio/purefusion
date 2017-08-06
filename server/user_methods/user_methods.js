@@ -122,14 +122,6 @@ Meteor.methods({
             Events.insert(stats[i]);
         }
 
-        // Statistics
-        console.log('Importing statistics');
-        var statistics = Meteor.call('getPureData', integration, 'statistics');
-        for (i in statistics) {
-            statistics[i].brandId = data.brandId;
-            Statistics.insert(statistics[i]);
-        }
-
         // Localise
         Meteor.call('localisteAllPosts', data.brandId);
         Meteor.call('flushCache');

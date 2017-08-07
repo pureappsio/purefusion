@@ -4,22 +4,19 @@ const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
 
-    addEmailEnding: function(text, list, type, subscriberId) {
-
-        // Get host
-        host = Meteor.absoluteUrl();
+    addEmailEnding: function(text, brand, type, subscriberId) {
 
         // Add social networks if any
-        if (Networks.findOne({ listId: list._id, ownerId: list.ownerId })) {
+        if (brand.networks) {
 
-            var networks = Networks.find({ listId: list._id, ownerId: list.ownerId }).fetch();
+            var networks = brand.networks;
             var networksText = "<p style='font-size: 14px; text-align: center; margin-top: 50px;'>Follow us on social media!</p><p style='text-align: center;'>";
 
             for (i in networks) {
 
-                var imageLink = Meteor.absoluteUrl() + networks[i].type;
+                var imageLink = 'https://' + brand.url + networks[i].type;
                 var imageText = "<img height='32' width='32' src='" + imageLink + ".png'>";
-                networksText += "<a style='margin-right: 5px; margin-left: 5px;' href='" + networks[i].url + "'>" + imageText + "</a>";
+                networksText += "<a style='margin-right: 5px; margin-left: 5px;' href='" + networks[i].link + "'>" + imageText + "</a>";
 
             }
 
@@ -29,22 +26,24 @@ Meteor.methods({
 
         }
 
+        var host = 'https://' + brand.url;
+
         // Add unsubscribe data
-        if (list.language) {
-            if (list.language == 'en') {
+        if (brand.language) {
+            if (brand.language == 'en') {
                 var unsubscribeText = "Unsubscribe";
             }
-            if (list.language == 'fr') {
+            if (brand.language == 'fr') {
                 var unsubscribeText = "Se désinscrire";
             }
         } else {
             var unsubscribeText = "Unsubscribe";
         }
         if (type == 'broadcast' || type == 'test') {
-            text += "<p style='margin-top: 30px; text-align: center;'><a style='color: gray;' href='" + host + "unsubscribe?s=-subscriberId-'>" + unsubscribeText + "</a></p>";
+            text += "<p style='margin-top: 30px; text-align: center;'><a style='color: gray;' href='" + host + "/api/unsubscribe?s=-subscriberId-'>" + unsubscribeText + "</a></p>";
         }
         if (type == 'automation') {
-            text += "<p style='margin-top: 30px; text-align: center;'><a style='color: gray;' href='" + host + "unsubscribe?s=" + subscriberId + "'>" + unsubscribeText + "</a></p>";
+            text += "<p style='margin-top: 30px; text-align: center;'><a style='color: gray;' href='" + host + "/api/unsubscribe?s=" + subscriberId + "'>" + unsubscribeText + "</a></p>";
         }
 
         return text;
@@ -84,29 +83,7 @@ Meteor.methods({
         Scheduled.remove(scheduled._id);
 
     },
-    addManualEmail: function(emailData) {
-
-        // Get list
-        var list = Lists.findOne(emailData.listId);
-
-        // Build entry
-        var entry = {
-            name: list.userName,
-            ownerId: emailData.userId,
-            listId: emailData.listId,
-            date: new Date(emailData.date),
-            to: emailData.email,
-            fromEmail: list.brandEmail,
-            from: list.userName,
-            subject: emailData.subject,
-            text: emailData.text,
-            type: 'simple'
-        }
-
-        // Insert
-        Scheduled.insert(entry);
-
-    },
+    
     cleanScheduled: function() {
 
         // Remove all broadcast emails
@@ -121,13 +98,13 @@ Meteor.methods({
     },
     clearNotConfirmed: function() {
 
-        // Go through all users
-        var users = Meteor.users.find({}).fetch();
+        // Go through all brands
+        var brands = Brands.find({}).fetch();
 
-        for (i = 0; i < users.length; i++) {
+        for (i = 0; i < brands.length; i++) {
 
             // Find all subscribers for this user
-            var subscribers = Subscribers.find({ ownerId: users[i]._id }).fetch();
+            var subscribers = Subscribers.find({ brandId: brands[i]._id }).fetch();
 
             for (j = 0; j < subscribers.length; j++) {
 
@@ -150,22 +127,19 @@ Meteor.methods({
         }
 
     },
-    sendTestEmail: function(listId, testEmailData) {
+    sendTestEmail: function(brandId, testEmailData) {
 
         console.log('Sending test email to: ' + testEmailData.to);
-        console.log('For list: ' + listId);
+        console.log('For list: ' + brandId);
 
-        // Get list
-        list = Lists.findOne(listId);
-
-        // Get host
-        host = Meteor.absoluteUrl();
+        // Get brand
+        brand = Brands.findOne(brandId);
 
         // Style
         testEmailData.html = '<div style="font-size: 16px;">' + testEmailData.html + '</div>';
 
         // Add unsubscribe data
-        testEmailData.html = Meteor.call('addEmailEnding', testEmailData.html, list);
+        testEmailData.html = Meteor.call('addEmailEnding', testEmailData.html, brand);
 
         testEmailData.unique_args = {
             'testArg': 'justatest'
@@ -173,13 +147,13 @@ Meteor.methods({
 
         // Build mail
         var helper = sendgridModule.mail;
-        from_email = new helper.Email(list.brandEmail);
+        from_email = new helper.Email(brand.email);
         to_email = new helper.Email(testEmailData.to);
         subject = testEmailData.subject;
         content = new helper.Content("text/html", testEmailData.html);
         mail = new helper.Mail(from_email, subject, to_email, content);
 
-        mail.from_email.name = list.userName;
+        mail.from_email.name = brand.userName;
         mail.addCustomArg({ 'subscriberId': 'someTestId' });
 
         // Send

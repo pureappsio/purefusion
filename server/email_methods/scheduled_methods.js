@@ -14,11 +14,6 @@ Meteor.methods({
             currentDate = currentDate.getTime();
             scheduledDate = (scheduled.date).getTime();
 
-            var user = Meteor.users.findOne(scheduled.ownerId);
-
-            // console.log('User: ')
-            // console.log(user);
-
             // Add style to text
             scheduled.text = '<div style="font-size: 16px;">' + scheduled.text + '</div>';
 

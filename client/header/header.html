@@ -21,8 +21,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'funnels'}}">Funnels</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{pathFor 'audience'}}">Audience</a>
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{pathFor 'audience'}}" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Audience</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{{pathFor 'audience'}}">Audience</a
+                        >
+                        <a class="dropdown-item" href="{{pathFor 'sequences'}}">Sequences</a
+                        >
+                        <a class="dropdown-item" href="{{pathFor 'broadcast'}}">Broadcast</a
+                        >
+                        <a class="dropdown-item" href="{{pathFor 'scheduled'}}">Scheduled</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'products'}}">Products</a>

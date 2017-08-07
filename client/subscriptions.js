@@ -31,8 +31,12 @@ Tracker.autorun(function() {
     Meteor.subscribe('userPricing');
     Meteor.subscribe('userTags');
 
+    // Audience
     Meteor.subscribe('userSequences');
+    Meteor.subscribe('userAutomations');
     Meteor.subscribe('userSubscribers');
+    Meteor.subscribe('userScheduled');
+    Meteor.subscribe('userBroadcasts');
     
     Meteor.subscribe('userRecordings');
 

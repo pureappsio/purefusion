@@ -8,6 +8,10 @@ h3 {
     margin-top: 15px !important;
 }
 
+.row-title {
+    font-weight: bold;
+}
+
 .red {
     color: red;
 }

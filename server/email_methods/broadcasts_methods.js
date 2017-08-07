@@ -28,14 +28,14 @@ Meteor.methods({
                 console.log('Re-sending broadcast ' + broadcasts[i].subject);
 
                 // Get all people that didn't open
-                var delivered = Stats.find({
+                var delivered = Events.find({
                     broadcastId: broadcasts[i]._id,
-                    event: 'delivered'
+                    type: 'delivered'
                 }, { fields: { subscriberId: 1 } }).fetch();
 
-                var opened = Stats.find({
+                var opened = Events.find({
                     broadcastId: broadcasts[i]._id,
-                    event: 'opened'
+                    type: 'open'
                 }, { fields: { subscriberId: 1 } }).fetch();
 
                 delivered = delivered.map(function(item) {
@@ -54,23 +54,22 @@ Meteor.methods({
                     criteria: 'resent',
                     option: {
                         delivered: delivered,
-                        opened: opened
+                        open: opened
                     }
                 });
                 broadcasts[i].filters = filters;
                 // console.log(broadcasts[i]);
 
-                var list = Lists.findOne(broadcasts[i].listId);
-                var recipients = Meteor.call('filterSubscribers', broadcasts[i].listId, broadcasts[i].filters);
+                var brand = Brands.findOne(broadcasts[i].brandId);
+                var recipients = Meteor.call('filterSubscribers', broadcasts[i].brandId, broadcasts[i].filters);
                 console.log('Recipients of second send: ' + recipients.length);
 
                 var scheduled = {
 
-                    name: list.userName,
-                    ownerId: broadcasts[i].ownerId,
-                    listId: broadcasts[i].listId,
+                    name: brand.userName,
+                    brandId: broadcasts[i].brandId,
                     date: new Date(),
-                    from: list.userName + ' <' + list.brandEmail + '>',
+                    from: brand.userName + ' <' + brand.email + '>',
                     subject: broadcasts[i].otherSubject,
                     filters: broadcasts[i].filters,
                     text: broadcasts[i].text,
@@ -100,13 +99,10 @@ Meteor.methods({
         console.log('Sending broadcast');
 
         // Get list
-        var list = Lists.findOne(scheduled.listId);
+        var brand = Brands.findOne(scheduled.brandId);
 
         // Get recipients
-        allRecipients = Meteor.call('filterSubscribers', scheduled.listId, scheduled.filters);
-
-        // Get host
-        host = Meteor.absoluteUrl();
+        allRecipients = Meteor.call('filterSubscribers', scheduled.brandId, scheduled.filters);
 
         if (scheduled.tagging == 'tagging') {
 
@@ -127,7 +123,7 @@ Meteor.methods({
 
         }
 
-        scheduled.text = Meteor.call('addEmailEnding', scheduled.text, list, 'broadcast');
+        scheduled.text = Meteor.call('addEmailEnding', scheduled.text, brand, 'broadcast');
 
         console.log(scheduled.text);
 
@@ -177,7 +173,7 @@ Meteor.methods({
             }
 
             // Common
-            email = new helper.Email(list.brandEmail, list.userName);
+            email = new helper.Email(brand.email, brand.userName);
             mail.setFrom(email);
             mail.setSubject(scheduled.subject);
             content = new helper.Content("text/html", scheduled.text);
@@ -190,7 +186,7 @@ Meteor.methods({
 
             // Send
             var requestBody = mail.toJSON()
-                // console.log(requestBody.personalizations[0]);
+            // console.log(requestBody.personalizations[0]);
             var request = sendgrid.emptyRequest()
             request.method = 'POST'
             request.path = '/v3/mail/send'
@@ -232,18 +228,17 @@ Meteor.methods({
         broadcast = Broadcasts.findOne(broadcastId);
 
         // Get list
-        list = Lists.findOne(broadcast.listId);
-        from = list.userName + ' <' + list.brandEmail + '>';
+        brand = Brands.findOne(broadcast.brandId);
+        from = brand.userName + ' <' + brand.email + '>';
 
         console.log('Sending broadcast email from: ' + from);
 
         // Make entry
         entry = {
-            name: list.userName,
-            ownerId: Meteor.user()._id,
-            listId: broadcast.listId,
+            name: brand.userName,
+            brandId: broadcast.brandId,
             date: broadcast.time,
-            from: list.userName + ' <' + list.brandEmail + '>',
+            from: brand.userName + ' <' + brand.email + '>',
             subject: broadcast.subject,
             filters: broadcast.filters,
             text: broadcast.text,
@@ -258,7 +253,7 @@ Meteor.methods({
     saveBroadcast: function(broadcast) {
 
         // Get number of recipients
-        var recipients = Meteor.call('filterSubscribers', broadcast.listId, broadcast.filters);
+        var recipients = Meteor.call('filterSubscribers', broadcast.brandId, broadcast.filters);
         broadcast.recipients = recipients.length;
         console.log(broadcast);
 
@@ -273,16 +268,16 @@ Meteor.methods({
         Broadcasts.remove(broadcastId);
 
     },
-    getNumberFilteredSubscribers: function(listId, filters) {
+    getNumberFilteredSubscribers: function(brandId, filters) {
 
-        var filteredSubscribers = Meteor.call('filterSubscribers', listId, filters);
+        var filteredSubscribers = Meteor.call('filterSubscribers', brandId, filters);
         return filteredSubscribers.length;
 
     },
-    filterSubscribers: function(listId, filters) {
+    filterSubscribers: function(brandId, filters) {
 
         // Get all subscribers
-        var subscribers = Subscribers.find().fetch();
+        var subscribers = Subscribers.find({ brandId: brandId }).fetch();
 
         // Filter
         var filteredCustomers = [];
@@ -292,7 +287,7 @@ Meteor.methods({
 
             if (filters[c].criteria == 'boughtproduct' || filters[c].criteria == 'notboughtproduct') {
 
-                filters[c].data = Meteor.call('getCustomersProduct', filters[c].option, listId);
+                filters[c].data = Meteor.call('getCustomersProduct', filters[c].option, brandId);
 
             }
 
@@ -311,18 +306,18 @@ Meteor.methods({
                     var purchaseDate = new Date(now.getTime() - 30.5 * 24 * 3600 * 1000);
                 }
 
-                filters[c].data = Meteor.call('getCustomersPurchaseDate', purchaseDate, listId);
+                filters[c].data = Meteor.call('getCustomersPurchaseDate', purchaseDate, brandId);
 
             }
 
             if (filters[c].option == 'customers' || filters[c].option == 'notcustomers') {
 
-                filters[c].data = Meteor.call('getCustomersEmails', listId);
+                filters[c].data = Meteor.call('getCustomersEmails', brandId);
             }
 
             if (filters[c].criteria == 'received' || filters[c].criteria == 'notreceived') {
 
-                var stats = Stats.find({ event: 'delivered', broadcastId: filters[c].option }, { _id: 1 }).fetch();
+                var stats = Events.find({ type: 'delivered', broadcastId: filters[c].option }, { _id: 1 }).fetch();
                 filters[c].data = stats.map(function(a) {
                     return a.subscriberId;
                 });
@@ -330,7 +325,7 @@ Meteor.methods({
 
             if (filters[c].criteria == 'openedbroadcast' || filters[c].criteria == 'notopenedbroadcast') {
 
-                var stats = Stats.find({ event: 'opened', broadcastId: filters[c].option }, { _id: 1 }).fetch();
+                var stats = Events.find({ type: 'open', broadcastId: filters[c].option }, { _id: 1 }).fetch();
                 filters[c].data = stats.map(function(a) {
                     return a.subscriberId;
                 });
@@ -338,7 +333,7 @@ Meteor.methods({
 
             if (filters[c].criteria == 'clickedbroadcast' || filters[c].criteria == 'notclickedbroadcast') {
 
-                var stats = Stats.find({ event: 'clicked', broadcastId: filters[c].option }, { _id: 1 }).fetch();
+                var stats = Events.find({ type: 'click', broadcastId: filters[c].option }, { _id: 1 }).fetch();
                 filters[c].data = stats.map(function(a) {
                     return a.subscriberId;
                 });
@@ -347,7 +342,7 @@ Meteor.methods({
         }
 
         // Filter with query
-        var query = { listId: listId };
+        var query = { brandId: brandId };
 
         for (f = 0; f < filters.length; f++) {
 
@@ -473,7 +468,7 @@ Meteor.methods({
 
             if (criteria == 'limit') {
 
-                var nbSubscribers = Subscribers.find({ listId: listId }).fetch().length;
+                var nbSubscribers = Subscribers.find({ brandId: brandId }).fetch().length;
                 var sampleSize = parseInt(parseInt(option) * nbSubscribers / 100);
 
                 if (sampleSize == 0) {
@@ -503,33 +498,7 @@ Meteor.methods({
 
         }
 
-        console.log(query);
-
         return subscribers;
-
-        //         if (criteria == 'bought') {
-
-        //             addSubscriberArray[f] = false;
-
-        //             var nb_products = Meteor.call('getNumberPurchases', currentSubscriber);
-
-        //             if (nb_products >= option) {
-        //                 addSubscriberArray[f] = true;
-        //             }
-
-        //         }
-
-        //         if (criteria == 'boughtless') {
-
-        //             addSubscriberArray[f] = false;
-
-        //             var nb_products = Meteor.call('getNumberPurchases', currentSubscriber);
-
-        //             if (nb_products <= option) {
-        //                 addSubscriberArray[f] = true;
-        //             }
-
-        //         }
 
 
     }

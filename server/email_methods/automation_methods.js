@@ -36,13 +36,16 @@ Meteor.methods({
         ConditionalEmails.remove(emailId);
 
     },
-    changeEmailOrder: function(email, orderChange) {
+    changeEmailOrder: function(ruleId, orderChange) {
 
         // Change by default
         changeOrder = true;
 
+        // Email
+        var rule = Automations.findOne(ruleId);
+
         // Get all emails from sequence
-        var emails = Automations.find({ sequenceId: email.sequenceId }).fetch();
+        var emails = Automations.find({ sequenceId: rule.sequenceId }).fetch();
 
         // Get max order
         var maxOrder = 1;
@@ -51,10 +54,10 @@ Meteor.methods({
         }
 
         // Cases when no action is done
-        if (email.order == 1 && orderChange == -1) {
+        if (rule.order == 1 && orderChange == -1) {
             changeOrder = false;
         }
-        if (email.order == maxOrder && orderChange == 1) {
+        if (rule.order == maxOrder && orderChange == 1) {
             changeOrder = false;
         }
 
@@ -65,12 +68,12 @@ Meteor.methods({
 
                 // Get ID of email to change
                 otherEmail = Automations.findOne({
-                    sequenceId: email.sequenceId,
-                    order: (email.order + 1)
+                    sequenceId: rule.sequenceId,
+                    order: (rule.order + 1)
                 });
 
                 // Change order of current email
-                Automations.update(email._id, { $inc: { order: 1 } })
+                Automations.update(ruleId, { $inc: { order: 1 } })
 
                 // Change order of other emails
                 Automations.update(otherEmail._id, { $inc: { order: -1 } });
@@ -81,12 +84,12 @@ Meteor.methods({
 
                 // Get ID of email to change
                 otherEmail = Automations.findOne({
-                    sequenceId: email.sequenceId,
-                    order: (email.order - 1)
+                    sequenceId: rule.sequenceId,
+                    order: (rule.order - 1)
                 });
 
                 // Change order of current email
-                Automations.update(email._id, { $inc: { order: -1 } })
+                Automations.update(ruleId, { $inc: { order: -1 } })
 
                 // Change order of other emails
                 Automations.update(otherEmail._id, { $inc: { order: 1 } });
@@ -102,10 +105,10 @@ Meteor.methods({
         Scheduled.remove(id);
 
     },
-    clearScheduled: function() {
+    clearScheduled: function(brandId) {
 
         // Remove all
-        Scheduled.remove({ ownerId: Meteor.user()._id });
+        Scheduled.remove({ brandId: brandId });
 
     },
     addConditionalEmail: function(newEmail, subscriber) {
@@ -113,8 +116,7 @@ Meteor.methods({
         console.log('Conditional email, checking if branching');
 
         // Get data
-        var list = Lists.findOne(subscriber.listId);
-        var user = Meteor.users.findOne(subscriber.ownerId);
+        var brand = Brands.findOne(subscriber.brandId);
 
         // Don't branch by default
         var branchToSequence = false;
@@ -182,7 +184,7 @@ Meteor.methods({
                 var branchEmail = Automations.findOne({ sequenceId: branchSequence._id, order: 1 });
 
                 // Add to scheduler
-                Meteor.call('addAutomationEmail', branchEmail, subscriber, list);
+                Meteor.call('addAutomationEmail', branchEmail, subscriber, brand);
 
                 // Update subscriber
                 Subscribers.update(subscriber._id, { $set: { "sequenceEmail": branchEmail._id } });
@@ -195,7 +197,7 @@ Meteor.methods({
             console.log('Do not branch, going to next in sequence');
 
             // Add to scheduler
-            Meteor.call('addAutomationEmail', newEmail, subscriber, list, user);
+            Meteor.call('addAutomationEmail', newEmail, subscriber, brand);
 
             // Update subscriber
             Subscribers.update(subscriber._id, { $set: { "sequenceEmail": newEmail._id } });
@@ -208,9 +210,8 @@ Meteor.methods({
         var sequence = Sequences.findOne(scheduled.sequenceId);
 
         // Get data
-        var list = Lists.findOne(scheduled.listId);
-        var subscriber = Subscribers.findOne({ listId: scheduled.listId, email: scheduled.to });
-        var user = Meteor.users.findOne(scheduled.ownerId);
+        var brand = Brands.findOne(scheduled.brandId);
+        var subscriber = Subscribers.findOne({ brandId: scheduled.brandId, email: scheduled.to });
 
         // Check if simple destination or branch
         if (sequence.destination.action) {
@@ -218,7 +219,7 @@ Meteor.methods({
             console.log('Simple move to next sequence');
 
             // Simple destination
-            Meteor.call('branchSequence', sequence.destination, subscriber, list, user);
+            Meteor.call('branchSequence', sequence.destination, subscriber, brand);
 
         } else {
 
@@ -281,7 +282,7 @@ Meteor.methods({
                 console.log(destinations[matchIndex]);
 
                 // Apply branching
-                Meteor.call('branchSequence', destinations[matchIndex], subscriber, list, user);
+                Meteor.call('branchSequence', destinations[matchIndex], subscriber, brand);
 
             }
 
@@ -294,9 +295,8 @@ Meteor.methods({
         // console.log(scheduled);
 
         // Get data
-        var list = Lists.findOne(scheduled.listId);
-        var subscriber = Subscribers.findOne({ listId: scheduled.listId, email: scheduled.to });
-        var user = Meteor.users.findOne(scheduled.ownerId);
+        var brand = Brands.findOne(scheduled.brandId);
+        var subscriber = Subscribers.findOne({ brandId: scheduled.brandId, email: scheduled.to });
 
         // Move to next order in sequence
         order = scheduled.sequenceEmail + 1;
@@ -319,7 +319,7 @@ Meteor.methods({
                 // console.log(newEmail);
 
                 // Add to scheduler
-                Meteor.call('addAutomationEmail', newEmail, subscriber, list);
+                Meteor.call('addAutomationEmail', newEmail, subscriber, brand);
 
                 // Update subscriber
                 Subscribers.update(subscriber._id, { $set: { "sequenceEmail": newEmail._id } });
@@ -335,39 +335,34 @@ Meteor.methods({
     },
     sendAutomationEmail: function(scheduled) {
 
-        var subscriber = Subscribers.findOne({ listId: scheduled.listId, email: scheduled.to, ownerId: scheduled.ownerId });
+        var subscriber = Subscribers.findOne({
+            brandId: scheduled.brandId,
+            email: scheduled.to
+        });
 
         // console.log('Subscriber: ')
         // console.log(subscriber);
 
         if (subscriber) {
 
-            var list = Lists.findOne(scheduled.listId);
-
-            // console.log('List: ')
-            // console.log(list);
-
+            var brand = Brands.findOne(scheduled.brandId);
             // Compile
             SSR.compileTemplate('automationEmail', Assets.getText('automation_email.html'));
 
-            // Get host
-            host = Meteor.absoluteUrl();
-
             // Add unsubscribe data & social tags
-            scheduled.text = Meteor.call('addEmailEnding', scheduled.text, list, 'automation', subscriber._id);
+            scheduled.text = Meteor.call('addEmailEnding', scheduled.text, brand, 'automation', subscriber._id);
 
             // Send
             parameters = {
-                host: host,
-                name: list.userName,
-                brand: list.brandName,
+                name: brand.userName,
+                brand: brand.name,
                 subscriberId: subscriber._id,
                 text: scheduled.text
             };
 
             if (Meteor.call('validateEmail', scheduled.to)) {
 
-                console.log('Sending email to ' + scheduled.to + ' of list ' + list.name);
+                console.log('Sending email to ' + scheduled.to + ' of list ' + brand.name);
 
                 // Build query
                 var urlQuery = '?medium=email';
@@ -395,16 +390,15 @@ Meteor.methods({
 
                 scheduled.text = $.html();
 
-
                 // Build mail
                 var helper = sendgridModule.mail;
-                from_email = new helper.Email(list.brandEmail);
+                from_email = new helper.Email(brand.email);
                 to_email = new helper.Email(scheduled.to);
                 subject = scheduled.subject;
                 content = new helper.Content("text/html", scheduled.text);
                 mail = new helper.Mail(from_email, subject, to_email, content);
 
-                mail.from_email.name = list.userName;
+                mail.from_email.name = brand.userName;
 
                 // Arguments
                 custom_arg = new helper.CustomArgs("subscriberId", subscriber._id)
@@ -423,25 +417,9 @@ Meteor.methods({
                     mail.addCustomArg(custom_arg);
                 }
 
-                // Add Google Analytics data
-                // tracking_settings = new helper.TrackingSettings()
-                // if (subscriber.origin) {
-                //     if (subscriber.origin == 'landing') {
-                //         source = "facebook";
-                //     }
-                //     if (subscriber.origin == 'blog') {
-                //         source = "blog";
-                //     }
-                // } else {
-                //     source = "blog";
-                // }
-                // ganalytics = new helper.Ganalytics(true, source, "email");
-                // tracking_settings.setGanalytics(ganalytics)
-                // mail.addTrackingSettings(tracking_settings)
-
                 // Send
                 var requestBody = mail.toJSON()
-                    // console.log(requestBody);
+                // console.log(requestBody);
                 var request = sendgrid.emptyRequest()
                 request.method = 'POST'
                 request.path = '/v3/mail/send'
@@ -482,7 +460,7 @@ Meteor.methods({
         }
 
     },
-    branchSequence: function(destination, subscriber, list, user) {
+    branchSequence: function(destination, subscriber, brand) {
 
         if (destination.action == 'go') {
 
@@ -493,7 +471,7 @@ Meteor.methods({
             var newEmail = Automations.findOne({ sequenceId: newSequence._id, order: 1 });
 
             // Add to scheduler
-            Meteor.call('addAutomationEmail', newEmail, subscriber, list, user);
+            Meteor.call('addAutomationEmail', newEmail, subscriber, brand);
 
             // Update subscriber
             Subscribers.update(subscriber._id, { $set: { "sequenceEmail": newEmail._id } });
@@ -526,83 +504,6 @@ Meteor.methods({
 
         // Save rule
         Automations.insert(rule);
-
-    },
-    processPing: function(data) {
-
-        console.log(data);
-
-        // Find user
-        var user = Meteor.users.findOne({ "services.gumroad.id": data.seller_id });
-        //console.log(user);
-
-        // Existing customer ?
-        var customers = Customers.find({ email: data.email }).fetch();
-
-        if (customers.length == 0) {
-            console.log('New customer');
-        } else {
-            console.log('Customer exists');
-        }
-
-        // Call automation rules
-        var rules = Automations.find({ owner: user._id }).fetch();
-
-        for (j = 0; j < rules.length; j++) {
-
-            if (rules[j].criteria == 'bought' && rules[j].product == 'any') {
-
-                // Calculate date
-                var currentDate = new Date();
-                currentDate = currentDate.getTime();
-
-                if (rules[j].period == 'minutes') {
-                    currentDate += rules[j].time * 1000 * 60;
-                }
-                if (rules[j].period == 'hours') {
-                    currentDate += rules[j].time * 1000 * 60 * 60;
-                }
-                if (rules[j].period == 'days') {
-                    currentDate += rules[j].time * 1000 * 60 * 60 * 24;
-                }
-
-                var entryDate = new Date(currentDate);
-
-                // Create new entry in scheduler
-                var entry = {
-                    name: user.services.gumroad.userName,
-                    owner: rules[j].owner,
-                    date: entryDate,
-                    to: data.email,
-                    from: user.profile.userName + ' <' + user.profile.brandEmail + '>',
-                    subject: rules[r].emailSubject,
-                    text: rules[r].emailText
-                }
-
-                Scheduled.insert(entry);
-
-            }
-
-        }
-
-    },
-    simulateSale: function() {
-
-        // Prepare data
-        var parameters = {
-            sale_id: "3hesog",
-            order_number: "3498d9gdf",
-            seller_id: "bHzYIhOXnA6MCharDa7_QA==",
-            product_id: "35435345",
-            product_permalink: "http://someproduct.co",
-            email: "fernando-godoy12@hotmail.com",
-            full_name: "John Smith",
-            purchaser_id: "35fgdg3",
-            price: 2900
-        };
-
-        // Make request
-        HTTP.post('http://localhost:3000/ping', { data: parameters });
 
     },
     validateEmail: function(email) {

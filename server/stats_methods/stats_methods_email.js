@@ -1,6 +1,5 @@
 Meteor.methods({
 
-    
     getInterestsGraphData: function(listId) {
 
         var now = new Date();

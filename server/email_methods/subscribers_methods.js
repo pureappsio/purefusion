@@ -26,95 +26,17 @@ Meteor.methods({
         return Subscribers.findOne(subscriberId);
     },
 
-    removeSubscriber: function(email, listId) {
+    removeSubscriber: function(email, brandId) {
 
         // Remove all from list
-        console.log('Deleting subscriber with email: ' + email + 'in list: ' + listId);
-        Subscribers.remove({ email: email, listId: listId });
+        console.log('Deleting subscriber with email: ' + email + 'in list: ' + brandId);
+        Subscribers.remove({ email: email, brandId: brandId });
 
     },
-    removeSubscribersList: function(listId) {
+    removeSubscribersList: function(brandId) {
 
         // Remove all from list
-        Subscribers.remove({ listId: listId });
-
-    },
-    refreshSubscribers: function(customers, integration) {
-
-        console.log(integration);
-
-        // Refresh Subscribers
-        for (var i = 0; i < customers.length; i++) {
-
-            // Check if already in list
-            var criterias = { email: customers[i].email, ownerId: integration.ownerId, listId: integration.list };
-            var isSubscriber = Subscribers.findOne(criterias);
-
-            if (isSubscriber) {
-                console.log('Refreshing subscriber');
-                subscriber = Subscribers.findOne(criterias);
-
-                // Update subscriber
-                Subscribers.update(subscriber._id, { $set: { "ltv": customers[i].ltv } });
-                Subscribers.update(subscriber._id, { $set: { "products": customers[i].products } });
-                Subscribers.update(subscriber._id, { $set: { "nb_products": customers[i].nb_products } });
-
-                // Not in sequence ?
-                if (subscriber.sequenceId == null) {
-
-                    // Check if there is a new subscriber sequence
-                    if (Sequences.findOne({ listId: integration.list, trigger: 'customers' })) {
-
-                        // Get sequence
-                        var newSequence = Sequences.findOne({ listId: integration.list, trigger: 'customers' });
-
-                        // Get email
-                        var newEmail = Automations.findOne({ sequenceId: newSequence._id, order: 1 });
-
-                        // Add to scheduler
-                        var user = Meteor.users.findOne(integration.ownerId);
-                        Meteor.call('addAutomationEmail', newEmail, subscriber, integration.list, user);
-
-                        // Update subscriber
-                        Subscribers.update(subscriber._id, { $set: { "sequenceEmail": newEmail._id } });
-                        Subscribers.update(subscriber._id, { $set: { "sequenceId": newSequence._id } });
-
-                    }
-
-                }
-
-            } else {
-
-                // Add new subscriber & customer
-                console.log('New subscriber');
-                customers[i].last_updated = new Date();
-                customers[i].listId = integration.list;
-                customers[i].ownerId = integration.ownerId;
-                var subscriberId = Subscribers.insert(customers[i]);
-
-                // Check if there is a new subscriber sequence
-                if (Sequences.findOne({ listId: integration.list, trigger: 'customers' })) {
-
-                    // Get sequence
-                    var newSequence = Sequences.findOne({ listId: integration.list, trigger: 'customers' });
-
-                    // Get email
-                    var newEmail = Automations.findOne({ sequenceId: newSequence._id, order: 1 });
-
-                    // Add to scheduler
-                    var subscriber = Subscribers.findOne(subscriberId);
-                    var user = Meteor.users.findOne(integration.ownerId);
-                    Meteor.call('addAutomationEmail', newEmail, subscriber, integration.list, user);
-
-                    // Update subscriber
-                    Subscribers.update(subscriber._id, { $set: { "sequenceEmail": newEmail._id } });
-                    Subscribers.update(subscriber._id, { $set: { "sequenceId": newSequence._id } });
-
-                }
-
-            }
-
-        }
+        Subscribers.remove({ brandId: brandId });
 
     },
     updateSubscriberInterests: function(subscriber, interests) {
@@ -154,31 +76,6 @@ Meteor.methods({
 
             // Get data
             var brand = Brands.findOne(subscriber.brandId);
-
-            // console.log('List: ');
-            // console.log(list);
-
-            // Send notifications
-            if (Integrations.findOne({ type: 'puremetrics' })) {
-
-                // Get integration
-                var integration = Integrations.findOne({ type: 'puremetrics' });
-
-                // Parameters
-                parameters = {
-                    type: 'subscription',
-                    message: 'New subscriber to the ' + list.name + ' email list'
-                };
-
-                // Add origin
-                if (subscriber.origin) {
-                    parameters.origin = subscriber.origin;
-                }
-
-                // Post
-                HTTP.post('https://' + integration.url + '/api/notifications?key=' + integration.key, { params: parameters });
-
-            }
 
             // Assign subscriber in sequence
             if (subscriber.sequenceId) {
@@ -230,11 +127,11 @@ Meteor.methods({
 
         // Create new entry for scheduler
         var entry = {
-            name: list.userName,
+            name: brand.userName,
             brandId: brand._id,
             date: entryDate,
             to: subscriber.email,
-            from: list.userName + ' <' + list.brandEmail + '>',
+            from: brand.userName + ' <' + brand.email + '>',
             subject: rule.emailSubject,
             text: rule.emailText,
             ruleId: rule._id
@@ -502,7 +399,7 @@ Meteor.methods({
                 subject = confirmationSubject;
                 content = new helper.Content("text/html", SSR.render("confirmationEmail", { host: host, name: name, brand: brand, subscriberId: subscriberId }));
                 mail = new helper.Mail(from_email, subject, to_email, content);
-                mail.from_email.name = list.userName;
+                mail.from_email.name = brand.userName;
 
                 // Send
                 var requestBody = mail.toJSON();
@@ -537,231 +434,6 @@ Meteor.methods({
 
         // Delete
         Subscribers.remove(id);
-
-        // Send notifications
-        if (brand && subscriber && Integrations.findOne({ type: 'puremetrics' })) {
-
-            // Get integration
-            var integration = Integrations.findOne({ type: 'puremetrics' });
-
-            // Parameters
-            parameters = {
-                type: 'unsubscribed',
-                message: 'Unsubscription to the ' + list.name + ' email list'
-            };
-
-            // Add origin
-            if (subscriber.origin) {
-                parameters.origin = subscriber.origin;
-            }
-
-            // Post
-            HTTP.post('https://' + integration.url + '/api/notifications?key=' + integration.key, { params: parameters });
-
-        }
-
-    },
-    importSubscriber: function(data) {
-
-        // New subscriber
-        subscriber = {
-            email: data.email
-        }
-
-        // Get list & user
-        var list = Lists.findOne({ _id: data.list });
-        var user = Meteor.users.findOne({ _id: list.ownerId });
-
-        // Process data
-        if (data.tag) {
-            subscriber.tags = data.tag;
-        }
-        if (data.origin) {
-            subscriber.origin = data.origin;
-        }
-        if (data.plan) {
-            subscriber.plan = data.plan;
-        }
-        if (data.product) {
-            // for (p = 0; p < data.products.length; p++) {
-            //   products.push({"name": data.products[p]});
-            // }
-            subscriber.products = [data.product];
-        }
-
-        // Set dates
-        subscriber.last_updated = new Date();
-        subscriber.date_added = new Date();
-
-        // Set list/owner
-        subscriber.listId = data.list;
-        subscriber.ownerId = user._id;
-
-        // Check if already in list
-        var isSubscriber = Subscribers.findOne({ email: data.email, listId: data.list, ownerId: user._id });
-
-        if (isSubscriber) {
-
-            console.log('Updating subscriber');
-            console.log(subscriber);
-
-            var existingSubscriber = Subscribers.findOne({ email: data.email, listId: data.list, ownerId: user._id });
-
-            if (subscriber.interests) {
-                Subscribers.update(existingSubscriber._id, { $set: { "interests": subscriber.interests } });
-            }
-            if (subscriber.product) {
-
-                // Get current product
-                var existingProducts = existingSubscriber.products;
-
-                if (existingProducts.indexOf(subscriber.product) == -1) {
-                    existingProducts.push(subscriber.product);
-                }
-
-                // Refresh
-                Subscribers.update(existingSubscriber._id, { $set: { "products": existingProducts } });
-
-            }
-            if (subscriber.origin) {
-                Subscribers.update(existingSubscriber._id, { $set: { "origin": subscriber.origin } });
-            }
-            if (subscriber.plan) {
-                Subscribers.update(existingSubscriber._id, { $set: { "plan": subscriber.plan } });
-            }
-            // Subscribers.update({email: data.email, listId: data.list, ownerId: user._id}, {$set: {"last_updated": new Date() } });
-        } else {
-
-            // Set confirmed
-            subscriber.confirmed = true;
-            console.log('Imported subscriber: ');
-            console.log(subscriber);
-
-            // Insert
-            var subscriberId = Subscribers.insert(subscriber);
-
-        }
-
-    },
-    deleteDeadLeads: function() {
-
-        // Get all users
-        var users = Meteor.users.find({}).fetch();
-
-        // Delay
-        var now = new Date();
-        var delay = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        console.log(delay);
-
-        // Go through all users
-        for (u = 0; u < users.length; u++) {
-
-            // Get all lists from user
-            var lists = Lists.find({ ownerId: users[u]._id }).fetch();
-
-            // Go through all lists
-            for (l = 0; l < lists.length; l++) {
-
-                var query = {
-
-                    listId: lists[l]._id,
-                    sequenceId: null,
-                    inactive: true,
-                    last_updated: { $lt: delay }
-                }
-
-                var subscribers = Subscribers.find(query).fetch();
-                console.log('List ' + lists[l].name + ' has ' + subscribers.length + ' subscribers to delete');
-
-                // Delete them
-                Subscribers.remove(query);
-
-            }
-
-        }
-
-    },
-    wakeUpDyingLeads: function() {
-
-        // Get  all users
-        var users = Meteor.users.find({}).fetch();
-
-        // Delay
-        var now = new Date();
-        var delay = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
-
-        // Go through all users
-        for (u = 0; u < users.length; u++) {
-
-            // Get all lists from user
-            var lists = Lists.find({ ownerId: users[u]._id }).fetch();
-
-            // Go through all lists
-            for (l = 0; l < lists.length; l++) {
-
-                // Query
-                var query = {
-                    $or: [{
-                        date_added: { $lt: delay },
-                        lastClick: { $lt: delay },
-                        lastOpen: { $lt: delay },
-                        listId: lists[l]._id,
-                        sequenceId: null,
-                        inactive: { $ne: true }
-                    }, {
-                        date_added: { $lt: delay },
-                        lastClick: { $exists: false },
-                        lastOpen: { $lt: delay },
-                        listId: lists[l]._id,
-                        sequenceId: null,
-                        inactive: { $ne: true }
-                    }, {
-                        date_added: { $lt: delay },
-                        lastClick: { $exists: false },
-                        lastOpen: { $exists: false },
-                        listId: lists[l]._id,
-                        sequenceId: null,
-                        inactive: { $ne: true }
-                    }]
-                };
-
-                var subscribers = Subscribers.find(query).fetch();
-                console.log('List ' + lists[l].name + ' has ' + subscribers.length + ' inactive subscribers not yet marked');
-
-                // Check if list has a wake up sequence
-                if (Sequences.findOne({ listId: lists[l]._id, type: "wake" })) {
-
-                    // Get sequence
-                    var sequence = Sequences.findOne({ listId: lists[l]._id, type: "wake" })
-
-                    // Get email
-                    var newEmail = Automations.findOne({ sequenceId: sequence._id, order: 1 });
-
-                    for (s in subscribers) {
-
-                        console.log('Waking up subscriber ' + subscribers[s].email);
-
-                        // Set as inactive
-                        Subscribers.update(subscribers[s]._id, { $set: { "inactive": true } });
-                        Subscribers.update(subscribers[s]._id, { $set: { "last_updated": new Date() } });
-
-                        // Assign the wake up sequence
-                        Subscribers.update(subscribers[s]._id, { $set: { "sequenceEmail": newEmail._id } });
-                        Subscribers.update(subscribers[s]._id, { $set: { "sequenceId": sequence._id } });
-
-                        // Send first email
-                        Meteor.call('addAutomationEmail', newEmail, subscribers[s], lists[l], users[u]);
-                    }
-
-                }
-
-                var subscribers = Subscribers.find({ listId: lists[l]._id, inactive: true }).fetch();
-                console.log('List ' + lists[l].name + ' has ' + subscribers.length + ' subscribers marked as inactive');
-
-            }
-
-        }
-
 
     },
     isInactive: function(subscriber) {

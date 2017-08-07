@@ -1,8 +1,8 @@
 Meteor.methods({
 
-    getSequences: function(listId) {
+    getSequences: function(brandId) {
 
-        return Sequences.find({ listId: listId }).fetch();
+        return Sequences.find({ brandId: brandId }).fetch();
 
     },
     moveNextEmail: function(subscriberId) {
@@ -11,7 +11,7 @@ Meteor.methods({
         var subscriber = Subscribers.findOne(subscriberId);
 
         // Find next scheduled email
-        var email = Scheduled.findOne({ to: subscriber.email, listId: subscriber.listId });
+        var email = Scheduled.findOne({ to: subscriber.email, brandId: subscriber.brandId });
 
         // Update
         Scheduled.update(email._id, { $set: { date: new Date() } });
@@ -54,11 +54,11 @@ Meteor.methods({
 
             // Get subscriber
             var subscriber = Subscribers.findOne(subscriberId);
-            var list = Lists.findOne(subscriber.listId);
+            var brand = Brands.findOne(subscriber.brandId);
             var user = Meteor.users.findOne(subscriber.ownerId);
 
             // Add email to scheduler
-            Meteor.call('addAutomationEmail', firstEmail, subscriber, list, user);
+            Meteor.call('addAutomationEmail', firstEmail, subscriber, brand);
 
         } else {
 
@@ -74,10 +74,10 @@ Meteor.methods({
 
         // Get sequence
         var sequence = Sequences.findOne(sequenceId);
-        var list = Lists.findOne(sequence.listId);
+        var brand = Brands.findOne(sequence.brandId);
 
         // Get subscribers
-        recipients = Meteor.call('filterSubscribers', sequence.listId, filters);
+        recipients = Meteor.call('filterSubscribers', sequence.brandId, filters);
 
         // Get email
         var firstEmail = Automations.findOne({ sequenceId: sequence._id, order: 1 });
@@ -104,8 +104,7 @@ Meteor.methods({
             // Create entry for scheduler
             var entry = {
                 name: list.userName,
-                ownerId: Meteor.user()._id,
-                listId: list._id,
+                brandId: brand._id,
                 date: entryDate,
                 from: list.userName + ' <' + list.brandEmail + '>',
                 subject: firstEmail.emailSubject,

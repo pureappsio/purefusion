@@ -1,8 +1,8 @@
 Meteor.startup(function() {
 
-	// console.log(Brands.find({}).fetch()[0]);
-	// console.log(Menus.find({}).fetch());
-	// console.log(Statistics.find({type: 'visit'}).fetch());
+    console.log(Brands.find({}).fetch()[0]);
+    // console.log(Menus.find({}).fetch());
+    // console.log(Automations.find({}).fetch());
 
     // Clean
     // Posts.remove({});
@@ -16,9 +16,9 @@ Meteor.startup(function() {
     // Tags.remove({});
     // Recordings.remove({});
     // Events.remove({});
-    // Statistics.remove({});
+    // Automations.remove({});
 
-	// Flush cashe
+    // Flush cashe
     Meteor.call('flushCache');
 
     // Remove all visitors

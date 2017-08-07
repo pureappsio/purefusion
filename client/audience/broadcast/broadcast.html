@@ -1,0 +1,102 @@
+<template name='broadcast'>
+    <h3>Broadcast Emails</h3> {{> filters}}
+    <div class='row'>
+        <div class='col-md-2'>Pick a date & time:</div>
+        <div class='col-md-1'>
+            <input type='text' id='day' class="form-control">
+        </div>
+        <div class='col-md-1'>
+            <input type='text' id='month' class="form-control">
+        </div>
+        <div class='col-md-1'>
+            <input type='text' id='hour' class="form-control">
+        </div>
+        <div class='col-md-1'>
+            <input type='text' id='minute' class="form-control">
+        </div>
+        <div class='col-md-4'>
+            <input type='text' id='test-to' placeholder="Test email ..." class="form-control">
+        </div>
+        <div class='col-md-2'>
+            <button id='test-email' class='btn btn-primary btn-block'>Send Test Email</button>
+        </div>
+    </div>
+    <div class='row voffset60'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <input type='text' id='email-subject' placeholder="Email subject ..." class="form-control">
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <input type='text' id='other-subject' placeholder="Second email subject ... (for auto-resend)" class="form-control">
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <div id="email-text"></div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-5'>
+            <select class='form-control' id="template-id">
+                {{#each templates}} {{> templateSelect}} {{/each}}
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <button id='load-template' class='btn btn-primary btn-block'>Load Template</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <h3>Tagging & Segmentation</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <select class='form-control' id='tagging'>
+                <option value="notagging">No subscribers tagging</option>
+                <option value="tagging">Tag links with subscriber ID</option>
+            </select>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-4'>
+            <label>Target Interest</label>
+            <select class='form-control' id='segmentation-interest'>
+                <option value="none">None</option>
+                {{#each interests}}{{> interestOptionSelect}}{{/each}}
+            </select>
+        </div>
+        <div class='col-md-4'>
+            <label>Target Sequence</label>
+            <select class='form-control' id='segmentation-sequence'>
+                {{#each sequences}}{{> interestOptionSelect}}{{/each}}
+            </select>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            {{purelink}}
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            {{#if noUserData}}
+            <button id='send-email' class='btn btn-primary btn-block btn-lg disabled'>Send to subscribers</button>
+            {{else}}
+            <button id='send-email' class='btn btn-primary btn-block btn-lg'>Send to subscribers</button>
+            <div id='sent' class='indicator'>Sent!</div>
+            {{/if}}
+        </div>
+    </div>
+    <div class='row voffset50'></div>
+</template>

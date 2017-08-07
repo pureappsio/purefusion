@@ -85,6 +85,20 @@ Meteor.publish("userSequences", function() {
     return Sequences.find({});
 });
 
+Meteor.publish("userAutomations", function() {
+    return Automations.find({});
+});
+
+Meteor.publish("userBroadcasts", function() {
+    return Broadcasts.find({});
+});
+
+
+Meteor.publish("userScheduled", function() {
+    return Scheduled.find({});
+});
+
+
 Meteor.publish("userSubscribers", function() {
     return Subscribers.find({}, { sort: { date: -1 }, limit: 50 });
 });

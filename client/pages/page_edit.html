@@ -1,0 +1,11 @@
+<template name='pageEdit'>
+    <h3>Editing Page {{title}}</h3>
+ 
+    {{> quickForm collection="Pages" doc=this id="updatePageForm" type="update" autosave=true}}
+
+    <div class='row'>
+        <div class="col-md-4">
+            <a class='btn btn-secondary btn-block' href='/admin/pages'>Come Back</a>
+        </div>
+    </div>
+</template>

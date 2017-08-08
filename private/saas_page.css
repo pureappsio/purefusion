@@ -1,0 +1,149 @@
+.btn.secondary-outline {
+    font-size: 22px !important;
+    background: none;
+}
+
+.btn-secondary.secondary-outline {
+    border: 2px solid white;
+    color: white;
+}
+
+.btn-secondary.secondary-outline:hover {
+    border: 2px solid #ffbb33;
+    background-color: #ffbb33;
+}
+
+.modal-video {
+    width: 100%;
+}
+
+.saas-main {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.saas-top-row {
+    background-color: black;
+    min-height: 400px;
+    padding-top: 75px;
+    padding-bottom: 90px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.saas-row-title {
+    color: white;
+    font-size: 30px;
+    text-align: center;
+}
+
+.saas-row-text {
+    color: white;
+    font-size: 20px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.saas-button-container {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.saas-row {
+    padding: 25px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-top: 1px solid #EEEEEE;
+}
+
+.saas-element-image {
+    box-shadow: 0 0 16px 0 rgba(86, 94, 102, .15);
+}
+
+.saas-message {
+    background-color: #444444;
+    color: white;
+    text-align: center;
+    min-height: 200px;
+}
+
+.saas-message-title {
+    font-size: 26px;
+    text-align: center;
+}
+
+.saas-message-button {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.saas-element-title {
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+.saas-feature-title {
+    font-size: 26px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.saas-feature-content {
+    text-align: center;
+}
+
+.saas-features-title {
+    font-size: 26px;
+    margin-bottom: 35px;
+    text-align: center;
+}
+
+.saas-feature-icon {
+    font-size: 70px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.saas-testimonial-title {
+    margin-top: 25px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.saas-testimonial-image {
+    margin-bottom: 30px;
+}
+
+.saas-testimonial-company {
+    margin-top: 5px;
+    font-size: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    color: darkgray;
+}
+
+.saas-image-round {
+    height: auto;
+    width: 100%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
+
+}
+
+.saas-testimonial-container {
+
+    margin-top: 25px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+    text-align: center;
+
+}
+

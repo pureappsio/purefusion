@@ -1,10 +1,10 @@
 <template name='pageListing'>
     <div class='row'>
-        <div class="col-md-6"><a href='/pages/{{_id}}'>{{title}}</a></div>
+        <div class="col-md-6"><a href='/admin/pages/{{_id}}'>{{title}}</a></div>
         <div class="col-md-3">{{url}}</div>
-        <div class="col-md-2">{{type}}</div>
+        <div class="col-md-2">{{printType}}</div>
         <div class="col-md-1">
-            <button class='btn btn-danger delete-page' data-toggle="modal" data-target="#deleteConfirm-{{_id}}">Delete</button>
+            <button class='btn btn-danger delete-page' data-toggle="modal" data-target="#deleteConfirm-{{_id}}"><i class="fa fa-trash delete" aria-hidden="true"></i></button>
         </div>
     </div>
     <div id="deleteConfirm-{{_id}}" class="modal fade" role="dialog">

@@ -1,0 +1,345 @@
+<div class='row sales-main-bg'>
+    <div class='col-md-12'>
+        <!-- Main logo -->
+        <div class='row sales-logo-row'>
+            <div class='col-md-1'></div>
+            <div class='col-md-3'>
+                <img class='img-fluid' src='{{brandPicture}}'>
+            </div>
+        </div>
+        <!-- Top heading row -->
+        {{#if useVideoTop}}
+        <div class='row sales-top-row-video' style='{{headerImage}}'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8'>
+                <div class='sales-top-row-title'>{{header.title}}</div>
+                <div class='sales-top-video'>
+                    {{#if videoAutoplay}}
+                    <video class='video-js vjs-big-play-centered vjs-16-9' width="100%" preload="auto" controls autoplay="autoplay" poster="{{videoPoster}}" data-setup="{}">
+                        <source src="{{videoLink}}" type="video/mp4">
+                    </video>
+                    {{else}}
+                    <video class='video-js vjs-big-play-centered vjs-16-9' width="100%" poster="{{videoPoster}}" preload="auto" controls data-setup="{}">
+                        <source src="{{videoLink}}" type="video/mp4">
+                    </video>
+                    {{/if}}
+                </div>
+                <a href='#payment-row'>
+                    <div class='checkout-top' id='checkout'>{{paymentButtonText}}</div>
+                </a>
+            </div>
+        </div>
+        {{else}}
+        <div class='row sales-top-row' style='{{headerImage}}'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8'>
+                <div class='sales-top-row-title'>{{header.title}}</div>
+                <div class='sales-top-row-icon'>
+                    <a href='#what'><span class="sales-top-row-glyph glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span></a>
+                </div>
+            </div>
+        </div> {{/if}}
+        <!-- What -->
+        <div class='row sales-what-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row' id='what'>
+                <div class='sales-section-title'>{{what.title}}</div>
+                {{#if useVideoWhat}}
+                <div class='sales-what-video'>
+                    {{#if videoAutoplay}}
+                    <video class='video-js vjs-big-play-centered vjs-16-9' width="100%" poster="{{videoPoster}}" preload="auto" controls autoplay="autoplay" data-setup="{}">
+                        <source src="{{videoLink}}" type="video/mp4">
+                    </video>
+                    {{else}}
+                    <video class='video-js vjs-big-play-centered vjs-16-9' width="100%" poster="{{videoPoster}}" preload="auto" controls data-setup="{}">
+                        <source src="{{videoLink}}" type="video/mp4">
+                    </video>
+                    {{/if}}
+                </div>
+                {{/if}}
+                <div class='sales-section-content'>
+                    {{{what.text}}}
+                </div>
+            </div>
+        </div>
+        <!-- Included -->
+        {{#if includedElements}}
+        <div class='row sales-included-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{included.title}}</div>
+                <div class='sales-section-content'>
+                    {{{included.text}}} {{#each included.elements}}
+                    <div class='included-element'>
+                        <i class="glyphicon-included fa fa-check" aria-hidden="true"></i> {{content}}</div> {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Benefits -->
+        {{#if benefitElements}}
+        <div class='row sales-benefits-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{benefits.title}}</div>
+                <div class='sales-section-content'>
+                    {{{benefits.text}}}
+                    <ul>
+                        {{#each benefits.elements}}
+                        <li class='benefits-list'>{{content}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Modules -->
+        {{#if course}}
+        <div class='row sales-modules-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='course-section-title'>{{modules.title}}</div>
+                {{#each module in courseModules}}
+                <div class='row'>
+                    <div class='col-md-12'>
+                        <div class='course-module-title'>Module #{{module.order}}: {{module.name}}</div>
+                        {{#each lesson in module.lessons}}
+                        <div class='lesson-container'>
+                            <div class='lesson-title'>
+                                <i class="lesson-play fa fa-play-circle" aria-hidden="true"></i> {{#if langEN}}Lesson{{else}}Leçon{{/if}} {{lesson.order}}: {{lesson.name}}</div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div> {{/each}}
+            </div>
+        </div>
+        {{else}} {{#if moduleElements}}
+        <div class='row sales-modules-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{modules.title}}</div>
+                <div class='sales-section-content'>
+                    {{#each module in modules.elements}}
+                    <div class='row module-container'>
+                        <div class='col-md-4'><img class='img-fluid' src='{{moduleImage module}}'></div>
+                        <div class='col-md-8'>
+                            <div class='module-title'>Module #{{module.number}}: {{module.title}}</div>
+                            <div class='module-content'>{{{module.content}}}</div>
+                        </div>
+                    </div> {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/if}} {{/if}}
+        <!-- Bonuses -->
+        {{#if bonusElements}}
+        <div class='row sales-bonuses-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{bonuses.title}}</div>
+                <div class='sales-section-content'>
+                    {{#each bonuses.elements}}
+                    <div class='row bonus-container'>
+                        <div class='col-md-12'>
+                            <div class='module-title'>Bonus #{{number}} - {{title}}</div>
+                            <div class='module-content'>{{{content}}}</div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Who -->
+        {{#if whoElements}}
+        <div class='row sales-who-row'>
+            <div class='col-md-2'></div>
+            <div style='{{greenTheme}}' class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{who.title}}</div>
+                <div class='sales-section-content'>
+                    <div class='row who-container'>
+                        {{#each who.elements}}
+                        <div class='col-md-4 who-description'>
+                            <div class='who-interior'>
+                                {{{content}}}
+                            </div>
+                        </div> {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Message -->
+        <div class='row sales-message-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='row'>
+                    <div class='col-md-1'></div>
+                    <div class='col-md-10'>
+                        <div class='sales-section-message'>{{{message.text}}}</div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-md-{{#if langEN}}4{{else}}3{{/if}}'></div>
+                    <div class='col-md-{{#if langEN}}4{{else}}6{{/if}}'>
+                        <a href='{{checkoutLink}}'>
+                            <div class='action checkout-middle' id='checkout'>{{paymentButtonText}}</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{#if faqElements}}
+        <!-- FAQ -->
+        <div class='row sales-faq-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{faq.title}}</div>
+                <div class='sales-section-content'>
+                    {{#each faq.elements}}
+                    <div class='faq-title'><i class="fa-faq fa fa-plus-circle" aria-hidden="true"></i> {{{title}}}</div>
+                    <div class='faq-content'>{{{content}}}</div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Testimonials -->
+        {{#if testimonialElements}}
+        <div class='row sales-testimonials-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{testimonials.title}}</div>
+                <div class='sales-section-content'>
+                    {{#each testimonials.elements}}
+                    <div class='testimonial-container'>
+                        <div class='testimonial-content'>{{{content}}}</div>
+                        <div class='testimonial-title'>{{{title}}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        <!-- Get Started -->
+        <div class='row sales-started-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{started.title}}</div>
+                <div class='sales-section-content'>
+                    <div>{{{started.text}}}</div>
+                    <div class='sales-price-display'>
+                        <div id='middle-base-sales-price' class='base-sale-price'></div>
+                        <div id='middle-sales-price'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Guarantee -->
+        <div class='row sales-guarantee-row'>
+            <div class='col-md-2'></div>
+            <div class='col-md-8 sales-row'>
+                <div class='sales-section-title'>{{#if langEN}}How about a guarantee?{{else}}Satisfait ou remboursé{{/if}}</div>
+                <div class='sales-section-content'>
+                    <div class='row'>
+                        <div class='col-md-3'>
+                            {{#if langEN}}
+                            <img class='img-fluid' src='{{meteorURL}}30_guarantee.png'> {{else}}
+                            <img class='img-fluid' src='{{meteorURL}}30_guarantee_fr.png'> {{/if}}
+                        </div>
+                        <div class='col-md-9 mobile-guarantee'>
+                            {{#if langEN}} As for all my products, this product comes with a 30-day 100% money back guarantee, with no questions asked. I truly believe in the quality of the products I am creating, and we want to make this purchase risk-free for you. So if at any point after purchasing the product you are not satisfied, just let me know under 30 days and you will get a full refund. {{else}} Comme pour tout mes produits, cette formation comporte une garantie satisfait ou remboursé sous 30 jours, sans avoir besoin de donner de raison. Je crois vraiment à la qualité de cette formation, et je veux que cet achat soit totalement sans risque pour vous. Si vous achetez cette formation et que vous n’êtes pas satisfait, envoyez moi un message sous 30 jours pour un remboursement intégral. {{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Payment -->
+        <div class='sales-payment-row sales-payment row' style='{{salesImage}}' id='payment-row'>
+            <div class='col-md-12'>
+                <div class='sales-section-title'>
+                    {{#if useVariants}} {{#if langEN}} Click on the desired option below to get started {{else}} Choisissez une option ci-dessous pour commencer {{/if}} {{else}} {{#if langEN}} Click on the button below to get started {{else}} Cliquez sur le bouton ci-dessous pour commencer {{/if}} {{/if}}
+                </div>
+                <div class='sales-section-content'>
+                    <div class='row'>
+                        {{#if useVariants}} {{#if twoVariants}} 
+                        <div class='col-md-2'></div>
+                        {{#each variant in variants}}
+                        <div class='col-md-4'>
+                            <div class='sales-container'>
+                                <div class='sales-product-name'>{{variant.name}}</div>
+                                <div class='sales-price'>
+                                    <!-- {{#if isDiscounted}}
+                                    <div class='base-sale-price'>
+                                        {{variantBasePrice variant}}
+                                    </div>
+                                    {{/if}}
+                                    <div class='{{#if isDiscounted}}reduced-price{{/if}}'>{{variantSalesPrice variant}}</div> -->
+                                    <div class='variant-base-price base-sale-price'></div>
+                                    <div class='variant-sales-price'></div>
+                                </div>
+                                {{#each salesElement in variant.includedSalesElements}}
+                                <div class='payment-element-included'>
+                                    <i class="fa fa-check glyphicon-included glyphicon-sales" aria-hidden="true"></i>
+                                    <span class='payment-element-content'>{{salesElement.value}}</span>
+                                </div> {{/each}} {{#each salesElement in variant.excludedSalesElements}}
+                                <div class='payment-element-excluded'>
+                                    <i class="fa fa-times glyphicon-excluded glyphicon-sales" aria-hidden="true"></i>
+                                    <span class='payment-element-content'>{{salesElement.value}}</span>
+                                </div> {{/each}}
+                                <a href='{{variantCheckoutLink variant}}{{#if isAffiliateLink}}{{affiliateLink}}{{/if}}'>
+                                    <div class='action checkout-end' id='checkout'>
+                                        {{paymentButtonText}}
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {{/each}} {{/if}} {{#if threeVariants}} {{#each variant in variants}}
+                        <div class='col-md-4'>
+                            <div class='sales-container'>
+                                <div class='sales-product-name'>{{variant.name}}</div>
+                                <div class='sales-price'>
+                                    <div class='variant-base-price base-sale-price'></div>
+                                    <div class='variant-sales-price'></div>
+                                </div>
+                                {{#each salesElement in variant.includedSalesElements}}
+                                <div class='payment-element-included'>
+                                    <i class="fa fa-check glyphicon-included glyphicon-sales" aria-hidden="true"></i>
+                                    <span class='payment-element-content'>{{salesElement.value}}</span>
+                                </div> {{/each}} {{#each salesElement in variant.excludedSalesElements}}
+                                <div class='payment-element-excluded'>
+                                    <i class="fa fa-times glyphicon-excluded glyphicon-sales" aria-hidden="true"></i>
+                                    <span class='payment-element-content'>{{salesElement.value}}</span>
+                                </div> {{/each}}
+                                <a href='{{variantCheckoutLink variant}}'>
+                                    <div class='action checkout-end' id='checkout'>
+                                        {{paymentButtonText}}
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {{/each}} {{/if}} {{else}}
+                        <div class='col-md-4'></div>
+                        <div class='col-md-4'>
+                            <div class='sales-container sales-container-no-variant'>
+                                <div class='sales-product-name'>{{productName}}</div>
+                                <div class='sales-price'>
+                                    <div id='bottom-base-sales-price' class='base-sale-price'></div>
+                                    <div id='bottom-sales-price'></div>
+                                </div>
+                                {{#each payment.elements}}
+                                <div class='payment-element'>{{content}}</div> {{/each}}
+                                <a href='{{checkoutLink}}'>
+                                    <div class='action checkout-end' id='checkout'>
+                                        {{paymentButtonText}}
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

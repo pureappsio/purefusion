@@ -1,0 +1,456 @@
+.lesson-title {
+    vertical-align: middle;
+    font-size: 18px;
+}
+
+.fa-faq {
+    margin-right: 5px;
+    color: gray;
+}
+
+.mobile-guarantee {
+    margin-top: 25px;
+}
+
+.lesson-play {
+    font-size: 30px !important;
+    color: #BBBBBB;
+    vertical-align: middle;
+    margin-right: 10px;
+    padding-bottom: 3px;
+}
+
+.course-module-title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.lesson-container {
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+    margin-top: 10px;
+}
+
+.payment-element {
+    color: gray;
+    margin: 5px;
+}
+
+.sales-what-row {
+    background-color: white !important;
+}
+
+.sales-included-row {
+    background-color: #F7F7F7;
+}
+
+.sales-benefits-row {
+    background-color: white;
+}
+
+.sales-modules-row {
+    background-color: #F7F7F7;
+}
+
+.sales-bonuses-row {
+    background-color: white;
+}
+
+.sales-message-row {
+    color: white;
+    background-color: #232824;
+}
+
+.sales-who-row {
+    background-color: #F7F7F7;
+}
+
+.sales-faq-row {
+    background-color: white;
+}
+
+.sales-started-row {
+    background-color: white;
+}
+
+.sales-guarantee-row {
+    background-color: white;
+}
+
+.sales-testimonials-row {
+    background-color: #F7F7F7;
+}
+
+.sales-payment-row {
+    background-color: #EEEEEE;
+    color: white;
+}
+
+.sales-container-no-variant {
+    text-align: center;
+}
+
+.payment-element-included {
+    color: black;
+    margin: 5px;
+    margin-left: 15px;
+}
+
+.payment-element-excluded {
+    color: DarkGray;
+    margin: 5px;
+    margin-left: 15px;
+}
+
+
+/*.payment-element-content {
+    margin-bottom: 10px;
+}*/
+
+.glyphicon-sales {
+    margin-right: 5px;
+}
+
+.glyphicon-included {
+    color: green;
+}
+
+.glyphicon-excluded {
+    color: red;
+}
+
+.base-sale-price {
+    text-decoration: line-through;
+}
+
+.reduced-price {
+    color: red;
+}
+
+@media screen and (min-width: 1060px) {
+    .timer-text {
+        vertical-align: middle;
+        display: inline-block;
+        margin-top: -35px;
+        margin-right: 30px;
+    }
+}
+
+#clockdiv {
+    font-family: sans-serif;
+    color: #fff;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 30px;
+}
+
+#clockdiv > div {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+#clockdiv div > span {
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.smalltext {
+    padding-top: 0px;
+    font-size: 16px;
+}
+
+.timer-row {
+    font-size: 26px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background-color: #f37921;
+    color: white;
+    text-align: center;
+}
+
+.sales-payment {
+    background-color: #F2F2F2;
+    color: white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.faq-title {
+    margin-top: 25px;
+    font-size: 20px;
+}
+
+.faq-content {
+    color: gray;
+}
+
+.testimonial-content {
+    color: gray;
+}
+
+.testimonial-title {
+    margin-top: 25px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.sales-price {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: 32px;
+    text-align: center;
+}
+
+.sales-price-display {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    font-size: 32px;
+    text-align: center;
+}
+
+.sales-container {
+    color: black;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    border: 1px solid black;
+}
+
+.sales-section-message {
+    font-size: 26px;
+    text-align: center;
+    margin: 40px;
+}
+
+.who-description {
+    text-align: justify;
+}
+
+.who-interior {
+    padding: 20px;
+
+    background-color: white !important;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+}
+
+.sales-logo-row {
+    background-color: white;
+}
+
+.benefits-list {
+    margin-top: 20px;
+}
+
+.testimonial-container {
+
+    margin-top: 25px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+
+}
+
+.bonus-container {
+    margin-top: 50px;
+    
+}
+
+.module-container {
+    margin-top: 50px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+}
+
+.module-title {
+    margin-top: -6px;
+    font-size: 22px;
+}
+
+.module-content {
+    margin-top: 10px;
+}
+
+.sales-product-name {
+    font-size: 22px;
+    background-color: white;
+    color: black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+    background-color: white;
+    text-align: center;
+}
+
+#checkout {
+    font-size: 26px;
+    font-weight: bold;
+    background-color: #f37921;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.7s 0s;
+    text-align: center;
+}
+
+.checkout-top {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 35px;
+}
+
+.checkout-middle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.checkout-end {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    margin-top: 25px;
+}
+
+#checkout:hover {
+    background-color: #ffd502;
+    transition: background-color 0.7s 0s;
+}
+
+.included-element {
+    margin-top: 20px;
+    margin-left: 20px;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+}
+
+.sales-top-row-video {
+    background-color: black;
+    min-height: 400px;
+    padding-top: 25px;
+    padding-bottom: 40px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.sales-top-video {
+    margin-top: 25px;
+}
+
+.sales-what-video {
+    margin-top: 25px;
+    margin-bottom: 35px;
+    text-align: center !important;
+}
+
+video {
+    display: block;
+    margin: 0 auto;
+}
+
+.sales-top-row {
+    background-color: black;
+    min-height: 400px;
+    padding-top: 125px;
+    padding-bottom: 100px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.sales-top-row-title {
+    color: white;
+    font-size: 34px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.sales-top-row-icon {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.sales-top-row-glyph {
+    font-size: 50px;
+    color: white;
+    cursor: pointer;
+}
+
+.sales-top-row-glyph:hover {
+    color: orange;
+}
+
+.sales-main-bg {
+    background-color: #dedede;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.sales-row {
+    padding: 25px;
+}
+
+.sales-what-middle {
+    background-color: white;
+}
+
+.sales-faq {
+    background-color: white;
+}
+
+.sales-testimonial {
+    background-color: white;
+}
+
+.sales-bonuses {
+    background-color: #444444;
+    color: white;
+}
+
+.sales-message {
+    background-color: #444444;
+    color: white;
+}
+
+.sales-who {
+    background-color: #f37921;
+    color: white;
+}
+
+.container-fluid {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.sales-section-title {
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 35px;
+    margin-top: 25px;
+}
+
+.course-section-title {
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.sales-section-content {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.guarantee-picture {
+    text-align: center;
+}

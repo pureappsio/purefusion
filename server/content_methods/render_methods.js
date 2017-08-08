@@ -60,12 +60,17 @@ Meteor.methods({
         // Flush
         console.log('Flushing cache');
         Caches.update({}, { $set: { cached: false } }, { multi: true });
-        Pages.update({}, { $set: { cached: false } }, { multi: true });
 
         // Posts
         var posts = Posts.find({}).fetch();
         for (i in posts) {
-            Posts.update(posts[i]._id, { $set: { cached: false } }, { selector: { category: posts[i].category }});
+            Posts.update(posts[i]._id, { $set: { cached: false } }, { selector: { category: posts[i].category } });
+        }
+
+        // Pages
+        var pages = Pages.find({}).fetch();
+        for (i in pages) {
+            Pages.update(pages[i]._id, { $set: { cached: false } }, { selector: { type: pages[i].type } });
         }
 
     },
@@ -495,7 +500,7 @@ Meteor.methods({
         if (parameters.url) {
 
             var page = Pages.findOne({ url: parameters.url });
-            
+
             Meteor.call('insertSession', {
                 type: 'visit',
                 postId: page._id,
@@ -759,93 +764,912 @@ Meteor.methods({
 
             } else {
 
-                // Render header & navbar
-                var headerParameters = {
-                    brandId: parameters.brandId,
-                    title: post.title,
-                    url: Meteor.absoluteUrl() + postUrl
-                };
-                if (Meteor.settings.useChat == true && post.type) {
-                    headerParameters.useChat = true;
-                }
-                if (post.excerpt) {
-                    headerParameters.description = post.excerpt;
-                }
-                if (post.creationDate) {
-                    headerParameters.creationDate = post.creationDate;
-                }
-                if (post.featuredPicture) {
-                    headerParameters.featuredPicture = post.featuredPicture;
-                }
-                if (Meteor.call('hasElement', post._id, 'audiorecord')) {
-                    headerParameters.recorder = true;
-                }
+                if (postType == 'post' || (postType == 'page' && post.type == 'generic')) {
 
-                headerHtml = Meteor.call('returnHeader', headerParameters);
+                    // Render header & navbar
+                    var headerParameters = {
+                        brandId: parameters.brandId,
+                        title: post.title,
+                        url: Meteor.absoluteUrl() + postUrl
+                    };
+                    if (Meteor.settings.useChat == true && post.type) {
+                        headerParameters.useChat = true;
+                    }
+                    if (post.excerpt) {
+                        headerParameters.description = post.excerpt;
+                    }
+                    if (post.creationDate) {
+                        headerParameters.creationDate = post.creationDate;
+                    }
+                    if (post.featuredPicture) {
+                        headerParameters.featuredPicture = post.featuredPicture;
+                    }
+                    if (Meteor.call('hasElement', post._id, 'audiorecord')) {
+                        headerParameters.recorder = true;
+                    }
 
-                navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
-                footerHtml = Meteor.call('returnFooter', parameters.brandId);
+                    headerHtml = Meteor.call('returnHeader', headerParameters);
 
-                // Check if cached
-                // var countryCode = Meteor.call('getCountryCodeLocation', location);
-                // console.log(post.cached);
+                    navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
+                    footerHtml = Meteor.call('returnFooter', parameters.brandId);
 
-                if (post.cached == true && !(query.origin)) {
+                    // Check if cached
+                    // var countryCode = Meteor.call('getCountryCodeLocation', location);
+                    // console.log(post.cached);
 
-                    // Get render
-                    if (post.type) {
-                        // console.log('Page cached, returning cached version');
+                    if (post.cached == true && !(query.origin)) {
 
-                        // Return cached HTML
-                        var postHtml = post.html;
+                        // Get render
+                        if (post.type) {
+                            // console.log('Page cached, returning cached version');
+
+                            // Return cached HTML
+                            var postHtml = post.html;
+
+                        } else {
+
+                            console.log('Post cached, returning cached version');
+
+                            // Return cached HTML
+                            var postHtml = Meteor.call('getLocalisedHtml', post, location);
+
+                            // Add social sharing
+                            if (post.type) {
+                                console.log('No social share for pages');
+                            } else {
+
+                                var browser = Meteor.call('detectBrowser', headers);
+
+                                if (browser == 'desktop') {
+                                    var socialShare = Meteor.call('renderSocialShare', {
+                                        postUrl: websiteUrl + postUrl,
+                                        post: post,
+                                        brandId: parameters.brandId
+                                    });
+
+                                    postHtml = socialShare + postHtml;
+                                }
+
+                            }
+
+                            // Add email box?
+                            if (post.signupBox) {
+
+                                if (post.signupBox != 'none') {
+                                    // console.log('Adding signup');
+                                    var boxHtml = Meteor.call('renderEmailBox', post, query);
+                                    postHtml += boxHtml;
+                                }
+                            }
+
+                            // Add disqus?
+                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
+                                if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
+                                    parameters = {
+                                        url: post.url,
+                                        websiteUrl: websiteUrl,
+                                        brandId: parameters.brandId
+                                    };
+                                    var commentHtml = Meteor.call('renderDisqus', parameters);
+                                    postHtml += commentHtml;
+                                }
+                            }
+
+                        }
+
+                        // Add exit intent?
+                        if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
+
+                            // Check value
+                            var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
+
+                            if (exitStatus == 'on') {
+                                var exitHtml = Meteor.call('renderExitModal', {
+                                    query: query
+                                });
+                                postHtml += exitHtml;
+                            }
+
+                        }
+
+                        return headerHtml + "<body>" + navbarHtml + "<div class='container-fluid main-container'>" + postHtml + "</div>" + footerHtml + "</body>";
 
                     } else {
 
-                        console.log('Post cached, returning cached version');
-
-                        // Return cached HTML
-                        var postHtml = Meteor.call('getLocalisedHtml', post, location);
-
-                        // Add social sharing
+                        // Compile
                         if (post.type) {
-                            console.log('No social share for pages');
+
+                            // console.log('Page not cached, rendering');
+
+                            // Compile
+                            SSR.compileTemplate('postTemplate',
+                                Assets.getText('pages/page_template.html'));
+
+                            // Build products for store
+                            if (Meteor.call('hasElement', post._id, 'store')) {
+                                var products = [];
+                                if (Products.find({}).fetch().length > 0) {
+
+                                    var allProducts = Products.find({}).fetch();
+
+                                    for (i = 0; i < allProducts.length; i++) {
+
+                                        // Get product from store
+                                        var storeProduct = Meteor.call('getProductData', allProducts[i].productId);
+
+                                        if (storeProduct) {
+
+                                            // Get sales page
+                                            var salesPageUrl = Pages.findOne(allProducts[i].pageId).url;
+                                            storeProduct.salesPageUrl = salesPageUrl;
+
+                                            // Add
+                                            products.push(storeProduct);
+                                        }
+
+                                    }
+
+                                }
+                            }
+
+                            // Build portfolio
+                            if (Meteor.call('hasElement', post._id, 'portfolio')) {
+
+                                if (Integrations.findOne({ type: 'pureportfolio' })) {
+
+                                    // Get integration
+                                    // console.log('Grabing portfolio');
+                                    var integration = Integrations.findOne({ type: 'pureportfolio' });
+
+                                    // Get portfolio
+                                    var portfolio = HTTP.get('https://' + integration.url + '/api/portfolio?option=array').data;
+
+                                    // Sort
+                                    portfolio.sort(function(a, b) {
+                                        if (a.value > b.value)
+                                            return -1;
+                                        if (a.value < b.value)
+                                            return 1;
+                                        // a doit être égale à b
+                                        return 0;
+                                    });
+
+                                    // Format
+                                    var translation = {
+                                        'p2p': 'Peer-to-Peer Lending',
+                                        'stock': 'Dividend Paying Stocks',
+                                        'realestate': 'Real Estate Crowdfunding',
+                                        'website': 'Profitable Websites',
+                                        'cash': 'Cash',
+                                        'equity': 'Private Equity'
+                                    };
+                                    for (s in portfolio) {
+                                        portfolio[s].type = translation[portfolio[s].type];
+                                        portfolio[s].value = portfolio[s].value.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                                        portfolio[s].yield = portfolio[s].yield.toFixed(2);
+                                        portfolio[s].income = (portfolio[s].income / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                                    }
+
+                                    // Get total
+                                    var total = HTTP.get('https://' + integration.url + '/api/total').data;
+
+                                    console.log(total);
+
+                                    // Format
+                                    total.value = (total.value).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                                    total.yield = (total.yield).toFixed(2);
+                                    total.monthlyIncome = (total.income / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+
+                                    total.passiveValue = (total.passiveValue).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                                    total.passiveYield = (total.passiveYield).toFixed(2);
+                                    total.passiveMonthlyIncome = (total.passiveIncome / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");;
+
+                                }
+
+                            } else {
+                                portfolio = {};
+                                total = {};
+                            }
+
+                            if (Meteor.call('hasElement', post._id, 'portfoliodetail')) {
+
+                                if (Integrations.findOne({ type: 'pureportfolio' })) {
+
+                                    var integration = Integrations.findOne({ type: 'pureportfolio' });
+
+                                    // Build individual positions
+                                    var p2p = HTTP.get('https://' + integration.url + '/api/positions?type=p2p&platforms=true').data;
+                                    var stock = HTTP.get('https://' + integration.url + '/api/positions?type=stock').data;
+                                    var realestate = HTTP.get('https://' + integration.url + '/api/positions?type=realestate&platforms=true').data;
+
+                                    var positions = {
+                                        p2p: p2p,
+                                        stock: stock,
+                                        realestate: realestate
+                                    }
+
+                                }
+
+
+                            } else {
+                                var positions = {};
+                            }
+
+                            // Pricing
+                            if (Meteor.call('hasElement', post._id, 'pricing')) {
+
+                                // Get all elements
+                                var pricingElements = Pricing.find({ type: 'element' }, { sort: { order: 1 } }).fetch();
+                                var pricingStructures = Pricing.find({ type: 'structure' }, { sort: { order: 1 } }).fetch();
+
+                                // Combine
+                                pricingData = [];
+                                for (i in pricingStructures) {
+                                    var pricingLine = pricingStructures[i];
+
+                                    var data = [];
+                                    for (j in pricingElements) {
+                                        data.push(pricingElements[j].features[pricingLine._id]);
+                                    }
+                                    pricingLine.data = data;
+                                    pricingData.push(pricingLine);
+                                }
+
+
+                            } else {
+                                var pricingElements = [];
+                                var pricingStructures = [];
+                                var pricingData = [];
+                            }
+
+                            // Exit intent
+                            // if (Meteor.call('hasElement', post._id, 'signupbox')) {
+
+                            //     var element = Meteor.call('getElement', post._id, 'signupbox');
+                            //     var exitIntentHtml = Meteor.call('renderExitModal', element.boxId);
+
+                            // }
+
+                            // if (Meteor.call('hasElement', post._id, 'emailsignup')) {
+
+                            //     var element = Meteor.call('getElement', post._id, 'emailsignup');
+                            //     var exitIntentHtml = Meteor.call('renderExitModal', element.boxId);
+
+                            // }
+
+                            // Latest posts
+                            if (Meteor.call('hasElement', post._id, 'latestposts')) {
+                                var posts = Posts.find({ userId: parameters.userId }, { sort: { creationDate: -1 }, limit: 3 });
+                            }
+
+                            // Best posts
+                            if (Meteor.call('hasElement', post._id, 'bestposts')) {
+                                if (Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId })) {
+
+                                    // Get best posts
+                                    var bestPostsStats = Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId }).value;
+                                    if (bestPostsStats.length > 6) {
+                                        bestPostsStats = bestPostsStats.slice(0, 6);
+                                    } else {
+                                        bestPostsStats = bestPostsStats.slice(0, 3);
+                                    }
+
+                                    var bestPosts = [];
+                                    for (i in bestPostsStats) {
+                                        bestPosts.push(Posts.findOne(bestPostsStats[i]._id));
+                                    }
+
+                                } else {
+                                    var bestPosts = [];
+                                }
+                            }
+
+                            // Helpers
+                            Template.postTemplate.helpers({
+
+                                integrationUrl: function() {
+
+                                    return Meteor.absoluteUrl();
+
+                                },
+                                langEN: function() {
+
+                                    if (brand.language) {
+                                        if (brand.language == 'fr') {
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    } else {
+                                        return true;
+                                    }
+
+                                },
+                                elements: function() {
+                                    return Elements.find({ pageId: post._id }, { sort: { order: 1 } });
+                                },
+                                isElementType: function(element, elementType) {
+
+                                    if (element.type == elementType) {
+                                        return true;
+                                    }
+                                },
+                                elementImage: function(element) {
+                                    var image = Images.findOne(element.image);
+                                    if (image) {
+                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                    } else {
+                                        return "";
+                                    }
+
+                                },
+                                isImage: function(element) {
+
+                                    var image = Images.findOne(element.image);
+                                    if (image) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+
+                                },
+                                userName: function() {
+                                    return brand.userName;
+                                },
+                                signupBoxContent: function(element) {
+                                    if (element.type == 'emailsignup' || element.type == 'signupbox') {
+                                        if (Boxes.findOne(element.boxId)) {
+                                            return Boxes.findOne(element.boxId).boxContent;
+                                        }
+
+                                    }
+                                },
+                                signupPopupContent: function(element) {
+                                    if (element.type == 'emailsignup' || element.type == 'signupbox') {
+                                        if (Boxes.findOne(element.boxId)) {
+                                            return Boxes.findOne(element.boxId).popupContent;
+                                        }
+
+                                    }
+                                },
+                                tags: function(element) {
+                                    if (Boxes.findOne(element.boxId)) {
+                                        return Boxes.findOne(element.boxId).tags;
+                                    }
+
+                                },
+                                listId: function(element) {
+                                    if (element.type == 'emailsignup' || element.type == 'signupbox') {
+                                        return Integrations.findOne({ type: 'puremail' }).list;
+                                    }
+                                },
+                                sequenceId: function(element) {
+                                    if (element.type == 'emailsignup' || element.type == 'signupbox') {
+                                        if (Boxes.findOne(element.boxId)) {
+                                            return Boxes.findOne(element.boxId).sequence;
+                                        }
+
+                                    }
+                                },
+                                products: function() {
+                                    return products;
+                                },
+                                pricingElements: function() {
+                                    return pricingElements;
+                                },
+                                pricingStructures: function() {
+                                    return pricingStructures;
+                                },
+                                pricingData: function() {
+                                    return pricingData;
+                                },
+                                isPictureTwo: function(element) {
+                                    if (element.pictureTwo != "") {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                },
+                                portfolio: function() {
+                                    return portfolio;
+                                },
+                                positions: function(type) {
+                                    return positions[type];
+                                },
+                                isStock: function(type) {
+                                    if (type == 'stock') {
+                                        return true;
+                                    }
+                                },
+                                isPlatform(type) {
+                                    if (type == 'p2p' || type == 'realestate') {
+                                        return true;
+                                    }
+                                },
+                                isP2p: function(type) {
+                                    if (type == 'p2p') {
+                                        return true;
+                                    }
+                                },
+                                isRe: function(type) {
+                                    if (type == 'realestate') {
+                                        return true;
+                                    }
+                                },
+                                total: function() {
+                                    return total;
+                                },
+                                formatMoney: function(number) {
+                                    return parseFloat(number).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                                },
+                                posts: function() {
+                                    return posts;
+                                },
+                                bestPosts: function() {
+                                    return bestPosts;
+                                },
+                                postImage: function(featuredPicture) {
+                                    var image = Images.findOne(featuredPicture);
+                                    if (image) {
+                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                    }
+                                },
+                                formatDate: function(date) {
+                                    return moment(date).format('MMMM Do YYYY');
+                                }
+
+                            });
+
+
                         } else {
 
-                            var browser = Meteor.call('detectBrowser', headers);
+                            if (post.category == 'recipe') {
 
-                            if (browser == 'desktop') {
-                                var socialShare = Meteor.call('renderSocialShare', {
-                                    postUrl: websiteUrl + postUrl,
-                                    post: post,
-                                    brandId: parameters.brandId
+                                // Compile
+                                SSR.compileTemplate('postTemplate', Assets.getText('posts/recipe_template.html'));
+
+                                // Helpers
+                                Template.postTemplate.helpers({
+
+                                    langEN: function() {
+
+                                        if (brand.language) {
+                                            if (brand.language == 'fr') {
+                                                return false;
+                                            } else {
+                                                return true;
+                                            }
+                                        } else {
+                                            return true;
+                                        }
+
+                                    },
+
+                                    postImage: function(featuredPicture) {
+
+                                        var image = Images.findOne(featuredPicture);
+                                        if (image) {
+                                            return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                        }
+                                    },
+                                    formatDate: function(date) {
+                                        return moment(date).format('MMMM Do YYYY');
+                                    },
+                                    userName: function() {
+                                        return brand.userName;
+                                    },
+                                    isEmailBox: function() {
+                                        if (this.signupBox) {
+                                            if (this.signupBox != 'none') {
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+                                    steps: function() {
+                                        return Elements.find({ postId: this._id, type: 'step' }, { sort: { order: 1 } });
+                                    },
+                                    ingredients: function() {
+                                        return Elements.find({ postId: this._id, type: 'ingredient' }, { sort: { order: 1 } });
+                                    }
                                 });
 
-                                postHtml = socialShare + postHtml;
-                            }
+                            } else if (post.category == 'affiliate') {
 
+                                // Get theme
+                                if (Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId })) {
+                                    var selectedTheme = Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId }).value;
+                                } else {
+                                    var selectedTheme = 'default';
+                                }
+
+                                // Compile
+                                SSR.compileTemplate('postTemplate', Assets.getText('posts/affiliate_post_template.html'));
+
+                                // Helpers
+                                Template.postTemplate.helpers({
+
+                                    langEN: function() {
+
+                                        if (brand.language) {
+                                            if (brand.language == 'fr') {
+                                                return false;
+                                            } else {
+                                                return true;
+                                            }
+                                        } else {
+                                            return true;
+                                        }
+
+                                    },
+
+                                    postImage: function(featuredPicture) {
+
+                                        var image = Images.findOne(featuredPicture);
+                                        if (image) {
+                                            return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                        }
+                                    },
+                                    formatDate: function(date) {
+                                        return moment(date).format('MMMM Do YYYY');
+                                    },
+                                    userName: function() {
+                                        return brand.userName;
+                                    },
+
+                                    elements: function() {
+                                        return Elements.find({ $or: [{ postId: this._id, type: 'affiliate' }, { postId: this._id, type: { $exists: false } }] }, { sort: { rank: 1 } });
+                                    },
+                                    elementImage: function(element) {
+                                        if (element.picture) {
+                                            var image = Images.findOne(element.picture);
+                                            return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                        }
+                                    },
+                                    isAffiliateTheme: function(theme) {
+                                        if (selectedTheme == theme) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+                                    hasDescription: function(element) {
+                                        if (element.description != "" && element.description != '<p><br></p>') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+                                    hasMiddleContent: function() {
+                                        if (this.middle != "" && this.middle != '<p><br></p>') {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+
+                                    rating: function(element) {
+                                        var answer = "";
+                                        var fullStars = Math.trunc(element.rating);
+                                        var decimalPart = element.rating - Math.trunc(element.rating);
+                                        for (i = 0; i < fullStars; i++) {
+                                            answer += '<i class="fa fa-star" aria-hidden="true"></i>';
+                                        }
+                                        if (decimalPart == 0) {
+                                            var emptyStars = 5 - fullStars;
+                                        } else {
+                                            answer += '<i class="fa fa-star-half-o" aria-hidden="true"></i>';
+                                            var emptyStars = 4 - fullStars;
+                                        }
+                                        for (i = 0; i < emptyStars; i++) {
+                                            answer += '<i class="fa fa-star-o" aria-hidden="true"></i>';
+                                        }
+
+                                        return answer;
+                                    },
+                                    siteUrl: function() {
+                                        return websiteUrl;
+                                    }
+                                });
+
+                            } else if (post.category == 'report') {
+
+                                // Compile
+                                SSR.compileTemplate('postTemplate', Assets.getText('posts/income_report_template.html'));
+
+                                // Get business report
+                                var businessReport = Meteor.call('getBusinessReport', post.month, post.year);
+
+                                // Get investment report
+                                var investmentReport = Meteor.call('getInvestmentReport', post.month, post.year);
+                                console.log(investmentReport);
+
+                                // Helpers
+                                Template.postTemplate.helpers({
+
+                                    total: function() {
+
+                                        var total = parseFloat(businessReport.profits.current) + parseFloat(investmentReport.global.current);
+                                        var variation = parseFloat(businessReport.profits.variation) + parseFloat(investmentReport.global.variation);
+                                        var past = parseFloat(businessReport.profits.current) - parseFloat(businessReport.profits.variation) + parseFloat(investmentReport.global.current) - parseFloat(investmentReport.global.variation);
+                                        var percent = variation / past * 100;
+
+                                        return {
+                                            current: total.toFixed(2),
+                                            variation: variation.toFixed(2),
+                                            variation_percent: percent.toFixed(2)
+                                        }
+
+                                    },
+                                    report: function() {
+
+                                        return businessReport;
+
+                                    },
+                                    sign: function(amount) {
+
+                                        if (amount == 'Infinity') {
+                                            return 0;
+                                        } else {
+                                            if (amount >= 0) {
+                                                return '+' + amount;
+                                            } else {
+                                                return amount;
+                                            }
+                                        }
+
+                                    },
+                                    variation: function(amount) {
+
+                                        if (amount >= 0) {
+                                            return 'text-success';
+                                        } else {
+                                            return 'text-danger';
+                                        }
+
+                                    },
+                                    invest: function() {
+
+                                        return investmentReport;
+
+                                    },
+                                    postImage: function(featuredPicture) {
+                                        var image = Images.findOne(featuredPicture);
+                                        if (image) {
+                                            return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                        }
+                                    },
+                                    isPodcast: function() {
+                                        if (this.podcastUrl || this.podcastFileId) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+                                    podcastLink: function() {
+                                        if (this.podcastUrl) {
+                                            return this.podcastUrl;
+                                        }
+                                        if (this.podcastFileId) {
+                                            var file = Images.findOne(this.podcastFileId);
+                                            return '/cdn/storage/Images/' + file._id + '/original/' + file._id + '.' + file.ext;
+                                        }
+                                    },
+                                    integrationUrl: function() {
+
+                                        if (Integrations.findOne({ type: 'puremail' })) {
+                                            return Integrations.findOne({ type: 'puremail' }).url;
+                                        }
+
+                                    },
+                                    langEN: function() {
+
+                                        if (brand.language) {
+                                            if (brand.language == 'fr') {
+                                                return false;
+                                            } else {
+                                                return true;
+                                            }
+                                        } else {
+                                            return true;
+                                        }
+
+                                    },
+                                    formatDate: function(date) {
+                                        var localLocale = moment(date);
+                                        localLocale.locale('en');
+                                        return localLocale.format('LL');
+                                    },
+                                    formatDateFR: function(date) {
+                                        var localLocale = moment(date);
+                                        localLocale.locale('fr');
+                                        return localLocale.format('LL');
+                                    },
+                                    userName: function() {
+                                        return brand.userName;
+                                    },
+                                    tags: function() {
+                                        if (Boxes.findOne(this.signupBox)) {
+                                            return Boxes.findOne(this.signupBox).tags;
+
+                                        }
+                                    },
+                                    siteUrl: function() {
+                                        return websiteUrl;
+                                    }
+                                });
+
+                            } else {
+
+                                // Compile
+                                SSR.compileTemplate('postTemplate', Assets.getText('posts/post_template.html'));
+
+                                // Helpers
+                                Template.postTemplate.helpers({
+                                    postImage: function(featuredPicture) {
+                                        var image = Images.findOne(featuredPicture);
+                                        if (image) {
+                                            return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                                        }
+                                    },
+                                    isPodcast: function() {
+                                        if (this.podcastUrl || this.podcastFileId) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    },
+                                    podcastLink: function() {
+                                        if (this.podcastUrl) {
+                                            return this.podcastUrl;
+                                        }
+                                        if (this.podcastFileId) {
+                                            var file = Images.findOne(this.podcastFileId);
+                                            return '/cdn/storage/Images/' + file._id + '/original/' + file._id + '.' + file.ext;
+                                        }
+                                    },
+                                    integrationUrl: function() {
+
+                                        if (Integrations.findOne({ type: 'puremail' })) {
+                                            return Integrations.findOne({ type: 'puremail' }).url;
+                                        }
+
+                                    },
+                                    langEN: function() {
+
+                                        if (brand.language) {
+                                            if (brand.language == 'fr') {
+                                                return false;
+                                            } else {
+                                                return true;
+                                            }
+                                        } else {
+                                            return true;
+                                        }
+
+                                    },
+                                    formatDate: function(date) {
+                                        var localLocale = moment(date);
+                                        localLocale.locale('en');
+                                        return localLocale.format('LL');
+                                    },
+                                    formatDateFR: function(date) {
+                                        var localLocale = moment(date);
+                                        localLocale.locale('fr');
+                                        return localLocale.format('LL');
+                                    },
+                                    userName: function() {
+                                        return brand.userName;
+                                    },
+                                    tags: function() {
+                                        if (Boxes.findOne(this.signupBox)) {
+                                            return Boxes.findOne(this.signupBox).tags;
+
+                                        }
+                                    },
+                                    siteUrl: function() {
+                                        return websiteUrl;
+                                    }
+                                });
+
+                            }
                         }
 
-                        // Add email box?
-                        if (post.signupBox) {
+                        // Render
+                        var rawHtml = SSR.render('postTemplate', post);
 
-                            if (post.signupBox != 'none') {
-                                // console.log('Adding signup');
-                                var boxHtml = Meteor.call('renderEmailBox', post, query);
-                                postHtml += boxHtml;
-                            }
-                        }
+                        // Highlight
+                        $ = cheerio.load(rawHtml);
+                        $('pre').each(function(i, elem) {
 
-                        // Add disqus?
-                        if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
-                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
-                                parameters = {
-                                    url: post.url,
-                                    websiteUrl: websiteUrl,
-                                    brandId: parameters.brandId
-                                };
-                                var commentHtml = Meteor.call('renderDisqus', parameters);
-                                postHtml += commentHtml;
+                            $(elem).removeClass('EnlighterJSRAW');
+
+                        });
+
+                        rawHtml = $.html();
+
+                        // Save
+                        if (post.type) {
+
+                            // Add modal?
+                            // if (exitIntentHtml) {
+                            //     rawHtml += exitIntentHtml;
+                            // }
+
+                            if (query.origin) {
+                                Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: false, html: rawHtml } })
+                            } else {
+                                Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: true, html: rawHtml } })
                             }
+
+                            postHtml = rawHtml;
+
+                        } else {
+
+                            // Process for affiliate links
+                            var renderedHtml = Meteor.call('rawProcessHTMLAmazon', rawHtml, parameters.brandId);
+
+                            // Get cache & HTML
+                            if (post.html) {
+                                var html = post.html;
+                            } else {
+                                html = {};
+                            }
+
+                            // Update
+                            html['US'] = renderedHtml;
+                            Posts.update({
+                                url: postUrl,
+                                brandId: parameters.brandId
+                            }, { $set: { cached: true, html: html } }, { selector: { category: post.category } });
+
+                            // Get localised HTML
+                            var postHtml = Meteor.call('getLocalisedHtml', { html: html }, location);
+
+                            // Add social sharing
+                            if (post.type) {
+                                console.log('No social share for pages');
+                            } else {
+
+                                var browser = Meteor.call('detectBrowser', headers);
+
+                                if (browser == 'desktop') {
+                                    var socialShare = Meteor.call('renderSocialShare', {
+                                        postUrl: websiteUrl + postUrl,
+                                        post: post,
+                                        userId: parameters.userId
+                                    });
+
+                                    postHtml = socialShare + postHtml;
+                                }
+
+                            }
+
+                            // Add email box?
+                            if (post.signupBox) {
+
+                                if (post.signupBox != 'none') {
+                                    var boxHtml = Meteor.call('renderEmailBox', post, query);
+                                    postHtml += boxHtml;
+                                }
+                            }
+
+                            // Add disqus?
+                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
+                                if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
+                                    parameters = {
+                                        url: post.url,
+                                        websiteUrl: websiteUrl,
+                                        userId: parameters.userId
+                                    };
+                                    var commentHtml = Meteor.call('renderDisqus', parameters);
+                                    postHtml += commentHtml;
+                                }
+                            }
+
                         }
 
                     }
@@ -858,7 +1682,8 @@ Meteor.methods({
 
                         if (exitStatus == 'on') {
                             var exitHtml = Meteor.call('renderExitModal', {
-                                query: query
+                                query: query,
+                                userId: parameters.userId
                             });
                             postHtml += exitHtml;
                         }
@@ -867,823 +1692,12 @@ Meteor.methods({
 
                     return headerHtml + "<body>" + navbarHtml + "<div class='container-fluid main-container'>" + postHtml + "</div>" + footerHtml + "</body>";
 
+
                 } else {
 
-                    // Compile
-                    if (post.type) {
-
-                        // console.log('Page not cached, rendering');
-
-                        // Compile
-                        SSR.compileTemplate('postTemplate',
-                            Assets.getText('pages/page_template.html'));
-
-                        // Build products for store
-                        if (Meteor.call('hasElement', post._id, 'store')) {
-                            var products = [];
-                            if (Products.find({}).fetch().length > 0) {
-
-                                var allProducts = Products.find({}).fetch();
-
-                                for (i = 0; i < allProducts.length; i++) {
-
-                                    // Get product from store
-                                    var storeProduct = Meteor.call('getProductData', allProducts[i].productId);
-
-                                    if (storeProduct) {
-
-                                        // Get sales page
-                                        var salesPageUrl = Pages.findOne(allProducts[i].pageId).url;
-                                        storeProduct.salesPageUrl = salesPageUrl;
-
-                                        // Add
-                                        products.push(storeProduct);
-                                    }
-
-                                }
-
-                            }
-                        }
-
-                        // Build portfolio
-                        if (Meteor.call('hasElement', post._id, 'portfolio')) {
-
-                            if (Integrations.findOne({ type: 'pureportfolio' })) {
-
-                                // Get integration
-                                // console.log('Grabing portfolio');
-                                var integration = Integrations.findOne({ type: 'pureportfolio' });
-
-                                // Get portfolio
-                                var portfolio = HTTP.get('https://' + integration.url + '/api/portfolio?option=array').data;
-
-                                // Sort
-                                portfolio.sort(function(a, b) {
-                                    if (a.value > b.value)
-                                        return -1;
-                                    if (a.value < b.value)
-                                        return 1;
-                                    // a doit être égale à b
-                                    return 0;
-                                });
-
-                                // Format
-                                var translation = {
-                                    'p2p': 'Peer-to-Peer Lending',
-                                    'stock': 'Dividend Paying Stocks',
-                                    'realestate': 'Real Estate Crowdfunding',
-                                    'website': 'Profitable Websites',
-                                    'cash': 'Cash',
-                                    'equity': 'Private Equity'
-                                };
-                                for (s in portfolio) {
-                                    portfolio[s].type = translation[portfolio[s].type];
-                                    portfolio[s].value = portfolio[s].value.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                                    portfolio[s].yield = portfolio[s].yield.toFixed(2);
-                                    portfolio[s].income = (portfolio[s].income / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                                }
-
-                                // Get total
-                                var total = HTTP.get('https://' + integration.url + '/api/total').data;
-
-                                console.log(total);
-
-                                // Format
-                                total.value = (total.value).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                                total.yield = (total.yield).toFixed(2);
-                                total.monthlyIncome = (total.income / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-
-                                total.passiveValue = (total.passiveValue).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                                total.passiveYield = (total.passiveYield).toFixed(2);
-                                total.passiveMonthlyIncome = (total.passiveIncome / 12).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");;
-
-                            }
-
-                        } else {
-                            portfolio = {};
-                            total = {};
-                        }
-
-                        if (Meteor.call('hasElement', post._id, 'portfoliodetail')) {
-
-                            if (Integrations.findOne({ type: 'pureportfolio' })) {
-
-                                var integration = Integrations.findOne({ type: 'pureportfolio' });
-
-                                // Build individual positions
-                                var p2p = HTTP.get('https://' + integration.url + '/api/positions?type=p2p&platforms=true').data;
-                                var stock = HTTP.get('https://' + integration.url + '/api/positions?type=stock').data;
-                                var realestate = HTTP.get('https://' + integration.url + '/api/positions?type=realestate&platforms=true').data;
-
-                                var positions = {
-                                    p2p: p2p,
-                                    stock: stock,
-                                    realestate: realestate
-                                }
-
-                            }
-
-
-                        } else {
-                            var positions = {};
-                        }
-
-                        // Pricing
-                        if (Meteor.call('hasElement', post._id, 'pricing')) {
-
-                            // Get all elements
-                            var pricingElements = Pricing.find({ type: 'element' }, { sort: { order: 1 } }).fetch();
-                            var pricingStructures = Pricing.find({ type: 'structure' }, { sort: { order: 1 } }).fetch();
-
-                            // Combine
-                            pricingData = [];
-                            for (i in pricingStructures) {
-                                var pricingLine = pricingStructures[i];
-
-                                var data = [];
-                                for (j in pricingElements) {
-                                    data.push(pricingElements[j].features[pricingLine._id]);
-                                }
-                                pricingLine.data = data;
-                                pricingData.push(pricingLine);
-                            }
-
-
-                        } else {
-                            var pricingElements = [];
-                            var pricingStructures = [];
-                            var pricingData = [];
-                        }
-
-                        // Exit intent
-                        // if (Meteor.call('hasElement', post._id, 'signupbox')) {
-
-                        //     var element = Meteor.call('getElement', post._id, 'signupbox');
-                        //     var exitIntentHtml = Meteor.call('renderExitModal', element.boxId);
-
-                        // }
-
-                        // if (Meteor.call('hasElement', post._id, 'emailsignup')) {
-
-                        //     var element = Meteor.call('getElement', post._id, 'emailsignup');
-                        //     var exitIntentHtml = Meteor.call('renderExitModal', element.boxId);
-
-                        // }
-
-                        // Latest posts
-                        if (Meteor.call('hasElement', post._id, 'latestposts')) {
-                            var posts = Posts.find({ userId: parameters.userId }, { sort: { creationDate: -1 }, limit: 3 });
-                        }
-
-                        // Best posts
-                        if (Meteor.call('hasElement', post._id, 'bestposts')) {
-                            if (Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId })) {
-
-                                // Get best posts
-                                var bestPostsStats = Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId }).value;
-                                if (bestPostsStats.length > 6) {
-                                    bestPostsStats = bestPostsStats.slice(0, 6);
-                                } else {
-                                    bestPostsStats = bestPostsStats.slice(0, 3);
-                                }
-
-                                var bestPosts = [];
-                                for (i in bestPostsStats) {
-                                    bestPosts.push(Posts.findOne(bestPostsStats[i]._id));
-                                }
-
-                            } else {
-                                var bestPosts = [];
-                            }
-                        }
-
-                        // Helpers
-                        Template.postTemplate.helpers({
-
-                            integrationUrl: function() {
-
-                                return Meteor.absoluteUrl();
-
-                            },
-                            langEN: function() {
-
-                                if (brand.language) {
-                                    if (brand.language == 'fr') {
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                } else {
-                                    return true;
-                                }
-
-                            },
-                            elements: function() {
-                                return Elements.find({ pageId: post._id }, { sort: { order: 1 } });
-                            },
-                            isElementType: function(element, elementType) {
-
-                                if (element.type == elementType) {
-                                    return true;
-                                }
-                            },
-                            elementImage: function(element) {
-                                var image = Images.findOne(element.image);
-                                if (image) {
-                                    return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                } else {
-                                    return "";
-                                }
-
-                            },
-                            isImage: function(element) {
-
-                                var image = Images.findOne(element.image);
-                                if (image) {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-
-                            },
-                            userName: function() {
-                                return brand.userName;
-                            },
-                            signupBoxContent: function(element) {
-                                if (element.type == 'emailsignup' || element.type == 'signupbox') {
-                                    if (Boxes.findOne(element.boxId)) {
-                                        return Boxes.findOne(element.boxId).boxContent;
-                                    }
-
-                                }
-                            },
-                            signupPopupContent: function(element) {
-                                if (element.type == 'emailsignup' || element.type == 'signupbox') {
-                                    if (Boxes.findOne(element.boxId)) {
-                                        return Boxes.findOne(element.boxId).popupContent;
-                                    }
-
-                                }
-                            },
-                            tags: function(element) {
-                                if (Boxes.findOne(element.boxId)) {
-                                    return Boxes.findOne(element.boxId).tags;
-                                }
-
-                            },
-                            listId: function(element) {
-                                if (element.type == 'emailsignup' || element.type == 'signupbox') {
-                                    return Integrations.findOne({ type: 'puremail' }).list;
-                                }
-                            },
-                            sequenceId: function(element) {
-                                if (element.type == 'emailsignup' || element.type == 'signupbox') {
-                                    if (Boxes.findOne(element.boxId)) {
-                                        return Boxes.findOne(element.boxId).sequence;
-                                    }
-
-                                }
-                            },
-                            products: function() {
-                                return products;
-                            },
-                            pricingElements: function() {
-                                return pricingElements;
-                            },
-                            pricingStructures: function() {
-                                return pricingStructures;
-                            },
-                            pricingData: function() {
-                                return pricingData;
-                            },
-                            isPictureTwo: function(element) {
-                                if (element.pictureTwo != "") {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            },
-                            portfolio: function() {
-                                return portfolio;
-                            },
-                            positions: function(type) {
-                                return positions[type];
-                            },
-                            isStock: function(type) {
-                                if (type == 'stock') {
-                                    return true;
-                                }
-                            },
-                            isPlatform(type) {
-                                if (type == 'p2p' || type == 'realestate') {
-                                    return true;
-                                }
-                            },
-                            isP2p: function(type) {
-                                if (type == 'p2p') {
-                                    return true;
-                                }
-                            },
-                            isRe: function(type) {
-                                if (type == 'realestate') {
-                                    return true;
-                                }
-                            },
-                            total: function() {
-                                return total;
-                            },
-                            formatMoney: function(number) {
-                                return parseFloat(number).toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                            },
-                            posts: function() {
-                                return posts;
-                            },
-                            bestPosts: function() {
-                                return bestPosts;
-                            },
-                            postImage: function(featuredPicture) {
-                                var image = Images.findOne(featuredPicture);
-                                if (image) {
-                                    return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                }
-                            },
-                            formatDate: function(date) {
-                                return moment(date).format('MMMM Do YYYY');
-                            }
-
-                        });
-
-
-                    } else {
-
-                        if (post.category == 'recipe') {
-
-                            // Compile
-                            SSR.compileTemplate('postTemplate', Assets.getText('posts/recipe_template.html'));
-
-                            // Helpers
-                            Template.postTemplate.helpers({
-
-                                langEN: function() {
-
-                                    if (brand.language) {
-                                        if (brand.language == 'fr') {
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
-                                    } else {
-                                        return true;
-                                    }
-
-                                },
-
-                                postImage: function(featuredPicture) {
-
-                                    var image = Images.findOne(featuredPicture);
-                                    if (image) {
-                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                    }
-                                },
-                                formatDate: function(date) {
-                                    return moment(date).format('MMMM Do YYYY');
-                                },
-                                userName: function() {
-                                    return brand.userName;
-                                },
-                                isEmailBox: function() {
-                                    if (this.signupBox) {
-                                        if (this.signupBox != 'none') {
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                steps: function() {
-                                    return Elements.find({ postId: this._id, type: 'step' }, { sort: { order: 1 } });
-                                },
-                                ingredients: function() {
-                                    return Elements.find({ postId: this._id, type: 'ingredient' }, { sort: { order: 1 } });
-                                }
-                            });
-
-                        } else if (post.category == 'affiliate') {
-
-                            // Get theme
-                            if (Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId })) {
-                                var selectedTheme = Metas.findOne({ type: 'affiliateTheme', brandId: parameters.brandId }).value;
-                            } else {
-                                var selectedTheme = 'default';
-                            }
-
-                            // Compile
-                            SSR.compileTemplate('postTemplate', Assets.getText('posts/affiliate_post_template.html'));
-
-                            // Helpers
-                            Template.postTemplate.helpers({
-
-                                langEN: function() {
-
-                                    if (brand.language) {
-                                        if (brand.language == 'fr') {
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
-                                    } else {
-                                        return true;
-                                    }
-
-                                },
-
-                                postImage: function(featuredPicture) {
-
-                                    var image = Images.findOne(featuredPicture);
-                                    if (image) {
-                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                    }
-                                },
-                                formatDate: function(date) {
-                                    return moment(date).format('MMMM Do YYYY');
-                                },
-                                userName: function() {
-                                    return brand.userName;
-                                },
-
-                                elements: function() {
-                                    return Elements.find({ $or: [{ postId: this._id, type: 'affiliate' }, { postId: this._id, type: { $exists: false } }] }, { sort: { rank: 1 } });
-                                },
-                                elementImage: function(element) {
-                                    if (element.picture) {
-                                        var image = Images.findOne(element.picture);
-                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                    }
-                                },
-                                isAffiliateTheme: function(theme) {
-                                    if (selectedTheme == theme) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                hasDescription: function(element) {
-                                    if (element.description != "" && element.description != '<p><br></p>') {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                hasMiddleContent: function() {
-                                    if (this.middle != "" && this.middle != '<p><br></p>') {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-
-                                rating: function(element) {
-                                    var answer = "";
-                                    var fullStars = Math.trunc(element.rating);
-                                    var decimalPart = element.rating - Math.trunc(element.rating);
-                                    for (i = 0; i < fullStars; i++) {
-                                        answer += '<i class="fa fa-star" aria-hidden="true"></i>';
-                                    }
-                                    if (decimalPart == 0) {
-                                        var emptyStars = 5 - fullStars;
-                                    } else {
-                                        answer += '<i class="fa fa-star-half-o" aria-hidden="true"></i>';
-                                        var emptyStars = 4 - fullStars;
-                                    }
-                                    for (i = 0; i < emptyStars; i++) {
-                                        answer += '<i class="fa fa-star-o" aria-hidden="true"></i>';
-                                    }
-
-                                    return answer;
-                                },
-                                siteUrl: function() {
-                                    return websiteUrl;
-                                }
-                            });
-
-                        } else if (post.category == 'report') {
-
-                            // Compile
-                            SSR.compileTemplate('postTemplate', Assets.getText('posts/income_report_template.html'));
-
-                            // Get business report
-                            var businessReport = Meteor.call('getBusinessReport', post.month, post.year);
-
-                            // Get investment report
-                            var investmentReport = Meteor.call('getInvestmentReport', post.month, post.year);
-                            console.log(investmentReport);
-
-                            // Helpers
-                            Template.postTemplate.helpers({
-
-                                total: function() {
-
-                                    var total = parseFloat(businessReport.profits.current) + parseFloat(investmentReport.global.current);
-                                    var variation = parseFloat(businessReport.profits.variation) + parseFloat(investmentReport.global.variation);
-                                    var past = parseFloat(businessReport.profits.current) - parseFloat(businessReport.profits.variation) + parseFloat(investmentReport.global.current) - parseFloat(investmentReport.global.variation);
-                                    var percent = variation / past * 100;
-
-                                    return {
-                                        current: total.toFixed(2),
-                                        variation: variation.toFixed(2),
-                                        variation_percent: percent.toFixed(2)
-                                    }
-
-                                },
-                                report: function() {
-
-                                    return businessReport;
-
-                                },
-                                sign: function(amount) {
-
-                                    if (amount == 'Infinity') {
-                                        return 0;
-                                    } else {
-                                        if (amount >= 0) {
-                                            return '+' + amount;
-                                        } else {
-                                            return amount;
-                                        }
-                                    }
-
-                                },
-                                variation: function(amount) {
-
-                                    if (amount >= 0) {
-                                        return 'text-success';
-                                    } else {
-                                        return 'text-danger';
-                                    }
-
-                                },
-                                invest: function() {
-
-                                    return investmentReport;
-
-                                },
-                                postImage: function(featuredPicture) {
-                                    var image = Images.findOne(featuredPicture);
-                                    if (image) {
-                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                    }
-                                },
-                                isPodcast: function() {
-                                    if (this.podcastUrl || this.podcastFileId) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                podcastLink: function() {
-                                    if (this.podcastUrl) {
-                                        return this.podcastUrl;
-                                    }
-                                    if (this.podcastFileId) {
-                                        var file = Images.findOne(this.podcastFileId);
-                                        return '/cdn/storage/Images/' + file._id + '/original/' + file._id + '.' + file.ext;
-                                    }
-                                },
-                                integrationUrl: function() {
-
-                                    if (Integrations.findOne({ type: 'puremail' })) {
-                                        return Integrations.findOne({ type: 'puremail' }).url;
-                                    }
-
-                                },
-                                langEN: function() {
-
-                                    if (brand.language) {
-                                        if (brand.language == 'fr') {
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
-                                    } else {
-                                        return true;
-                                    }
-
-                                },
-                                formatDate: function(date) {
-                                    var localLocale = moment(date);
-                                    localLocale.locale('en');
-                                    return localLocale.format('LL');
-                                },
-                                formatDateFR: function(date) {
-                                    var localLocale = moment(date);
-                                    localLocale.locale('fr');
-                                    return localLocale.format('LL');
-                                },
-                                userName: function() {
-                                    return brand.userName;
-                                },
-                                tags: function() {
-                                    if (Boxes.findOne(this.signupBox)) {
-                                        return Boxes.findOne(this.signupBox).tags;
-
-                                    }
-                                },
-                                siteUrl: function() {
-                                    return websiteUrl;
-                                }
-                            });
-
-                        } else {
-
-                            // Compile
-                            SSR.compileTemplate('postTemplate', Assets.getText('posts/post_template.html'));
-
-                            // Helpers
-                            Template.postTemplate.helpers({
-                                postImage: function(featuredPicture) {
-                                    var image = Images.findOne(featuredPicture);
-                                    if (image) {
-                                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
-                                    }
-                                },
-                                isPodcast: function() {
-                                    if (this.podcastUrl || this.podcastFileId) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                podcastLink: function() {
-                                    if (this.podcastUrl) {
-                                        return this.podcastUrl;
-                                    }
-                                    if (this.podcastFileId) {
-                                        var file = Images.findOne(this.podcastFileId);
-                                        return '/cdn/storage/Images/' + file._id + '/original/' + file._id + '.' + file.ext;
-                                    }
-                                },
-                                integrationUrl: function() {
-
-                                    if (Integrations.findOne({ type: 'puremail' })) {
-                                        return Integrations.findOne({ type: 'puremail' }).url;
-                                    }
-
-                                },
-                                langEN: function() {
-
-                                    if (brand.language) {
-                                        if (brand.language == 'fr') {
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
-                                    } else {
-                                        return true;
-                                    }
-
-                                },
-                                formatDate: function(date) {
-                                    var localLocale = moment(date);
-                                    localLocale.locale('en');
-                                    return localLocale.format('LL');
-                                },
-                                formatDateFR: function(date) {
-                                    var localLocale = moment(date);
-                                    localLocale.locale('fr');
-                                    return localLocale.format('LL');
-                                },
-                                userName: function() {
-                                    return brand.userName;
-                                },
-                                tags: function() {
-                                    if (Boxes.findOne(this.signupBox)) {
-                                        return Boxes.findOne(this.signupBox).tags;
-
-                                    }
-                                },
-                                siteUrl: function() {
-                                    return websiteUrl;
-                                }
-                            });
-
-                        }
-                    }
-
-                    // Render
-                    var rawHtml = SSR.render('postTemplate', post);
-
-                    // Highlight
-                    $ = cheerio.load(rawHtml);
-                    $('pre').each(function(i, elem) {
-
-                        $(elem).removeClass('EnlighterJSRAW');
-
-                    });
-
-                    rawHtml = $.html();
-
-                    // Save
-                    if (post.type) {
-
-                        // Add modal?
-                        // if (exitIntentHtml) {
-                        //     rawHtml += exitIntentHtml;
-                        // }
-
-                        if (query.origin) {
-                            Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: false, html: rawHtml } })
-                        } else {
-                            Pages.update({ url: postUrl, brandId: parameters.brandId }, { $set: { cached: true, html: rawHtml } })
-                        }
-
-                        postHtml = rawHtml;
-
-                    } else {
-
-                        // Process for affiliate links
-                        var renderedHtml = Meteor.call('rawProcessHTMLAmazon', rawHtml, parameters.brandId);
-
-                        // Get cache & HTML
-                        if (post.html) {
-                            var html = post.html;
-                        } else {
-                            html = {};
-                        }
-
-                        // Update
-                        html['US'] = renderedHtml;
-                        Posts.update({ 
-                            url: postUrl, 
-                            brandId: parameters.brandId 
-                        }, { $set: { cached: true, html: html } }, { selector: { category: post.category } });
-
-                        // Get localised HTML
-                        var postHtml = Meteor.call('getLocalisedHtml', { html: html }, location);
-
-                        // Add social sharing
-                        if (post.type) {
-                            console.log('No social share for pages');
-                        } else {
-
-                            var browser = Meteor.call('detectBrowser', headers);
-
-                            if (browser == 'desktop') {
-                                var socialShare = Meteor.call('renderSocialShare', {
-                                    postUrl: websiteUrl + postUrl,
-                                    post: post,
-                                    userId: parameters.userId
-                                });
-
-                                postHtml = socialShare + postHtml;
-                            }
-
-                        }
-
-                        // Add email box?
-                        if (post.signupBox) {
-
-                            if (post.signupBox != 'none') {
-                                var boxHtml = Meteor.call('renderEmailBox', post, query);
-                                postHtml += boxHtml;
-                            }
-                        }
-
-                        // Add disqus?
-                        if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
-                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
-                                parameters = {
-                                    url: post.url,
-                                    websiteUrl: websiteUrl,
-                                    userId: parameters.userId
-                                };
-                                var commentHtml = Meteor.call('renderDisqus', parameters);
-                                postHtml += commentHtml;
-                            }
-                        }
-
-                    }
+                    return Meteor.call('renderPage', parameters.url, parameters.query, parameters.headers);
 
                 }
-
-                // Add exit intent?
-                if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
-
-                    // Check value
-                    var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
-
-                    if (exitStatus == 'on') {
-                        var exitHtml = Meteor.call('renderExitModal', {
-                            query: query,
-                            userId: parameters.userId
-                        });
-                        postHtml += exitHtml;
-                    }
-
-                }
-
-                return headerHtml + "<body>" + navbarHtml + "<div class='container-fluid main-container'>" + postHtml + "</div>" + footerHtml + "</body>";
 
             }
 

@@ -1,6 +1,5 @@
 var cheerio = Npm.require("cheerio");
 var minify = Npm.require('html-minifier').minify;
-
 import Images from '/lib/images.collection.js';
 
 Meteor.methods({

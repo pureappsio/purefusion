@@ -21,6 +21,7 @@
     "braintree-web-drop-in": "^1.4.0",
     "chart.js": "^2.6.0",
     "cheerio": "^1.0.0-rc.2",
+    "countryjs": "^1.8.0",
     "fbgraph": "^1.4.1",
     "html-minifier": "^3.5.2",
     "instagram-node": "^0.5.8",
@@ -30,11 +31,13 @@
     "meteor-node-stubs": "^0.2.11",
     "node-pinterest": "0.0.3",
     "paypal-rest-sdk": "^1.7.1",
+    "query-string": "^5.0.0",
     "request": "^2.81.0",
     "sendgrid": "^5.2.0",
     "simpl-schema": "^0.3.1",
     "spin": "0.0.1",
     "stripe": "^4.23.1",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "url-parse": "^1.1.9"
   }
 }

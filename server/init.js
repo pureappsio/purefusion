@@ -1,8 +1,14 @@
 Meteor.startup(function() {
 
-    console.log(Brands.find({}).fetch()[0]);
     // console.log(Menus.find({}).fetch());
     // console.log(Automations.find({}).fetch());
+
+    var pages = Pages.find({}).fetch();
+    for (i in pages) {
+        Pages.update(pages[i]._id, { $unset: { content: "", userId: "" } }, { selector: { type: pages[i].type } });
+    }
+
+    // console.log(Pages.find({}).fetch());
 
     // Clean
     // Posts.remove({});

@@ -60,7 +60,7 @@ Meteor.methods({
             brandPicture: function() {
 
                 var brand = Brands.findOne(page.brandId);
-                return Images.findOne(brand.image).link();
+                return Images.findOne(brand.logo).link();
             },
 
             listId: function() {

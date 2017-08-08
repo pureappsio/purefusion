@@ -51,7 +51,7 @@
     <div class='col-md-1'></div>
     <div class='col-md-10'>
         <div class='tripwire-title'>{{what.title}}</div>
-        {{#each element in elements 'what'}}
+        {{#each element in what.elements}}
         <div class='tripwire-what-element-title'>{{element.title}}</div>
         <div class='tripwire-what-element-text'>{{element.content}}</div>
         {{/each}}
@@ -66,7 +66,7 @@
     <div class='col-md-10'>
         <div class='tripwire-title tripwire-title-center'>{{inside.title}}</div>
         <div class='row'>
-            {{#each element in elements 'inside'}}
+            {{#each element in inside.elements}}
             <div class='col-md-4'>
                 <div class='tripwire-inside-element-title'>{{element.title}}</div>
                 <div class='tripwire-inside-element-text'>{{element.content}}</div>
@@ -89,7 +89,7 @@
     <div class='col-md-1'></div>
     <div class='col-md-10'>
         <div class='tripwire-title tripwire-title-center'>Frequently Asked Questions</div>
-        {{#each element in elements 'faq'}}
+        {{#each element in faq.elements}}
         <div class='tripwire-main-faq-title'>{{element.title}}</div>
         <div class='tripwire-main-faq-text'>{{element.content}}</div>
         {{/each}}

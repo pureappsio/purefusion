@@ -268,11 +268,11 @@ Meteor.methods({
             });
 
             // Get product data
-            var productData = Meteor.call('getProductData', page._id);
+            var productData = Products.findOne(page.productId);
 
             // Get brand data
             var brand = Brands.findOne(page.brandId);
-            var brandLanguage = Meteor.call('getBrandLanguage', page.brandId);
+            var brandLanguage = brand.language;
 
             // Compile
             SSR.compileTemplate('pageTemplate',
@@ -299,21 +299,21 @@ Meteor.methods({
                 brandPicture: function() {
 
                     var brand = Brands.findOne(page.brandId);
-                    return Images.findOne(brand.image).link();
+                    return Images.findOne(brand.logo).link();
                 },
-                elements: function(type) {
-                    return Elements.find({ pageId: page._id, type: type });
-                },
+                // elements: function(type) {
+                //     return Elements.find({ pageId: page._id, type: type });
+                // },
                 checkoutLink: function() {
 
-                    return 'https://' + Integrations.findOne(brand.cartId).url + '?product_id=' + productData._id;
+                    return 'https://' + headers.host + '/store/checkout?product_id=' + productData._id;
 
                 },
                 salesPrice: function() {
                     if (brandLanguage == 'en') {
-                        return '$' + (productData.price.USD).toFixed(2);
+                        return '$' + (productData.price).toFixed(2);
                     } else {
-                        return (productData.price.EUR).toFixed(2) + ' €';
+                        return (productData.price).toFixed(2) + ' €';
                     }
                 },
                 langEN: function() {
@@ -388,7 +388,7 @@ Meteor.methods({
                 brandPicture: function() {
 
                     var brand = Brands.findOne(page.brandId);
-                    return Images.findOne(brand.image).link();
+                    return Images.findOne(brand.logo).link();
                 }
             }
 
@@ -487,7 +487,7 @@ Meteor.methods({
                 brandPicture: function() {
 
                     var brand = Brands.findOne(page.brandId);
-                    return Images.findOne(brand.image).link();
+                    return Images.findOne(brand.logo).link();
                 }
             }
 

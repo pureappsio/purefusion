@@ -5,9 +5,9 @@ Meteor.methods({
     calculateSalesPrice: function(productData, discount, currency) {
 
         if (currency == 'USD') {
-            var price = parseFloat(productData.price.USD);
+            var price = parseFloat(productData.price);
         } else {
-            var price = parseFloat(productData.price.EUR);
+            var price = parseFloat(productData.price);
         }
 
         if (discount.type == 'amount') {
@@ -29,14 +29,14 @@ Meteor.methods({
 
         if (discount.useDiscount == false) {
             if (productData.basePrice) {
-                var price = parseFloat(productData.basePrice[currency]);
+                var price = parseFloat(productData.basePrice);
             }
             else {
-                var price = parseFloat(productData.price[currency]);
+                var price = parseFloat(productData.price);
             }
         }
         else {
-            var price = parseFloat(productData.price[currency]);
+            var price = parseFloat(productData.price);
         }
 
         if (currency == 'USD') {

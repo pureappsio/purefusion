@@ -4,137 +4,7 @@ Future = Npm.require('fibers/future');
 import Images from '/lib/images.collection.js';
 
 Meteor.methods({
-
-    importData: function(data) {
-
-        console.log(data);
-
-        // Press
-        if (data.type == 'purepress') {
-            Meteor.call('importPurePress', data);
-        }
-
-    },
-    importPurePress: function(data) {
-
-        console.log('Importing from PurePress');
-
-        // Integration
-        var integration = {
-            url: data.url,
-            key: data.key
-        }
-
-        // Posts
-        console.log('Importing posts');
-        var posts = Meteor.call('getPureData', integration, 'posts');
-        for (i in posts) {
-            posts[i].brandId = data.brandId;
-            Posts.insert(posts[i], { selector: { category: posts[i].category }});
-        }
-
-        // Pages
-        console.log('Importing pages');
-        var pages = Meteor.call('getPureData', integration, 'pages');
-        for (i in pages) {
-            pages[i].brandId = data.brandId;
-            Pages.insert(pages[i]);
-        }
-
-        // Metas
-        console.log('Importing metas');
-        var metas = Meteor.call('getPureData', integration, 'metas');
-        for (i in metas) {
-            metas[i].brandId = data.brandId;
-            Meteor.call('insertMeta', metas[i]);
-        }
-
-        // Elements
-        console.log('Importing elements');
-        var elements = Meteor.call('getPureData', integration, 'elements');
-        for (i in elements) {
-            elements[i].brandId = data.brandId;
-            console.log(elements[i]);
-            Elements.insert(elements[i], { selector: { type: elements[i].type }});
-        }
-
-        // Images
-        console.log('Importing images');
-        var images = Meteor.call('getPureData', integration, 'files');
-        for (i in images) {
-            images[i].brandId = data.brandId;
-            Images.collection.insert(images[i]);
-        }
-
-        // Menus
-        console.log('Importing menus');
-        var menus = Meteor.call('getPureData', integration, 'menus');
-        for (i in menus) {
-            menus[i].brandId = data.brandId;
-            Menus.insert(menus[i]);
-        }
-
-        // Boxes
-        console.log('Importing boxes');
-        var boxes = Meteor.call('getPureData', integration, 'boxes');
-        for (i in boxes) {
-            boxes[i].brandId = data.brandId;
-            Boxes.insert(boxes[i]);
-        }
-
-        // Categories
-        console.log('Importing categories');
-        var categories = Meteor.call('getPureData', integration, 'categories');
-        for (i in categories) {
-            categories[i].brandId = data.brandId;
-            Categories.insert(categories[i]);
-        }
-
-        // Pricing
-        console.log('Importing pricing');
-        var pricing = Meteor.call('getPureData', integration, 'pricing');
-        for (i in pricing) {
-            pricing[i].brandId = data.brandId;
-            Pricing.insert(pricing[i]);
-        }
-
-        // Tags
-        console.log('Importing tags');
-        var tags = Meteor.call('getPureData', integration, 'tags');
-        for (i in tags) {
-            tags[i].brandId = data.brandId;
-            Tags.insert(tags[i]);
-        }
-
-        // Recordings
-        console.log('Importing recordings');
-        var recordings = Meteor.call('getPureData', integration, 'recordings');
-        for (i in recordings) {
-            recordings[i].brandId = data.brandId;
-            Recordings.insert(recordings[i]);
-        }
-
-        // Stats
-        console.log('Importing stats');
-        var stats = Meteor.call('getPureData', integration, 'stats');
-        for (i in stats) {
-            stats[i].brandId = data.brandId;
-            Events.insert(stats[i]);
-        }
-
-        // Localise
-        Meteor.call('localisteAllPosts', data.brandId);
-        Meteor.call('flushCache');
-
-    },
-    getPureData: function(integration, dataName) {
-
-        var url = "https://" + integration.url + "/api/" + dataName + "?key=" + integration.key;
-        console.log(url);
-        var answer = HTTP.get(url);
-        return answer.data[dataName];
-
-    },
+    
     getVisitorBrand: function(document) {
 
         var hostnameArray = document.location.hostname.split(".");
@@ -329,7 +199,7 @@ Meteor.methods({
     },
     localisteAllPosts(brandId) {
 
-        var posts = Posts.find({brandId: brandId}).fetch();
+        var posts = Posts.find({ brandId: brandId }).fetch();
 
         for (i in posts) {
             Meteor.call('localisePost', posts[i]._id);

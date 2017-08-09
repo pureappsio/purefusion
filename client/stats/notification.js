@@ -20,6 +20,15 @@ Template.notification.helpers({
         else if (this.type == 'visit') {
             return "VISIT";
         }
+        else if (this.type == 'store') {
+            return "STORE VISIT";
+        }
+        else if (this.type == 'checkout') {
+            return "CHECKOUT";
+        }
+        else if (this.type == 'cart') {
+            return "ADDED TO CART";
+        }
         else if (this.type == 'affiliateClick') {
             return "AFFILIATE CLICK";
         }
@@ -30,22 +39,31 @@ Template.notification.helpers({
     },
     styleType: function() {
         if (this.type == 'sale') {
-            return "badge-success";
+            return "badge-success notification-5";
+        }
+        if (this.type == 'affiliateClick') {
+            return "badge-success notification-5";
         }
         else if (this.type == 'failed') {
-            return "badge-danger";
+            return "badge-default";
         }
         else if (this.type == 'survey') {
             return "badge-secondary";
         }
         else if (this.type == 'subscribed') {
-            return "badge-default";
+            return "badge-default notification-2";
         }
         else if (this.type == 'unsubscribed') {
-            return "badge-danger";
+            return "badge-default";
+        }
+        else if (this.type == 'cart') {
+            return "badge-primary notification-3";
+        }
+        else if (this.type == 'checkout') {
+            return "badge-primary notification-4";
         }
         else {
-            return "badge-primary";
+            return "badge-primary notification-1";
         }
     },
     formatOrigin: function() {
@@ -101,6 +119,9 @@ Template.notification.helpers({
             else if (this.pageId) {
                 return 'New visit on page ' + Pages.findOne(this.pageId).title;
             }
+             else if (this.productId) {
+                return 'New visit on product page ' + Products.findOne(this.productId).name;
+            }
             
         }
         if (this.type == 'affiliateClick') {
@@ -110,6 +131,18 @@ Template.notification.helpers({
         }
         if (this.type == 'subscribed') {
             return 'New subscriber for sequence ' + Sequences.findOne(this.sequenceId).name;
+        }
+
+        if (this.type == 'store') {
+            return 'New visit on the store';
+        }
+
+        if (this.type == 'cart') {
+            return 'Added product ' + Products.findOne(this.productId).name + ' to cart';
+        }
+
+         if (this.type == 'checkout') {
+            return 'Visited checkout for product ' + Products.findOne(this.productId).name;
         }
 
     },

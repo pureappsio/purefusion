@@ -4,4 +4,22 @@
             <h3>Sales</h3>
         </div>
     </div>
+    <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th>Email</th>
+                    <th>Date</th>
+                    <th>Edit</th>
+                    <th>Invoice</th>
+                    <th>Receipt</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each sales}} {{> sale}} {{/each}}
+            </tbody>
+        </table>
 </template>

@@ -1,14 +1,16 @@
 Meteor.startup(function() {
 
     // console.log(Menus.find({}).fetch());
-    // console.log(Automations.find({}).fetch());
+    // console.log(Sales.find({}).fetch()[0]);
 
-    var pages = Pages.find({}).fetch();
-    for (i in pages) {
-        Pages.update(pages[i]._id, { $unset: { content: "", userId: "" } }, { selector: { type: pages[i].type } });
-    }
+    // var pages = Pages.find({}).fetch();
+    // for (i in pages) {
+    //     Pages.update(pages[i]._id, { $unset: { content: "", userId: "" } }, { selector: { type: pages[i].type } });
+    // }
 
-    // console.log(Pages.find({}).fetch());
+    // Meteor.call('convertPosts');
+
+    console.log(Events.find({type: 'cart'}).fetch());
 
     // Clean
     // Posts.remove({});
@@ -23,6 +25,14 @@ Meteor.startup(function() {
     // Recordings.remove({});
     // Events.remove({});
     // Automations.remove({});
+    
+    // Subscribers.remove({});
+    // Tags.remove({});
+    // Automations.remove({});
+    // Sequences.remove({});
+
+    // Products.remove({});
+    // Sales.remove({});
 
     // Flush cashe
     Meteor.call('flushCache');

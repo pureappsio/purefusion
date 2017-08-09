@@ -20,6 +20,7 @@ Tracker.autorun(function() {
 
     // Products
     Meteor.subscribe('userProducts');
+    Meteor.subscribe('userSales');
 
     Meteor.subscribe('userPages');
     Meteor.subscribe('userElements');

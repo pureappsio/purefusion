@@ -95,7 +95,7 @@ $("#modal-close").click(function() {
                     </div>
                 </div>
                 <div class='row'>
-                    {{#each feature in featureElements}}
+                    {{#each feature in features.elements}}
                     <div class='col-md-4'>
                         <div class='saas-feature-icon'>
                             <i class="fa fa-{{feature.icon}}" aria-hidden="true"></i>
@@ -108,7 +108,7 @@ $("#modal-close").click(function() {
             </div>
         </div>
         <!-- Integrations -->
-        {{#if integrationElements}}
+        {{#if integrations.elements}}
         <div class='row saas-row'>
             <div class='col-md-1'></div>
             <div class='col-md-10'>
@@ -119,7 +119,7 @@ $("#modal-close").click(function() {
                     </div>
                 </div>
                 <div class='row justify-content-center'>
-                    {{#each integration in integrationElements}}
+                    {{#each integration in integrations.elements}}
                     <div class='col-md-2'>
                         <img class='saas-element-image img-fluid' src='{{imageLink integration}}'>
                     </div>
@@ -129,7 +129,7 @@ $("#modal-close").click(function() {
         </div>
         {{/if}}
         <!-- Testimonials -->
-        {{#if testimonialElements}}
+        {{#if testimonials.elements}}
         <div class='row saas-row'>
             <div class='col-md-1'></div>
             <div class='col-md-10'>
@@ -140,7 +140,7 @@ $("#modal-close").click(function() {
                     </div>
                 </div>
                 <div class='row justify-content-center'>
-                     {{#each testimonial in testimonialElements}}
+                     {{#each testimonial in testimonials.elements}}
                     <div class='col-md-3 saas-testimonial-container'>
                         <div class='row saas-testimonial-image'>
                             <div class='col-md-4'></div>

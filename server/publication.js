@@ -36,6 +36,11 @@ Meteor.publish("userProducts", function() {
     return Products.find({});
 });
 
+// Sales
+Meteor.publish("userSales", function() {
+    return Sales.find({});
+});
+
 Meteor.publish("allUsers", function() {
     return Meteor.users.find({});
 });
@@ -100,7 +105,7 @@ Meteor.publish("userScheduled", function() {
 
 
 Meteor.publish("userSubscribers", function() {
-    return Subscribers.find({}, { sort: { date: -1 }, limit: 50 });
+    return Subscribers.find({}, { sort: { date_added: -1 }, limit: 50 });
 });
 
 Meteor.publish("userEvents", function() {

@@ -3,6 +3,7 @@ Template.importData.events({
     'click #import-data': function() {
 
         var data = {
+            targetId: $('#brand').val(),
             brandId: $('#import-brand :selected').val(),
             url: $('#url').val(),
             key: $('#key').val(),

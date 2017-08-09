@@ -12,6 +12,26 @@ h3 {
     font-weight: bold;
 }
 
+.notification-1 {
+    background-color: RoyalBlue !important;
+}
+
+.notification-2 {
+    background-color: DeepSkyBlue !important;
+}
+
+.notification-3 {
+    background-color: green !important;
+}
+
+.notification-4 {
+    background-color: orange !important;
+}
+
+.notification-5 {
+    background-color: red !important;
+}
+
 .red {
     color: red;
 }

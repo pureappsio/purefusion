@@ -77,60 +77,85 @@ Meteor.methods({
             list: data.targetId
         }
 
-        // Subscribers
-        console.log('Importing subscribers');
-        var subscribers = Meteor.call('getPureData', integration, 'subscribers');
-        console.log(subscribers.length);
+        // // Subscribers
+        // console.log('Importing subscribers');
+        // var subscribers = Meteor.call('getPureData', integration, 'subscribers');
+        // console.log(subscribers.length);
 
-        for (i in subscribers) {
+        // for (i in subscribers) {
 
-            // Set brand
-            subscribers[i].brandId = data.brandId;
+        //     // Set brand
+        //     subscribers[i].brandId = data.brandId;
 
-            // Fix unwanted
-            delete subscribers[i].ownerId;
-            delete subscribers[i].listId;
-            delete subscribers[i].products;
-            delete subscribers[i].nb_products;
-            subscribers[i].confirmed = true;
+        //     // Fix unwanted
+        //     delete subscribers[i].ownerId;
+        //     delete subscribers[i].listId;
+        //     delete subscribers[i].products;
+        //     delete subscribers[i].nb_products;
+        //     subscribers[i].confirmed = true;
 
-            // Insert
-            if (subscribers[i].email != "") {
-                Subscribers.insert(subscribers[i]);
+        //     // Insert
+        //     if (subscribers[i].email != "") {
+        //         Subscribers.insert(subscribers[i]);
+        //     }
+        // }
+
+        // // Sequences
+        // console.log('Importing sequences');
+        // var sequences = Meteor.call('getPureData', integration, 'sequences');
+        // console.log(sequences.length);
+        // for (i in sequences) {
+        //     sequences[i].brandId = data.brandId;
+        //     delete sequences[i].ownerId;
+        //     delete sequences[i].listId;
+        //     Sequences.insert(sequences[i]);
+        // }
+
+        // // Rules
+        // console.log('Importing automations');
+        // var automations = Meteor.call('getPureData', integration, 'automations');
+        // console.log(automations.length);
+        // for (i in automations) {
+        //     automations[i].brandId = data.brandId;
+        //     delete automations[i].ownerId;
+        //     delete automations[i].listId;
+        //     Automations.insert(automations[i]);
+        // }
+
+        // // Tags
+        // console.log('Importing tags');
+        // var tags = Meteor.call('getPureData', integration, 'tags');
+        // console.log(tags.length);
+        // for (i in tags) {
+        //     tags[i].brandId = data.brandId;
+        //     delete tags[i].ownerId;
+        //     delete tags[i].listId;
+        //     Tags.insert(tags[i]);
+        // }
+
+        // Events
+        console.log('Importing events');
+        var stats = Meteor.call('getPureData', integration, 'stats');
+        console.log(stats.length);
+        for (i in stats) {
+
+            // Add brand
+            stats[i].brandId = data.brandId;
+
+            // Process
+            delete stats[i].ownerId;
+            delete stats[i].listId;
+            if (stats[i].event == 'opened') {
+                stats[i].event = 'open';
             }
-        }
+            if (stats[i].event == 'clicked') {
+                stats[i].event = 'click';
+            }
+            stats[i].type = stats[i].event;
+            delete stats[i].event;
 
-        // Sequences
-        console.log('Importing sequences');
-        var sequences = Meteor.call('getPureData', integration, 'sequences');
-        console.log(sequences.length);
-        for (i in sequences) {
-            sequences[i].brandId = data.brandId;
-            delete sequences[i].ownerId;
-            delete sequences[i].listId;
-            Sequences.insert(sequences[i]);
-        }
-
-        // Rules
-        console.log('Importing automations');
-        var automations = Meteor.call('getPureData', integration, 'automations');
-        console.log(automations.length);
-        for (i in automations) {
-            automations[i].brandId = data.brandId;
-            delete automations[i].ownerId;
-            delete automations[i].listId;
-            Automations.insert(automations[i]);
-        }
-
-        // Tags
-        console.log('Importing tags');
-        var tags = Meteor.call('getPureData', integration, 'tags');
-        console.log(tags.length);
-        for (i in tags) {
-            tags[i].brandId = data.brandId;
-            delete tags[i].ownerId;
-            delete tags[i].listId;
-            Tags.insert(tags[i]);
+            // console.log(stats[i]);
+            Events.insert(stats[i]);
         }
 
     },
@@ -160,18 +185,17 @@ Meteor.methods({
             // Insert
             if (Products.findOne(products[i]._id)) {
                 console.log('Existing product');
-            }
-            else {
+            } else {
                 Products.insert(products[i]);
             }
-        
+
         }
 
         console.log('Importing elements');
         var elements = Meteor.call('getPureData', integration, 'elements');
         console.log(elements.length);
 
-         for (i in elements) {
+        for (i in elements) {
 
             // Set brand
             elements[i].brandId = data.brandId;
@@ -185,11 +209,10 @@ Meteor.methods({
             // Insert
             if (Elements.findOne(elements[i]._id)) {
                 console.log('Existing element');
-            }
-            else {
+            } else {
                 Elements.insert(elements[i]);
             }
-        
+
         }
 
         console.log('Importing sales');
@@ -207,11 +230,10 @@ Meteor.methods({
             // Insert
             if (Sales.findOne(sales[i]._id)) {
                 console.log('Existing sale');
-            }
-            else {
+            } else {
                 Sales.insert(sales[i]);
             }
-        
+
         }
 
         console.log('Importing sessions');
@@ -229,12 +251,11 @@ Meteor.methods({
             // Insert
             if (Events.findOne(sessions[i]._id)) {
                 console.log('Existing event');
-            }
-            else {
+            } else {
                 console.log(sessions[i]);
                 Events.insert(sessions[i]);
             }
-        
+
         }
 
 
@@ -361,12 +382,12 @@ Meteor.methods({
         }
 
         // Subscribers
-        if ((dataName == 'subscribers' || dataName == 'sequences' || dataName == 'automations' || dataName == 'tags') && integration.list) {
+        if ((dataName == 'subscribers' || dataName == 'stats' || dataName == 'sequences' || dataName == 'automations' || dataName == 'tags') && integration.list) {
             url += '&list=' + integration.list;
         }
 
         // Sessions
-        if (dataName == 'sessions') {
+        if (dataName == 'sessions' || dataName == 'stats') {
             var now = new Date();
             var pastDate = new Date(now.getTime() - 2 * 31 * 24 * 3600 * 1000);
             url += '&from=' + pastDate + '&to=' + now;

@@ -4,35 +4,31 @@ Template.notification.helpers({
 
         if (this.type == 'sale') {
             return "SALE";
-        }
-        else if (this.type == 'failed') {
+        } else if (this.type == 'failed') {
             return "FAILED";
-        }
-        else if (this.type == 'survey') {
+        } else if (this.type == 'survey') {
             return "SURVEY";
-        }
-        else if (this.type == 'subscribed') {
+        } else if (this.type == 'subscribed') {
             return "SUBSCRIPTION";
-        }
-        else if (this.type == 'unsubscribed') {
+        } else if (this.type == 'unsubscribed') {
             return "UNSUBSCRIBED";
-        }
-        else if (this.type == 'visit') {
+        } else if (this.type == 'visit') {
             return "VISIT";
-        }
-        else if (this.type == 'store') {
+        } else if (this.type == 'store') {
             return "STORE VISIT";
-        }
-        else if (this.type == 'checkout') {
+        } else if (this.type == 'checkout') {
             return "CHECKOUT";
-        }
-        else if (this.type == 'cart') {
+        } else if (this.type == 'cart') {
             return "ADDED TO CART";
-        }
-        else if (this.type == 'affiliateClick') {
+        } else if (this.type == 'open') {
+            return "EMAIL OPEN";
+        } else if (this.type == 'click') {
+            return "EMAIL CLICK";
+        } else if (this.type == 'delivered') {
+            return "EMAIL DELIVERED";
+        } else if (this.type == 'affiliateClick') {
             return "AFFILIATE CLICK";
-        }
-        else {
+        } else {
             return this.type;
         }
 
@@ -43,26 +39,19 @@ Template.notification.helpers({
         }
         if (this.type == 'affiliateClick') {
             return "badge-success notification-5";
-        }
-        else if (this.type == 'failed') {
+        } else if (this.type == 'failed') {
             return "badge-default";
-        }
-        else if (this.type == 'survey') {
+        } else if (this.type == 'survey') {
             return "badge-secondary";
-        }
-        else if (this.type == 'subscribed') {
+        } else if (this.type == 'subscribed') {
             return "badge-default notification-2";
-        }
-        else if (this.type == 'unsubscribed') {
+        } else if (this.type == 'unsubscribed') {
             return "badge-default";
-        }
-        else if (this.type == 'cart') {
+        } else if (this.type == 'cart') {
             return "badge-primary notification-3";
-        }
-        else if (this.type == 'checkout') {
+        } else if (this.type == 'checkout') {
             return "badge-primary notification-4";
-        }
-        else {
+        } else {
             return "badge-primary notification-1";
         }
     },
@@ -115,19 +104,17 @@ Template.notification.helpers({
 
             if (this.postId) {
                 return 'New visit on post ' + Posts.findOne(this.postId).title;
-            }
-            else if (this.pageId) {
+            } else if (this.pageId) {
                 return 'New visit on page ' + Pages.findOne(this.pageId).title;
-            }
-             else if (this.productId) {
+            } else if (this.productId) {
                 return 'New visit on product page ' + Products.findOne(this.productId).name;
             }
-            
+
         }
         if (this.type == 'affiliateClick') {
             if (this.postId) {
                 return 'New affiliate click on post ' + Posts.findOne(this.postId).title;
-            }    
+            }
         }
         if (this.type == 'subscribed') {
             return 'New subscriber for sequence ' + Sequences.findOne(this.sequenceId).name;
@@ -141,8 +128,42 @@ Template.notification.helpers({
             return 'Added product ' + Products.findOne(this.productId).name + ' to cart';
         }
 
-         if (this.type == 'checkout') {
+        if (this.type == 'checkout') {
             return 'Visited checkout for product ' + Products.findOne(this.productId).name;
+        }
+
+        if (this.type == 'open') {
+
+            if (this.ruleId) {
+                return 'Opened email ' + Automations.findOne(this.ruleId).emailName;
+            }
+
+            if (this.broadcastId) {
+                return 'Opened broadcast ' + Broadcasts.findOne(this.broadcastId).subject;
+            }
+
+        }
+
+        if (this.type == 'delivered') {
+
+            if (this.ruleId) {
+                return 'Delivered email ' + Automations.findOne(this.ruleId).emailName;
+            }
+
+            if (this.broadcastId) {
+                return 'Delivered broadcast ' + Broadcasts.findOne(this.broadcastId).subject;
+            }
+        }
+
+        if (this.type == 'click') {
+
+            if (this.ruleId) {
+                return 'Clicked email ' + Automations.findOne(this.ruleId).emailName;
+            }
+
+            if (this.broadcastId) {
+                return 'Clicked broadcast ' + Broadcasts.findOne(this.broadcastId).subject;
+            }
         }
 
     },

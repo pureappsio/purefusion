@@ -10,7 +10,7 @@ Meteor.startup(function() {
 
     // Meteor.call('convertPosts');
 
-    console.log(Events.find({type: 'cart'}).fetch());
+    // console.log(Events.find({type: 'cart'}).fetch());
 
     // Clean
     // Posts.remove({});

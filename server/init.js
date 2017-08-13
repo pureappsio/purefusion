@@ -1,7 +1,7 @@
 Meteor.startup(function() {
 
     // console.log(Menus.find({}).fetch());
-    // console.log(Sales.find({}).fetch()[0]);
+    console.log(Subscribers.find({ ip: { $exists: true } }).fetch());
 
     // var pages = Pages.find({}).fetch();
     // for (i in pages) {
@@ -25,7 +25,7 @@ Meteor.startup(function() {
     // Recordings.remove({});
     // Events.remove({});
     // Automations.remove({});
-    
+
     // Subscribers.remove({});
     // Tags.remove({});
     // Automations.remove({});

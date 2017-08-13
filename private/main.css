@@ -11,6 +11,10 @@ html {
     color: red;
 }*/
 
+.btn {
+    color: white !important;
+}
+
 #thankYouRecord {
     text-align: center;
     margin-top: 10px; 

@@ -66,6 +66,37 @@ Meteor.methods({
         console.log(elements.length);
 
     },
+    importPureCourses: function(data) {
+
+        console.log('Importing from PureCourses');
+
+        // Integration
+        var integration = {
+            url: data.url,
+            key: data.key
+        }
+
+        // Courses
+        var courses = Meteor.call('getPureData', integration, 'courses');
+        console.log(courses.length);
+
+        // Modules
+        var modules = Meteor.call('getPureData', integration, 'modules');
+        console.log(modules.length);
+
+        // Lessons
+        var lessons = Meteor.call('getPureData', integration, 'lessons');
+        console.log(lessons.length);
+
+        // Elements
+        var elements = Meteor.call('getPureData', integration, 'elements');
+        console.log(elements.length);
+
+        // Students
+        // var courses = Meteor.call('getPureData', integration, 'courses');
+        // console.log(courses.length);
+
+    },
     importPureMail: function(data) {
 
         console.log('Importing from PureMail');
@@ -77,61 +108,61 @@ Meteor.methods({
             list: data.targetId
         }
 
-        // // Subscribers
-        // console.log('Importing subscribers');
-        // var subscribers = Meteor.call('getPureData', integration, 'subscribers');
-        // console.log(subscribers.length);
+        // Subscribers
+        console.log('Importing subscribers');
+        var subscribers = Meteor.call('getPureData', integration, 'subscribers');
+        console.log(subscribers.length);
 
-        // for (i in subscribers) {
+        for (i in subscribers) {
 
-        //     // Set brand
-        //     subscribers[i].brandId = data.brandId;
+            // Set brand
+            subscribers[i].brandId = data.brandId;
 
-        //     // Fix unwanted
-        //     delete subscribers[i].ownerId;
-        //     delete subscribers[i].listId;
-        //     delete subscribers[i].products;
-        //     delete subscribers[i].nb_products;
-        //     subscribers[i].confirmed = true;
+            // Fix unwanted
+            delete subscribers[i].ownerId;
+            delete subscribers[i].listId;
+            delete subscribers[i].products;
+            delete subscribers[i].nb_products;
+            subscribers[i].confirmed = true;
 
-        //     // Insert
-        //     if (subscribers[i].email != "") {
-        //         Subscribers.insert(subscribers[i]);
-        //     }
-        // }
+            // Insert
+            if (subscribers[i].email != "") {
+                Subscribers.insert(subscribers[i]);
+            }
+        }
 
-        // // Sequences
-        // console.log('Importing sequences');
-        // var sequences = Meteor.call('getPureData', integration, 'sequences');
-        // console.log(sequences.length);
-        // for (i in sequences) {
-        //     sequences[i].brandId = data.brandId;
-        //     delete sequences[i].ownerId;
-        //     delete sequences[i].listId;
-        //     Sequences.insert(sequences[i]);
-        // }
+        // Sequences
+        console.log('Importing sequences');
+        var sequences = Meteor.call('getPureData', integration, 'sequences');
+        console.log(sequences.length);
+        for (i in sequences) {
+            sequences[i].brandId = data.brandId;
+            delete sequences[i].ownerId;
+            delete sequences[i].listId;
+            Sequences.insert(sequences[i]);
+        }
 
-        // // Rules
-        // console.log('Importing automations');
-        // var automations = Meteor.call('getPureData', integration, 'automations');
-        // console.log(automations.length);
-        // for (i in automations) {
-        //     automations[i].brandId = data.brandId;
-        //     delete automations[i].ownerId;
-        //     delete automations[i].listId;
-        //     Automations.insert(automations[i]);
-        // }
+        // Rules
+        console.log('Importing automations');
+        var automations = Meteor.call('getPureData', integration, 'automations');
+        console.log(automations.length);
+        for (i in automations) {
+            automations[i].brandId = data.brandId;
+            delete automations[i].ownerId;
+            delete automations[i].listId;
+            Automations.insert(automations[i]);
+        }
 
-        // // Tags
-        // console.log('Importing tags');
-        // var tags = Meteor.call('getPureData', integration, 'tags');
-        // console.log(tags.length);
-        // for (i in tags) {
-        //     tags[i].brandId = data.brandId;
-        //     delete tags[i].ownerId;
-        //     delete tags[i].listId;
-        //     Tags.insert(tags[i]);
-        // }
+        // Tags
+        console.log('Importing tags');
+        var tags = Meteor.call('getPureData', integration, 'tags');
+        console.log(tags.length);
+        for (i in tags) {
+            tags[i].brandId = data.brandId;
+            delete tags[i].ownerId;
+            delete tags[i].listId;
+            Tags.insert(tags[i]);
+        }
 
         // Events
         console.log('Importing events');
@@ -393,7 +424,7 @@ Meteor.methods({
             url += '&from=' + pastDate + '&to=' + now;
         }
 
-        // console.log(url);
+        console.log(url);
 
         var answer = HTTP.get(url);
         return answer.data[dataName];

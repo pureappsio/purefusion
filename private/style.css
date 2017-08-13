@@ -44,6 +44,10 @@ body {
     font-family: 'Open Sans' !important;
 }
 
+.btn {
+    color: white !important;
+}
+
 .admin-panel {
     margin: 20px;
 }

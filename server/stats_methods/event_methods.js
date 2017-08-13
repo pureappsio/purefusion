@@ -144,6 +144,14 @@ Meteor.methods({
                 }
             }
 
+            // Existing subscriber?
+            if (Subscribers.findOne({ ip: ip })) {
+
+                var subscriber = Subscribers.findOne({ ip: ip });
+                stat.subscriberId = subscriber._id;
+                
+            }
+
         }
 
         Meteor.call('insertStat', stat);

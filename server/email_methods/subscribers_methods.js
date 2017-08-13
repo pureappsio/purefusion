@@ -274,6 +274,11 @@ Meteor.methods({
             }
             Subscribers.update(isSubscriber._id, { $set: { "last_updated": new Date() } });
 
+            // IP
+            if (subscriber.ip) {
+                Subscribers.update(isSubscriber._id, { $set: { "ip": subscriber.ip } });
+            }
+
             // Assign returning status
             Subscribers.update(isSubscriber._id, { $set: { "status": "returning" } });
 

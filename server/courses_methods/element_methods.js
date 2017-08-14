@@ -4,8 +4,10 @@ Meteor.methods({
 
     getFileLink: function(fileId) {
 
+        console.log(fileId);
+
         // Path
-        var fileRef = Files.findOne(fileId);
+        var fileRef = Images.findOne(fileId);
 
         path = fileRef.versions['original'].meta.pipePath;
 

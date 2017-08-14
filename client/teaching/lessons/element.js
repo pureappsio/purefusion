@@ -21,17 +21,14 @@ Template.element.events({
 Template.element.helpers({
 
     videoUrl: function() {
-        if (this.url) {
-            return this.url;
-        }
         if (this.videoId) {
-            return Session.get('videoLink' + this._id);
+            return Session.get('videoLink' + this.videoId);
         }
     },
     imgUrl: function() {
 
         if (this.pictureId) {
-            return Files.findOne(this.pictureId).link();
+            return Images.findOne(this.pictureId).link();
         }
 
     },
@@ -45,7 +42,7 @@ Template.element.helpers({
     isAudio: function() {
 
         if (this.videoId) {
-            var file = Files.findOne(this.videoId);
+            var file = Images.findOne(this.videoId);
             if (file.ext == 'mp3' || file.ext == 'wav' || file.ext == 'ogg') {
                 return true;
             }
@@ -55,7 +52,7 @@ Template.element.helpers({
     audioUrl: function() {
 
         if (this.videoId) {
-            return Files.findOne(this.videoId).link();
+            return Images.findOne(this.videoId).link();
         }
 
     },
@@ -65,10 +62,9 @@ Template.element.helpers({
         }
     },
     isVideo: function() {
-        if (this.url) {
-            return true;
-        } else if (this.videoId) {
-            var file = Files.findOne(this.videoId);
+
+        if (this.videoId) {
+            var file = Images.findOne(this.videoId);
             if (file.ext == 'mp4' || file.ext == 'mov' || file.ext == 'avi') {
                 return true;
             }

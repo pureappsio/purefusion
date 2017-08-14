@@ -13,7 +13,10 @@
 
     </div>
     {{#if isAppUser}}
-    <div class="row voffset15">
+
+    {{> quickForm collection="Elements" doc=defaultElement id="insertElementLesson" type="insert"}}
+
+    <!-- <div class="row voffset15">
         <div class="col-md-2"></div>
         <div class='col-md-8'>
             <label for='element-type'>Element Type</label>
@@ -50,13 +53,13 @@
             <div id='element-added' class='confirmation-message'>Element added
             </div>
         </div>
-    </div>
+    </div> -->
     {{/if}} 
 
     {{#each elements}}{{> element}} {{/each}}
 
 
-    {{#if isVideo}}
+    <!-- {{#if isVideo}}
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
@@ -82,13 +85,13 @@
         </div>
         <div class="col-md-3"></div>
     </div>
-    {{/if}}
+    {{/if}} -->
     <div class="row voffset15">
         <div class="col-md-3"></div>
         <div class="col-md-6">
             {{#if isTheme 'simple'}}
-            <a href='/courses/{{courseId}}' class="btn btn-block btn-primary">Come Back</a> {{else}}
-            <a href='/modules/{{moduleId}}' class="btn btn-block btn-primary">Come Back</a> {{/if}}
+            <a href='/admin/courses/{{courseId}}' class="btn btn-block btn-primary">Come Back</a> {{else}}
+            <a href='/admin/modules/{{moduleId}}' class="btn btn-block btn-primary">Come Back</a> {{/if}}
         </div>
         <div class="col-md-3"></div>
     </div>

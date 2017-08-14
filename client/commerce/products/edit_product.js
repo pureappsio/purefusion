@@ -1,127 +1,127 @@
 Template.editProduct.onRendered(function() {
 
     // Init
-    CKEDITOR.replace('summernote');
-    CKEDITOR.replace('tripwire-text');
-    CKEDITOR.replace('feedback-text');
+    // CKEDITOR.replace('summernote');
+    // CKEDITOR.replace('tripwire-text');
+    // CKEDITOR.replace('feedback-text');
 
-    $('.note-popover').css({ display: 'none' });
+    // $('.note-popover').css({ display: 'none' });
 
-    // Set session to false
-    Session.set('productMedia', false);
+    // // Set session to false
+    // Session.set('productMedia', false);
 
-    if (this.data) {
+    // if (this.data) {
 
-        // Payment plan or price
-        if (this.data.paymentPlan) {
+    //     // Payment plan or price
+    //     if (this.data.paymentPlan) {
 
-            var paymentPlan = this.data.paymentPlan;
+    //         var paymentPlan = this.data.paymentPlan;
 
-            Meteor.call('getBraintreePlans', Meteor.user()._id, function(err, data) {
+    //         Meteor.call('getBraintreePlans', Meteor.user()._id, function(err, data) {
 
-                // Integrations
-                for (i = 0; i < data.length; i++) {
-                    $('#product-payment-plans').append($('<option>', {
-                        value: data[i].id,
-                        text: data[i].name
-                    }));
-                }
+    //             // Integrations
+    //             for (i = 0; i < data.length; i++) {
+    //                 $('#product-payment-plans').append($('<option>', {
+    //                     value: data[i].id,
+    //                     text: data[i].name
+    //                 }));
+    //             }
 
-                // Refresh picker
-                $('#product-payment-plans').val(paymentPlan);
+    //             // Refresh picker
+    //             $('#product-payment-plans').val(paymentPlan);
 
-            });
+    //         });
 
-        }
+    //     }
 
-        if (this.data.description) {
-            $('#summernote').val(this.data.description);
-        }
+    //     if (this.data.description) {
+    //         $('#summernote').val(this.data.description);
+    //     }
 
-        if (this.data.tripwireText) {
-            CKEDITOR.instances['tripwire-text'].setData(this.data.tripwireText);
-        }
+    //     if (this.data.tripwireText) {
+    //         CKEDITOR.instances['tripwire-text'].setData(this.data.tripwireText);
+    //     }
 
-        if (this.data.tripwireType) {
-            $('#use-tripwire').val(this.data.tripwireType);
-        }
+    //     if (this.data.tripwireType) {
+    //         $('#use-tripwire').val(this.data.tripwireType);
+    //     }
 
-        if (this.data.feedbackText) {
-            $('#feedback-text').val(this.data.feedbackText);
-        }
+    //     if (this.data.feedbackText) {
+    //         $('#feedback-text').val(this.data.feedbackText);
+    //     }
 
-        if (this.data.useFeedback) {
-            $('#use-feedback').val(this.data.useFeedback);
-        }
+    //     if (this.data.useFeedback) {
+    //         $('#use-feedback').val(this.data.useFeedback);
+    //     }
 
-        var selection = this.data.type;
+    //     var selection = this.data.type;
 
-        $('#product-type').val(this.data.type);
+    //     $('#product-type').val(this.data.type);
 
-        $('#product-option').empty();
+    //     $('#product-option').empty();
 
-        // Get current product
-        var currentProduct = this.data;
+    //     // Get current product
+    //     var currentProduct = this.data;
 
-        // Delivery option
-        if (selection == 'api') {
+    //     // Delivery option
+    //     if (selection == 'api') {
 
-            courses = this.data.courses;
+    //         courses = this.data.courses;
 
-            Meteor.call('getCourses', function(err, data) {
+    //         Meteor.call('getCourses', function(err, data) {
 
-                // Select
-                $('#product-option').append("<select id='product-courses' class='form-control'></select>")
+    //             // Select
+    //             $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
-                // Integrations
-                for (i = 0; i < data.length; i++) {
-                    $('#product-courses').append($('<option>', {
-                        value: data[i]._id,
-                        text: data[i].name
-                    }));
-                }
+    //             // Integrations
+    //             for (i = 0; i < data.length; i++) {
+    //                 $('#product-courses').append($('<option>', {
+    //                     value: data[i]._id,
+    //                     text: data[i].name
+    //                 }));
+    //             }
 
-                // Refresh picker
-                $('#product-courses').val(courses);
+    //             // Refresh picker
+    //             $('#product-courses').val(courses);
 
-            });
+    //         });
 
-        }
-        if (selection == 'saas') {
+    //     }
+    //     if (selection == 'saas') {
 
-            plan = this.data.plan;
+    //         plan = this.data.plan;
 
-            Meteor.call('getPlans', function(err, data) {
+    //         Meteor.call('getPlans', function(err, data) {
 
-                // Select
-                $('#product-option').append("<select id='product-plans' class='form-control'></select>")
+    //             // Select
+    //             $('#product-option').append("<select id='product-plans' class='form-control'></select>")
 
-                // Integrations
-                for (i = 0; i < data.length; i++) {
-                    $('#product-plans').append($('<option>', {
-                        value: data[i]._id,
-                        text: data[i].name
-                    }));
-                }
+    //             // Integrations
+    //             for (i = 0; i < data.length; i++) {
+    //                 $('#product-plans').append($('<option>', {
+    //                     value: data[i]._id,
+    //                     text: data[i].name
+    //                 }));
+    //             }
 
-                // Refresh picker
-                $('#product-plans').val(plan);
+    //             // Refresh picker
+    //             $('#product-plans').val(plan);
 
-            });
+    //         });
 
-        }
-        if (selection == 'download') {
+    //     }
+    //     if (selection == 'download') {
 
-            // Put URL option
-            $('#product-option').append("<input id='product-url' type='text' class='form-control' placeholder='URL ...''>")
+    //         // Put URL option
+    //         $('#product-option').append("<input id='product-url' type='text' class='form-control' placeholder='URL ...''>")
 
-            // Fill if URL already exist
-            if (currentProduct.url) {
-                $('#product-url').val(currentProduct.url);
-            }
+    //         // Fill if URL already exist
+    //         if (currentProduct.url) {
+    //             $('#product-url').val(currentProduct.url);
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
 });
 

@@ -1,6 +1,6 @@
 Meteor.startup(function() {
 
-    // console.log(Menus.find({}).fetch());
+    console.log(Elements.find({ type: 'lessonElement' }).fetch());
     // console.log(Meteor.users.find({ role: 'student' }).fetch());
 
     // var pages = Pages.find({}).fetch();

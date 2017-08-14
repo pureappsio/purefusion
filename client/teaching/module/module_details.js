@@ -7,7 +7,7 @@ Template.moduleDetails.events({
             name: $('#lesson-name').val(),
             moduleId: this._id,
             courseId: this.courseId,
-            userId: Meteor.user()._id
+            brandId: Session.get('selectedBrand')
         };
         
         // Add
@@ -27,7 +27,7 @@ Template.moduleDetails.events({
             type: $('#resource-type :selected').val(),
             moduleId: this._id,
             courseId: this.courseId,
-            userId: Meteor.user()._id
+            brandId: Session.get('selectedBrand')
         };
 
         // Add

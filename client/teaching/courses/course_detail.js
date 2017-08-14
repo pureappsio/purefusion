@@ -6,7 +6,7 @@ Template.courseDetails.events({
         lesson = {
             name: $('#lesson-name').val(),
             courseId: this._id,
-            userId: Meteor.user()._id
+            brandId: Session.get('selectedBrand')
         };
 
         // Add
@@ -19,7 +19,7 @@ Template.courseDetails.events({
         module = {
             name: $('#module-name').val(),
             courseId: this._id,
-            userId: Meteor.user()._id
+            brandId: Session.get('selectedBrand')
         }
 
         if ($('#products').val() != null) {
@@ -42,7 +42,7 @@ Template.courseDetails.events({
             url: $('#resource-url').val(),
             type: $('#resource-type :selected').val(),
             courseId: this._id,
-            userId: Meteor.user()._id
+            brandId: Session.get('selectedBrand')
         };
 
         // Add

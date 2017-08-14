@@ -5,6 +5,10 @@
     color: darkblue;
 }
 
+.teaching-text {
+    font-size: 22px !important;
+}
+
 .element-content {
     display: none;
 }

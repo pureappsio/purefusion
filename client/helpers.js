@@ -12,8 +12,42 @@ Template.registerHelper("getMeta", function(meta) {
 
 Template.registerHelper("isTheme", function(theme) {
 
-    if (Brands.findOne({ brandId: Session.get('selectedBrand') }).coursesTheme == theme) {
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    if (brand.coursesTheme == theme) {
         return true;
+    }
+
+});
+
+Template.registerHelper("isAdmin", function() {
+
+    if (Session.get('preview')) {
+        return false;
+
+    } else {
+        if (Meteor.user()) {
+
+            if (Meteor.user().role == 'admin') {
+                return true;
+            }
+        }
+    }
+
+});
+
+Template.registerHelper("isAppUser", function() {
+
+    if (Session.get('preview')) {
+        return false;
+
+    } else {
+        if (Meteor.user()) {
+
+            if (Meteor.user().role == 'appuser' || Meteor.user().role == 'admin') {
+                return true;
+            }
+        }
     }
 
 });

@@ -721,12 +721,23 @@ Meteor.methods({
     },
     setStorePicture: function(elementId) {
 
+        // Get element
+        var elementData = Elements.findOne(elementId);
+
         // Set store picture
-        Elements.update(elementId, { $set: { storePicture: true } });
+        Elements.update(elementId, { $set: { storePicture: true } }, { selector: { type: elementData.type } });
         var element = Elements.findOne(elementId);
 
         // Update all others
-        Elements.update({ _id: { $ne: elementId }, type: element.type, productId: element.productId }, { $set: { storePicture: false } }, { multi: true });
+        var elements = Elements.find({
+            _id: { $ne: elementId },
+            type: element.type,
+            productId: element.productId
+        }).fetch();
+
+        for (i in elements) {
+            Elements.update(elements[i]._id, { $set: { storePicture: false } }, { selector: { type: elementData.type } });
+        }
 
     },
     changerOrderElement: function(elementId, orderChange) {
@@ -931,7 +942,7 @@ Meteor.methods({
         });
 
     },
-    
+
     removeDiscount: function(discountId) {
 
         // Add
@@ -947,7 +958,7 @@ Meteor.methods({
         return discountId;
 
     },
-    
+
     removeSale: function(saleId) {
 
         Sales.remove(saleId);
@@ -984,7 +995,7 @@ Meteor.methods({
         return Metas.findOne({ type: 'brandEmail', userId: userId }).value;
     },
 
-   
+
     addProduct(product) {
 
         // Add

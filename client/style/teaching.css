@@ -1,0 +1,242 @@
+/* CSS declarations go here */
+
+.course-pricing {
+    margin-right: 25px;
+    color: darkblue;
+}
+
+.element-content {
+    display: none;
+}
+
+.feat-courses-title {
+    margin-top: 35px;
+    font-size: 30px;
+    margin-bottom: 25px;
+}
+
+.visitor-course-title {
+    margin-top: 30px !important;
+}
+
+.visitor-course-container {
+    padding-right: 45px;
+    padding-left: 45px;
+}
+
+.visitor-course {
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    padding-bottom: 25px;
+    border: 1px solid lightgray;
+}
+
+.visitor-picture {
+    border-radius: 15px 15px 0px 0px;
+}
+
+.course-picture {
+    border-radius: 15px 15px 0px 0px;
+}
+
+.course-link {
+    text-decoration: none !important;
+    color: black !important
+}
+
+.course-inside {
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.08);
+    border-radius: 15px;
+    border: 1px solid lightgray;
+    background-color: #f7f7f7;
+    padding-bottom: 25px;
+    cursor: pointer;
+}
+
+.visitor-row {
+    min-height: 450px;
+    background-color: black;
+    color: white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    padding-top: 130px;
+    padding-bottom: 100px;
+    font-size: 46px;
+    font-weight: bold;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.form-nav {
+    margin-right: 15px;
+}
+
+.btn-nav {
+    font-size: 22px !important;
+}
+
+#spinner {
+    text-align: center;
+    opacity: 1;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+}
+
+.course-container {
+    margin-bottom: 15px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.element-img {}
+
+.fa-delete {
+    color: gray;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.fa-delete:hover {
+    color: red;
+}
+
+.fa-edit {
+    padding-top: 3px;
+    color: gray;
+    cursor: pointer;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.fa-edit:hover {
+    color: blue;
+}
+
+.confirmation-message {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 10px;
+    display: none;
+}
+
+.confirmation-message-line {
+    font-size: 18px;
+    display: none;
+}
+
+.row {
+    margin-top: 5px;
+    vertical-align: middle;
+}
+
+label {
+    font-size: 16px;
+}
+
+.login-small {
+    font-size: 18px;
+}
+
+.col-centered {
+    text-align: center;
+}
+
+.site-title {
+    color: black;
+    font-size: 22px;
+}
+
+.column-sort {
+    cursor: pointer;
+}
+
+.icon-small {
+    font-size: 14px;
+}
+
+.column-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.column-bold {
+    font-weight: bold;
+}
+
+.bg-green {
+    background-color: #80CC99;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+.voffset30 {
+    margin-top: 30px;
+}
+
+.voffset50 {
+    margin-top: 50px;
+}
+
+.voffset15 {
+    margin-top: 15px;
+}
+
+.item-remove {
+    color: red;
+}
+
+.filter-label {
+    font-size: 14px;
+}
+
+.item-remove:hover {
+    cursor: pointer;
+}
+
+.investment-minus:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+.investment-plus:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+
+/*video {
+    width: 100%;
+    height: auto;
+    border: 1px solid black;
+}
+*/
+
+.possible-course-picture {
+    filter: grayscale(100%) opacity(50%);
+}
+
+
+/*.possible-course-picture-container {
+    background-color: gray;
+}*/
+
+#sent-notification {
+    margin-top: 15px;
+    text-align: center;
+    display: none
+}

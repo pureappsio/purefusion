@@ -5,16 +5,19 @@
 
     <h3>Product Pictures/Videos</h3>
     
-    {{#autoForm collection="Elements" doc=defaultPic id="insertProductPicForm" type="insert" }}
+<!--     {{#autoForm collection="Elements" doc=defaultPic id="insertProductPicForm" type="insert" }}
     <fieldset>
         {{> afQuickField name='imageId'}}
-     <!--    {{> afQuickField name='brandId' value=adminUser type='hidden'}}
+        {{> afQuickField name='brandId' value=adminUser type='hidden'}}
         {{> afQuickField name='productId' value=adminUser type='hidden'}}
         {{> afQuickField name='type' value=adminUser type='hidden'}}
-        {{> afQuickField name='order' value=adminUser type='hidden'}} -->
+        {{> afQuickField name='order' value=adminUser type='hidden'}}
     </fieldset>
     <button type="submit" class="btn btn-block btn-primary">Insert</button>
     {{/autoForm}}
+ -->
+
+    {{> quickForm collection="Elements" doc=defaultPic id="insertElementPic" type="insert"}}
 
     <div class='row'>
         {{#each mediaElements}} {{> addPicture}} {{/each}}

@@ -46,13 +46,8 @@ Template.course.helpers({
     },
     url: function() {
 
-        if (this.imgUrl) {
-            return this.imgUrl;
-        }
-
-        if (this.imgId) {
-            return Images.findOne(this.imgId).link();
-        }
+        var element = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true });
+        return Images.findOne(element.imageId).link();
 
     }
 

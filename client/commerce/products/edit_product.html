@@ -1,0 +1,28 @@
+<template name="editProduct">
+    <h3>Editing Product {{name}}</h3> 
+
+    {{> quickForm collection="Products" doc=this id="updateProductForm" type="update" autosave=true}}
+
+    <h3>Product Pictures/Videos</h3>
+    
+    {{#autoForm collection="Elements" doc=defaultPic id="insertProductPicForm" type="insert" }}
+    <fieldset>
+        {{> afQuickField name='imageId'}}
+     <!--    {{> afQuickField name='brandId' value=adminUser type='hidden'}}
+        {{> afQuickField name='productId' value=adminUser type='hidden'}}
+        {{> afQuickField name='type' value=adminUser type='hidden'}}
+        {{> afQuickField name='order' value=adminUser type='hidden'}} -->
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Insert</button>
+    {{/autoForm}}
+
+    <div class='row'>
+        {{#each mediaElements}} {{> addPicture}} {{/each}}
+    </div>
+
+    <div class='row voffset30'>
+        <div class='col-md-4'>
+            <a href='/admin/products' class='btn btn-block btn-secondary'>Come Back</a>
+        </div>
+    </div>
+</template>

@@ -10,6 +10,13 @@ Template.registerHelper("getMeta", function(meta) {
     return Metas.findOne({ type: meta, userId: Meteor.user()._id }).value;
 });
 
+Template.registerHelper("isTheme", function(theme) {
+
+    if (Brands.findOne({ brandId: Session.get('selectedBrand') }).coursesTheme == theme) {
+        return true;
+    }
+
+});
 
 Template.registerHelper("formatDate", function(date) {
     return moment(date).format('MMMM Do YYYY, h:mm:ss a');

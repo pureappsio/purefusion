@@ -1,7 +1,7 @@
 Meteor.startup(function() {
 
     // console.log(Menus.find({}).fetch());
-    console.log(Subscribers.find({ ip: { $exists: true } }).fetch());
+    // console.log(Meteor.users.find({ role: 'student' }).fetch());
 
     // var pages = Pages.find({}).fetch();
     // for (i in pages) {

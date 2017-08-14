@@ -80,21 +80,145 @@ Meteor.methods({
         var courses = Meteor.call('getPureData', integration, 'courses');
         console.log(courses.length);
 
+        for (i in courses) {
+
+            // Set brand
+            courses[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete courses[i].userId;
+            delete courses[i].access;
+            delete courses[i].status;
+            delete courses[i].imgId;
+
+            url = (courses[i].name).replace(/ /g, "-");
+            url = url.replace(/:/g, "");
+
+            courses[i].show = true;
+            courses[i].type = 'course';
+            courses[i].price = 0;
+            courses[i].shortName = url.toLowerCase();
+
+            // Insert
+            if (Products.findOne(courses[i]._id)) {
+                console.log('Existing course');
+            } else {
+                console.log(courses[i]);
+                Products.insert(courses[i]);
+            }
+
+        }
+
         // Modules
         var modules = Meteor.call('getPureData', integration, 'modules');
         console.log(modules.length);
+
+        for (i in modules) {
+
+            // Set brand
+            modules[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete modules[i].userId;
+
+            // Insert
+            if (Modules.findOne(modules[i]._id)) {
+                console.log('Existing module');
+            } else {
+                console.log(modules[i]);
+                Modules.insert(modules[i]);
+            }
+
+        }
 
         // Lessons
         var lessons = Meteor.call('getPureData', integration, 'lessons');
         console.log(lessons.length);
 
+        for (i in lessons) {
+
+            // Set brand
+            lessons[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete lessons[i].userId;
+
+            // Insert
+            if (Lessons.findOne(lessons[i]._id)) {
+                console.log('Existing lesson');
+            } else {
+                console.log(lessons[i]);
+                Lessons.insert(lessons[i]);
+            }
+
+        }
+
         // Elements
         var elements = Meteor.call('getPureData', integration, 'elements');
         console.log(elements.length);
 
+        for (i in elements) {
+
+            // Set brand
+            elements[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete elements[i].userId;
+            elements[i].type = 'lessonElement';
+
+            // Insert
+            if (Elements.findOne(elements[i]._id)) {
+                console.log('Existing element');
+            } else {
+                console.log(elements[i]);
+                Elements.insert(elements[i]);
+            }
+
+        }
+
+        // Files
+        var files = Meteor.call('getPureData', integration, 'files');
+        console.log(files.length);
+
+        for (i in files) {
+
+            // Set brand
+            files[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete files[i].userId;
+
+            // Insert
+            if (Images.collection.findOne(files[i]._id)) {
+                console.log('Existing file');
+            } else {
+                console.log(files[i]);
+                Images.collection.insert(files[i]);
+            }
+
+        }
+
         // Students
-        // var courses = Meteor.call('getPureData', integration, 'courses');
-        // console.log(courses.length);
+        var users = Meteor.call('getPureData', integration, 'users');
+        console.log(users.length);
+
+        for (i in users) {
+
+            // Set brand
+            users[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete users[i].teacherId;
+
+            // Insert
+            if (Meteor.users.findOne(users[i]._id)) {
+                console.log('Existing user');
+            } else {
+                console.log(users[i]);
+                Meteor.users.insert(users[i]);
+            }
+
+        }
 
     },
     importPureMail: function(data) {
@@ -243,6 +367,20 @@ Meteor.methods({
             } else {
                 Elements.insert(elements[i]);
             }
+
+        }
+
+        console.log('Importing files');
+        var files = Meteor.call('getPureData', integration, 'files');
+        console.log(files.length);
+
+        for (i in files) {
+
+            // Set brand
+            files[i].brandId = data.brandId;
+
+            // Insert
+            Images.collection.insert(files[i]);
 
         }
 

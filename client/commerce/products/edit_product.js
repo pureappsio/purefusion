@@ -16,7 +16,7 @@ Template.editProduct.onRendered(function() {
         if (this.data.paymentPlan) {
 
             var paymentPlan = this.data.paymentPlan;
-            
+
             Meteor.call('getBraintreePlans', Meteor.user()._id, function(err, data) {
 
                 // Integrations
@@ -160,6 +160,16 @@ Template.editProduct.helpers({
     },
     salesElements: function() {
         return Elements.find({ type: 'salesElement', productId: this._id })
+    },
+    defaultPic: function() {
+
+        return {
+            brandId: Session.get('selectedBrand'),
+            productId: this._id,
+            type: 'productPictures',
+            order: Elements.find({ type: 'productPictures', productId: this._id }).count() + 1,
+            storePicture: false
+        };
     }
 
 });

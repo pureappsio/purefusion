@@ -38,10 +38,8 @@ Template.courses.helpers({
 
                 return Products.find({
                     type: 'course',
-                    status: { $ne: 'draft' },
                     brandId: Meteor.user().brandId,
-                    _id: { $nin: courses },
-                    access: 'paid'
+                    _id: { $nin: courses }
                 });
             }
         }

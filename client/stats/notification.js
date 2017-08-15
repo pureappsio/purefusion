@@ -132,6 +132,13 @@ Template.notification.helpers({
             return 'Visited checkout for product ' + Products.findOne(this.productId).name;
         }
 
+        if (this.type == 'sale') {
+
+            var sale = Sales.findOne(this.saleId);
+            return 'New sale of $' + sale.amount;
+            
+        }
+
         if (this.type == 'open') {
 
             if (this.ruleId) {

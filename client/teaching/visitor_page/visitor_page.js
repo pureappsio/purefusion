@@ -12,31 +12,27 @@ Template.visitorPage.onRendered(function() {
 Template.visitorPage.helpers({
 
     title: function() {
-        return Metas.findOne({ type: 'frontMessage', userId: Session.get('teacherId') }).value;
+        return Session.get('brand').teaching.frontMessage;
     },
     image: function() {
-        var picId = Metas.findOne({ type: 'frontPicture', userId: Session.get('teacherId') }).value;
-        return Files.findOne(picId).link();
+        var picId = Session.get('brand').teaching.frontPicture;
+        return Images.findOne(picId).link();
     },
     courses: function() {
-        return Courses.find({
-            userId: Session.get('teacherId'),
-            status: { $ne: 'draft' }
+        return Products.find({
+            brandId: Session.get('selectedBrand'),
+            show: true
         }, { limit: 6 });
     },
     isTitle: function() {
-        if (Metas.findOne({ type: 'frontMessage', userId: Session.get('teacherId') })) {
+        if (Session.get('brand').teaching.frontMessage) {
             return true;
         }
     },
     featName: function() {
 
         // Get language
-        if (Metas.findOne({ type: 'language', userId: Session.get('teacherId') })) {
-            var language = Metas.findOne({ type: 'language', userId: Session.get('teacherId') }).value;
-        } else {
-            var language = 'en';
-        }
+        var language = Session.get('brand').language;
 
         // Return
         if (Metas.findOne({ type: 'theme', userId: Session.get('teacherId') })) {

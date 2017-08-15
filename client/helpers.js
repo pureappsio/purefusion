@@ -14,8 +14,21 @@ Template.registerHelper("isTheme", function(theme) {
 
     var brand = Brands.findOne(Session.get('selectedBrand'));
 
-    if (brand.coursesTheme == theme) {
+    if (brand.teaching.coursesTheme == theme) {
         return true;
+    }
+
+});
+
+Template.registerHelper("langEN", function() {
+
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    if (brand.language == 'en') {
+        return true;
+    }
+    else {
+        return false;
     }
 
 });

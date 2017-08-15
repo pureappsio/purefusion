@@ -81,14 +81,18 @@ computePrice = function(price) {
     console.log('Price: ');
     console.log(price);
 
-    if (price[Session.get('currency')]) {
-        return price[Session.get('currency')];
-    } else {
-        var rates = Metas.findOne({ type: 'rates' }).value;
-        var finalPrice = price.EUR * rates[Session.get('currency')];
-        console.log(finalPrice);
-        return parseFloat(finalPrice.toFixed(0) + '.99');
-    }
+    // if (price[Session.get('currency')]) {
+    //     return price[Session.get('currency')];
+    // } else {
+
+    //     var rates = Metas.findOne({ type: 'rates' }).value;
+
+    //     var finalPrice = price.EUR * rates[Session.get('currency')];
+
+    //     return parseFloat(finalPrice.toFixed(0) + '.99');
+    // }
+
+    return price;
 
 }
 

@@ -103,6 +103,9 @@ Meteor.publish("userScheduled", function() {
     return Scheduled.find({});
 });
 
+Meteor.publish("userGateways", function() {
+    return Gateways.find();
+});
 
 Meteor.publish("userSubscribers", function() {
     return Subscribers.find({}, { sort: { date_added: -1 }, limit: 50 });

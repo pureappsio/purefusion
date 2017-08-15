@@ -192,6 +192,22 @@ Template.subscriberDetails.helpers({
     //         return Automations.findOne(Session.get('subscriberData').sequenceEmail).order;
     //     }
     // },
+    products: function() {
+
+        return Events.find({ type: 'sale', subscriberId: this._id }).count();
+    },
+    ltv: function() {
+
+        var events = Events.find({ type: 'sale', subscriberId: this._id }).fetch();
+
+        var ltv = 0;
+        for (i in events) {
+            ltv += parseFloat(Sales.findOne(events[i].saleId).amount);
+        }
+
+        return '$' + ltv;
+
+    },
     events: function() {
 
         return Events.find({ subscriberId: this._id }, { sort: { date: -1 } });

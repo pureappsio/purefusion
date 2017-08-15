@@ -1,13 +1,6 @@
 Template.checkout.rendered = function() {
 
-    // // Get image
-    // Meteor.call('getTitle', function(err, url) {
-    //     Session.set('mainPicture', url);
-    // });
-
-    Meteor.call('getBrandEmail', Session.get('sellerId'), function(err, email) {
-        Session.set('brandEmail', email);
-    });
+    Session.set('useHeader', false);
 
     if (Session.get('checkoutExitIntent') != 'fired') {
         Session.set('checkoutExitIntent', 'armed');
@@ -47,9 +40,9 @@ Template.checkout.helpers({
 
     isSimpleTheme: function() {
 
-        if (Metas.findOne({ type: 'checkoutTheme' })) {
+        if (Session.get('brand').checkoutTheme) {
 
-            if (Metas.findOne({ type: 'checkoutTheme' }).value == 'simple') {
+            if (Session.get('brand').checkoutTheme == 'simple') {
                 return true;
             } else {
                 return false;
@@ -61,10 +54,10 @@ Template.checkout.helpers({
 
     },
     brandEmail: function() {
-        return Session.get('brandEmail');
+        return Session.get('brand').email;
     },
     mainPicture: function() {
-        return Session.get('mainPicture');
+        return Images.findOne(Session.get('brand').logo).link();
     }
 
 });

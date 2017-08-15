@@ -18,7 +18,12 @@ Template.visitor.helpers({
         }
 
     },
-     existingSubscriberLink: function() {
+    subscriberEmail: function() {
+        if (Subscribers.findOne({ ip: this.ip })) {
+            return Subscribers.findOne({ ip: this.ip }).email;
+        }
+    },
+    existingSubscriberLink: function() {
 
         if (Subscribers.findOne({ ip: this.ip })) {
             return Subscribers.findOne({ ip: this.ip })._id;

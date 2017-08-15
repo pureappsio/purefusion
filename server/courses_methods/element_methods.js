@@ -4,12 +4,12 @@ Meteor.methods({
 
     getFileLink: function(fileId) {
 
-        console.log(fileId);
-
         // Path
         var fileRef = Images.findOne(fileId);
 
         path = fileRef.versions['original'].meta.pipePath;
+
+        console.log(fileRef);
 
         // Build S3 path
         s3Conf = Meteor.settings.s3;

@@ -3,8 +3,8 @@
         <div class="col-md-1">
             <span class="flag-icon {{locationStyle}}"></span>
         </div>
-        <div class="col-md-2">
-            {{ip}} {{#if existingSubscriber}} <a href='/admin/subscribers/{{existingSubscriberLink}}'>Existing Subscriber</a> {{/if}}
+        <div class="col-md-3">
+            {{ip}} {{#if existingSubscriber}} <a href='/admin/subscribers/{{existingSubscriberLink}}'>{{subscriberEmail}}</a> {{/if}}
         </div>
         <div class="col-md-2">
             <span class="badge btn-block badge-info">{{livestamp date}}</span>

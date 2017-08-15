@@ -10,6 +10,8 @@ Template.checkoutPayment.rendered = function() {
 
     console.log(Session.get('affiliateCode'));
 
+    console.log('currency: ' + Session.get('currency'));
+
     // Reset status of payment
     Session.set('paymentStatus', false);
 
@@ -17,7 +19,7 @@ Template.checkoutPayment.rendered = function() {
     Session.set('planDetails', null);
 
     // Check payment type
-    Meteor.call('getPayment', Session.get('sellerId'), function(err, paymentType) {
+    Meteor.call('getPayment', Session.get('brand').userId, function(err, paymentType) {
 
         // Set
         Session.set('payment', paymentType);
@@ -27,7 +29,7 @@ Template.checkoutPayment.rendered = function() {
 
             console.log('Stripe init');
 
-            Meteor.call('getStripeData', Session.get('sellerId'), function(err, data) {
+            Meteor.call('getStripeData', Session.get('brand').userId, function(err, data) {
 
                 // Stripe
                 var stripe = Stripe(data.publishable_key);
@@ -113,7 +115,7 @@ Template.checkoutPayment.rendered = function() {
         // Init Braintree Drop In
         if (paymentType == 'braintree') {
 
-            Meteor.call('getClientToken', Session.get('sellerId'), function(err, clientToken) {
+            Meteor.call('getClientToken', Session.get('brand').userId, function(err, clientToken) {
 
                 if (err) {
                     console.log('There was an error', err);
@@ -133,7 +135,7 @@ Template.checkoutPayment.rendered = function() {
                 $('#braintree-hosted').show();
             }
 
-            Meteor.call('getClientToken', Session.get('sellerId'), function(err, clientToken) {
+            Meteor.call('getClientToken', Session.get('brand').userId, function(err, clientToken) {
 
                 if (err) {
                     console.log('There was an error', err);
@@ -164,7 +166,7 @@ Template.checkoutPayment.rendered = function() {
         if (products[i].paymentPlan) {
 
             // Load plan data
-            Meteor.call('getBraintreePlan', products[i].paymentPlan, Session.get('sellerId'), function(err, data) {
+            Meteor.call('getBraintreePlan', products[i].paymentPlan, Session.get('brand').userId, function(err, data) {
 
                 Session.set('planDetails', data);
 
@@ -177,7 +179,8 @@ Template.checkoutPayment.rendered = function() {
             productId: products[i]._id,
             type: 'checkout',
             country: Session.get('countryCode'),
-            userId: Session.get('sellerId')
+            brandId: Session.get('selectedBrand'),
+            headers: headers.get()
         };
 
         // Origin & medium
@@ -216,12 +219,9 @@ Template.checkoutPayment.helpers({
     },
     isSimpleTheme: function() {
 
-        if (Metas.findOne({ type: 'checkoutTheme', userId: Session.get('sellerId') })) {
+        if (Session.get('brand').checkoutTheme) {
 
-            if (Metas.findOne({
-                    type: 'checkoutTheme',
-                    userId: Session.get('sellerId')
-                }).value == 'simple') {
+            if (Session.get('brand').checkoutTheme == 'simple') {
                 return true;
             } else {
                 return false;
@@ -243,9 +243,9 @@ Template.checkoutPayment.helpers({
     },
     paypalBraintree: function() {
 
-        if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') })) {
+        if (Metas.findOne({ type: 'payment', userId: Session.get('brand').userId })) {
 
-            if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') }).value == 'paypalbraintree') {
+            if (Metas.findOne({ type: 'payment', userId: Session.get('brand').userId }).value == 'paypalbraintree') {
                 return true;
             }
 
@@ -254,9 +254,9 @@ Template.checkoutPayment.helpers({
     },
     braintreeUi: function() {
 
-        if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') })) {
+        if (Metas.findOne({ type: 'payment', userId: Session.get('brand').userId })) {
 
-            if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') }).value == 'braintree') {
+            if (Metas.findOne({ type: 'payment', userId: Session.get('brand').userId }).value == 'braintree') {
                 return true;
             }
 
@@ -505,7 +505,7 @@ Template.checkoutPayment.events({
 
             if (Session.get('cart')[0].type == 'validation') {
                 Meteor.call('validateProduct', saleData, function(err, data) {
-                    window.location = '/thank-you';
+                    window.location = '/store/thank-you';
                 });
             } else {
                 Meteor.call('paypalCheckout', saleData, function(err, redirectUrl) {
@@ -591,16 +591,16 @@ function initializeBraintree(clientToken) {
 
                                 if (Session.get('cart')[0].type == 'validation') {
                                     Meteor.call('validateProduct', saleData, function(err, data) {
-                                        window.location = '/thank-you';
+                                        window.location = '/store/thank-you';
                                     });
                                 } else {
                                     Meteor.call('purchaseProduct', saleData, function(err, sale) {
                                         Session.set('paymentFormStatus', null);
                                         if (sale.success == true) {
-                                            Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                           window.location = "/store/purchase_confirmation?sale_id=" + sale._id;
                                         }
                                         if (sale.success == false) {
-                                            Router.go("/failed_payment?sale_id=" + sale._id);
+                                            window.location = "/store/failed_payment?sale_id=" + sale._id;
                                         }
 
                                     });
@@ -751,16 +751,16 @@ function initializeBraintreeHosted(clientToken) {
 
                             if (Session.get('cart')[0].type == 'validation') {
                                 Meteor.call('validateProduct', saleData, function(err, data) {
-                                    window.location = '/thank-you';
+                                    window.location = '/store/thank-you';
                                 });
                             } else {
                                 Meteor.call('purchaseProduct', saleData, function(err, sale) {
                                     Session.set('paymentFormStatus', null);
                                     if (sale.success == true) {
-                                        Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                        Router.go("/store/purchase_confirmation?sale_id=" + sale._id);
                                     }
                                     if (sale.success == false) {
-                                        Router.go("/failed_payment?sale_id=" + sale._id);
+                                        Router.go("/store/failed_payment?sale_id=" + sale._id);
                                     }
 
                                 });
@@ -786,7 +786,7 @@ function createSalesData(paymentProcessor) {
 
     // Send to server
     var saleData = {
-        userId: Session.get('sellerId')
+        brandId: Session.get('selectedBrand')
     }
 
     if (paymentProcessor != 'paypal') {
@@ -835,6 +835,7 @@ function createSalesData(paymentProcessor) {
     var variants = [];
     var quantities = [];
     for (i = 0; i < cart.length; i++) {
+        
         products.push(cart[i]._id);
 
         if (cart[i].variantId) {
@@ -851,7 +852,7 @@ function createSalesData(paymentProcessor) {
 
     }
     saleData.products = products;
-    saleData.variants = variants;
+    // saleData.variants = variants;
     saleData.quantities = quantities;
 
     // Mobile or Desktop
@@ -871,6 +872,9 @@ function createSalesData(paymentProcessor) {
     }
     if (Session.get('origin')) {
         saleData.origin = Session.get('origin');
+    }
+    if (Session.get('ip')) {
+        saleData.ip = Session.get('ip');
     }
     if (Session.get('medium')) {
         saleData.medium = Session.get('medium');

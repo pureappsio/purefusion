@@ -988,12 +988,12 @@ Meteor.methods({
     },
 
 
-    getBrandName: function(userId) {
-        return Metas.findOne({ type: 'brandName', userId: userId }).value;
-    },
-    getBrandEmail: function(userId) {
-        return Metas.findOne({ type: 'brandEmail', userId: userId }).value;
-    },
+    // getBrandName: function(userId) {
+    //     return Metas.findOne({ type: 'brandName', userId: userId }).value;
+    // },
+    // getBrandEmail: function(userId) {
+    //     return Metas.findOne({ type: 'brandEmail', userId: userId }).value;
+    // },
 
 
     addProduct(product) {

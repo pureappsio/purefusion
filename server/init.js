@@ -1,7 +1,8 @@
 Meteor.startup(function() {
 
-    console.log(Elements.find({ type: 'lessonElement' }).fetch());
-    // console.log(Meteor.users.find({ role: 'student' }).fetch());
+    // console.log(Elements.find({ type: 'lessonElement' }).fetch());
+    console.log(Meteor.users.find({ role: 'admin' }).fetch()[0]);
+    // console.log(Brands.find({}).fetch());
 
     // var pages = Pages.find({}).fetch();
     // for (i in pages) {

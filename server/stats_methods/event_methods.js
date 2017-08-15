@@ -40,6 +40,10 @@ Meteor.methods({
             brandId: parameters.brandId
         };
 
+        if (parameters.productId) {
+            stat.productId = parameters.productId;
+        }
+
         // Page or post
         if (parameters.postId) {
             if (parameters.postType == 'page') {

@@ -802,9 +802,13 @@ Meteor.methods({
                 password: data.password
             });
 
-            // Assign role & teacher ID
+            // Assign role & brand ID
             Meteor.users.update(userId, { $set: { role: data.role } });
 
+            if (data.brandId) {
+                Meteor.users.update(userId, { $set: { brandId: data.brandId } });
+            }
+ 
         }
 
         return userId;

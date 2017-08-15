@@ -1,14 +1,16 @@
 <template name="header">
     <nav class="navbar navbar-expand-md navbar-light bg-faded">
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="/">
+            <div class='site-title'>
+                {{#if isAppUser}}PureFusion{{else}}{{title}}{{/if}}
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
-            <div class='site-title'>PureFusion</div>
-        </a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                {{#if currentUser}}
+                {{#if isAppUser}}
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'brands'}}">Brands</a>
                 </li>
@@ -66,6 +68,7 @@
                 {{/if}}
             </ul>
             <ul class="navbar-nav">
+                {{#if isAppUser}}
                 <form class="form-inline">
                     <select id='brand-select' class="form-control mr-sm-2" type="text">
                         <option value="all">All Brands</option>
@@ -77,12 +80,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'settings'}}">Settings</a>
                 </li>
+                {{/if}}
+                {{#if currentUser}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{email}}</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a id='log-out' class="dropdown-item" href="/">Log Out</a>
                     </div>
                 </li>
+                {{/if}} {{#if notUser}}
+                <li class="nav-item">
+                    <a href="/users/login" class="form-nav nav-link">{{#if langEN}}Login{{else}}Se Connecter{{/if}}</a>
+                </li>
+                <form class="form-inline ">
+                    <a href="/users/signup" class="btn-nav btn btn-warning">{{#if langEN}}Sign Up{{else}}Créer un Compte{{/if}}</a>
+                </form>
+                {{/if}}
             </ul>
         </div>
     </nav>

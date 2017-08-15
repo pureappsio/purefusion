@@ -1,4 +1,23 @@
-/*.product-listing-picture {
+@media (min-width: 1024px) {
+    .row-checkout-title {
+        position: relative;
+    }
+    .help-title {
+        text-align: right;
+        right: 0;
+        position: absolute;
+        margin-top: 70px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .help-title {
+        display: none;
+    }
+}
+
+
+.product-listing-picture {
     max-height: 50px;
     margin-right: 5px !important;
 }
@@ -30,28 +49,6 @@
     display: none;
 }
 
-.fa-delete {
-    color: gray;
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-.fa-delete:hover {
-    color: red;
-}
-
-.fa-edit {
-    padding-top: 3px;
-    color: gray;
-    cursor: pointer;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-.fa-edit:hover {
-    color: blue;
-}
-
 .stats-indicator {
     font-size: 40px;
 }
@@ -60,7 +57,7 @@
     font-size: 20px;
 }
 
-.navbar-brand {
+/*.navbar-brand {
     padding: 0px;
 }
 
@@ -81,11 +78,7 @@
 
 .nav-icons {
     padding-top: 4px;
-}
-
-button {
-    cursor: pointer;
-}
+}*/
 
 .col-center {
     text-align: center;
@@ -226,9 +219,9 @@ button {
     height: 600px;
 }
 
-.edit-product {
+/*.edit-product {
     margin: 10px;
-}
+}*/
 
 .main-row-store {
     margin-top: 15px !important;
@@ -360,7 +353,7 @@ button {
     margin-top: 15px;
 }
 
-body {
+/*.store-body {
     font-size: 18px;
     margin: 0;
     padding: 0;
@@ -372,14 +365,14 @@ body {
     margin: 0;
     padding: 0;
     background-color: #EEEEEE;
-}
+}*/
 
-.container-fluid {
+/*.container-fluid {
     margin: 0;
     padding: 0;
     background-color: white !important;
 }
-
+*/
 .main-col {
     background-color: white;
     padding-bottom: 50px;
@@ -409,24 +402,6 @@ body {
     text-align: left;
 }
 
-@media (min-width: 1024px) {
-    .row-checkout-title {
-        position: relative;
-    }
-    .help-title {
-        text-align: right;
-        right: 0;
-        position: absolute;
-        margin-top: 70px;
-    }
-}
-
-@media (max-width: 1024px) {
-    .help-title {
-        display: none;
-    }
-}
-
 .purchase-confirmed {
     font-size: 24px;
 }
@@ -439,8 +414,3 @@ body {
 #product-id {
     display: none;
 }
-
-.admin-panel {
-    padding: 10px;
-    background-color: white;
-}*/

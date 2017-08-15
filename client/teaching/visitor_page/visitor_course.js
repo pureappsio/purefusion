@@ -2,26 +2,19 @@ Template.visitorCourse.helpers({
 
     url: function() {
 
-        if (this.imgUrl) {
-            return this.imgUrl;
-        }
-        if (this.imgId) {
-            console.log(Files.findOne(this.imgId));
-            return Files.findOne(this.imgId).link();
-        }
+        var element = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true });
+        return Images.findOne(element.imageId).link();
 
     },
     pricing: function() {
 
-        if (this.access == 'free') {
+        if (this.price == 0) {
             return 'FREE';
         }
-
-        else if (Session.get('coursesProducts')) {
-            if (Session.get('coursesProducts')[this._id]) {
-                return '$' + Session.get('coursesProducts')[this._id].price;
-            }
+        else {
+            return '$' + this.price;
         }
+    
     }
 
 });

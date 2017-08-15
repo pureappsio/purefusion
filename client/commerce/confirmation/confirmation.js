@@ -1,10 +1,5 @@
 Template.confirmation.rendered = function() {
 
-    // Get image
-    // Meteor.call('getTitle', function(err, url) {
-    //     Session.set('mainPicture', url);
-    // });
-
     Session.set('pixelTrackingPage', 'purchase');
 
     // Redirect?
@@ -56,7 +51,7 @@ Template.confirmation.helpers({
     },
     isApi: function() {
         var product = Products.findOne(this.products[0]);
-        if (product.type == 'api') {
+        if (product.type == 'course') {
             return true;
         } else {
             return false;
@@ -92,17 +87,20 @@ Template.confirmation.helpers({
         var products = Products.find({ '_id': { $in: this.products } }).fetch();
 
         for (i in products) {
-            if (this.variants[i] != null) {
-                variant = Variants.findOne(this.variants[i]);
-                products[i].name += ' (' + variant.name + ' )';
-                products[i].url = variant.url;
+            if (this.variants[i]) {
+                if (this.variants[i] != null) {
+                    variant = Variants.findOne(this.variants[i]);
+                    products[i].name += ' (' + variant.name + ' )';
+                    products[i].url = variant.url;
+                }
             }
+
         }
         return products;
 
     },
     mainPicture: function() {
-        return Session.get('mainPicture');
+        return Images.findOne(Session.get('brand').logo).link();
     }
 
 });

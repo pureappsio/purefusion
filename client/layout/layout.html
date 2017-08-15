@@ -1,5 +1,7 @@
 <template name="layout">
-    {{> header}}
+	{{#if notStore}}
+    	{{> header}}
+    {{/if}}
     <div id="main" class="container-fluid">
         {{> yield}}
     </div>

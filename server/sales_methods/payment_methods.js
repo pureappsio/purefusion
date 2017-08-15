@@ -288,7 +288,8 @@ Meteor.methods({
         console.log(items);
 
         // Get brand name
-        var brandName = Meteor.call('getBrandName', saleData.userId);
+        var brand = Brands.findOne(saleData.brandId);
+        var brandName = brand.name;
 
         var create_payment_json = {
             "intent": "sale",
@@ -296,8 +297,8 @@ Meteor.methods({
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": Meteor.absoluteUrl() + "validate_payment?sale_id=" + saleId,
-                "cancel_url": Meteor.absoluteUrl() + "failed_payment?sale_id=" + saleId
+                "return_url": Meteor.absoluteUrl() + "store/validate_payment?sale_id=" + saleId,
+                "cancel_url": Meteor.absoluteUrl() + "store/failed_payment?sale_id=" + saleId
             },
             "transactions": [{
                 "item_list": {
@@ -361,8 +362,11 @@ Meteor.methods({
         // Make transaction
         var fut = new Future();
 
+        // Get brand
+        var brand = Brands.findOne(saleData.brandId);
+
         // Configure braintree
-        var braintreeGateway = Gateways.findOne({ type: 'braintree', userId: saleData.userId });
+        var braintreeGateway = Gateways.findOne({ type: 'braintree', userId: brand.userId });
         if (braintreeGateway.mode == 'sandbox') {
             gateway = braintree.connect({
                 environment: braintree.Environment.Sandbox,
@@ -545,29 +549,29 @@ Meteor.methods({
         // Send email to customer
         Meteor.call('sendReceipt', sale);
 
-        // Get customer origin
-        Meteor.call('getSaleOrigin', sale);
-
-        // Send notification
-        Meteor.call('sendNotification', sale);
-
-        // Send tripwire
-        Meteor.call('sendTripwire', sale);
-
-        // Send feedback
-        Meteor.call('sendFeedback', sale);
-
-        // Enroll customer
-        Meteor.call('enrollCustomer', sale);
-
-        // Add to plan
-        Meteor.call('addCustomerPlan', sale);
-
         // Add to list
         Meteor.call('addToList', sale);
 
-        // Add redirect
-        Meteor.call('addRedirect', sale);
+        // // // Get customer origin
+        // Meteor.call('getSaleOrigin', sale);
+
+        // Send notification
+        Meteor.call('createSaleEvent', sale);
+
+        // // Send tripwire
+        // Meteor.call('sendTripwire', sale);
+
+        // Send feedback
+        // Meteor.call('sendFeedback', sale);
+
+        // // Enroll customer
+        // Meteor.call('enrollCustomer', sale);
+
+        // // Add to plan
+        // Meteor.call('addCustomerPlan', sale);
+
+        // // Add redirect
+        // Meteor.call('addRedirect', sale);
 
     },
 

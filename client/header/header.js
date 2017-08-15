@@ -21,6 +21,12 @@ Template.header.onRendered(function() {
 
 Template.header.helpers({
 
+    notUser: function() {
+        if (!Meteor.user()) {
+            return true;
+        }
+    },
+
     email: function() {
         return Meteor.user().emails[0].address;
     },
@@ -28,6 +34,9 @@ Template.header.helpers({
 
         return Brands.find({});
 
+    },
+    title: function() {
+        return Session.get('title');
     }
 
 });

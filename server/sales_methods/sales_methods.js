@@ -110,9 +110,11 @@ Meteor.methods({
             if (product.useFeedback) {
                 if (product.useFeedback == 'yes') {
 
+                    var brand = Brands.findOne(sale.brandId);
+
                     // Send tripwire to client
-                    var brandName = Meteor.call('getBrandName', sale.userId);
-                    var brandEmail = Meteor.call('getBrandEmail', sale.userId);
+                    var brandName = brand.name;
+                    var brandEmail = brand.email;
 
                     // Build mail
                     var helper = sendgridModule.mail;
@@ -162,9 +164,11 @@ Meteor.methods({
             if (product.tripwireType) {
                 if (product.tripwireType == 'email') {
 
+                    var brand = Brands.findOne(sale.brandId);
+
                     // Send tripwire to client
-                    var brandName = Meteor.call('getBrandName', sale.userId);
-                    var brandEmail = Meteor.call('getBrandEmail', sale.userId);
+                    var brandName = brand.name;
+                    var brandEmail = brand.email;
 
                     // Build mail
                     var helper = sendgridModule.mail;
@@ -237,7 +241,7 @@ Meteor.methods({
             } else {
 
                 // Get origin from list
-                var subscriber = Meteor.call('getSubscriberInfo', sale.email);
+                var subscriber = Subscribers.findOne({ email: sale.email });
 
                 if (subscriber._id) {
 
@@ -335,7 +339,7 @@ Meteor.methods({
             ltv += customers[i].ltv;
         }
 
-        return ltv/customers.length;
+        return ltv / customers.length;
 
     },
     getCustomers: function(query) {
@@ -452,86 +456,45 @@ Meteor.methods({
     },
     sendFailedNotification: function(sale) {
 
-        // console.log(Integrations.find({}).fetch());
 
-        // Look for metrics integration
-        if (Integrations.findOne({ type: 'puremetrics' })) {
-
-            // Get integration
-            var integration = Integrations.findOne({ type: 'puremetrics' });
-
-            // Refresh sale
-            sale = Sales.findOne(sale._id);
-
-            // Build message
-            var brandName = Meteor.call('getBrandName', sale.userId);
-            if (sale.currency == 'EUR') {
-                var message = 'Failed transaction on ' + brandName + ' for ' + sale.amount + ' €';
-            }
-            if (sale.currency == 'USD') {
-                var message = 'Failed transaction on ' + brandName + ' for $' + sale.amount;
-            }
-
-            // Send notification
-            parameters = {
-                type: 'failed',
-                message: message
-            };
-
-            // Add origin
-            if (sale.origin) {
-                parameters.origin = sale.origin;
-            }
-
-            console.log('Sending notification: ');
-            console.log(parameters);
-
-            HTTP.post('https://' + integration.url + '/api/notifications?key=' + integration.key, { params: parameters });
-
-        }
 
     },
-    sendNotification: function(sale) {
+    createSaleEvent: function(sale) {
 
-        console.log(Integrations.find({}).fetch());
+        // Insert in stats
+        var stat = {
+            date: new Date(),
+            type: 'sale',
+            brandId: sale.brandId,
+            saleId: sale._id
+        }
 
-        // Look for metrics integration
-        if (Integrations.findOne({ type: 'puremetrics' })) {
+        if (sale.origin) {
+            stat.origin = sale.origin;
+        }
+        if (sale.country) {
+            stat.country = sale.country;
+        }
 
-            // Get integration
-            var integration = Integrations.findOne({ type: 'puremetrics' });
+        if (sale.medium) {
+            stat.medium = sale.medium;
+        }
 
-            // Refresh sale
-            sale = Sales.findOne(sale._id);
+        if (sale.browser) {
+            stat.browser = sale.browser;
+        }
 
-            // Build message
-            var brandName = Meteor.call('getBrandName', sale.userId);
-            if (sale.currency == 'EUR') {
-                var message = 'New sale on ' + brandName + ' for ' + sale.amount + ' €';
-            }
-            if (sale.currency == 'USD') {
-                var message = 'New sale on ' + brandName + ' for $' + sale.amount;
-            }
+        // Existing subscriber?
+        if (Subscribers.findOne({ email: sale.email })) {
 
-            // Send notification
-            parameters = {
-                type: 'sale',
-                message: message
-            };
-
-            // Add origin
-            if (sale.origin) {
-                parameters.origin = sale.origin;
-            }
-
-            console.log('Sending notification: ');
-            console.log(parameters);
-
-            // console.log('https://' + integration.url + '/api/notifications?key=' + integration.key);
-
-            HTTP.post('https://' + integration.url + '/api/notifications?key=' + integration.key, { params: parameters });
+            var subscriber = Subscribers.findOne({ email: sale.email });
+            stat.subscriberId = subscriber._id;
 
         }
+
+        console.log('New sale event');
+        console.log(stat);
+        Events.insert(stat);
 
     },
 
@@ -566,8 +529,10 @@ Meteor.methods({
         }
         text = SSR.render("recoverEmail", emailData);
 
-        var brandName = Meteor.call('getBrandName', product.userId);
-        var brandEmail = Meteor.call('getBrandEmail', product.userId);
+        var brand = Brands.findOne(product.brandId);
+
+        var brandName = brand.name;
+        var brandEmail = brand.email;
 
         // Build mail
         var helper = sendgridModule.mail;
@@ -632,8 +597,10 @@ Meteor.methods({
             }
             text = SSR.render("recoverEmail", emailData);
 
-            var brandName = Meteor.call('getBrandName', sale.userId);
-            var brandEmail = Meteor.call('getBrandEmail', sale.userId);
+            var brand = Brands.findOne(sale.brandId);
+
+            var brandName = brand.name;
+            var brandEmail = brand.email;
 
             // Build mail
             var helper = sendgridModule.mail;
@@ -666,21 +633,16 @@ Meteor.methods({
     },
     addToList: function(sale) {
 
-        // Check if email list is connected
-        if (Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
+        // Adding to list
+        if (Subscribers.findOne({ email: sale.email, brandId: sale.brandId })) {
 
-            console.log('Adding customer to list');
-            var integration = Integrations.findOne({ type: 'puremail', list: { $exists: true } });
+            console.log('Existing subscriber');
 
-            // Subscribe
-            var url = "https://" + integration.url + "/api/subscribe?key=" + integration.key;
-            var answer = HTTP.post(url, {
-                data: {
-                    email: sale.email,
-                    list: integration.list,
-                    products: sale.products
-                }
-            });
+        } else {
+
+            var subscriber = {
+
+            }
 
         }
 
@@ -745,9 +707,11 @@ Meteor.methods({
         // User
         var user = Meteor.users.findOne(sale.userId);
 
+        var brand = Brands.findOne(sale.brandId);
+
         // Get data
-        var brandName = Meteor.call('getBrandName', sale.userId);
-        var brandEmail = Meteor.call('getBrandEmail', sale.userId);
+        var brandName = brand.name;
+        var brandEmail = brand.email;
 
         // Found courses?
         var enrolling = false;
@@ -886,6 +850,8 @@ Meteor.methods({
     },
     sendReceipt: function(sale) {
 
+        console.log(sale);
+
         // Format prices
         if (sale.currency == 'EUR') {
             subtotal = sale.subtotal + ' €';
@@ -909,13 +875,16 @@ Meteor.methods({
 
             var product = Products.findOne(sale.products[i]);
 
-            if (sale.variants[i] != null) {
-                variant = Variants.findOne(sale.variants[i]);
-                product.name += ' (' + variant.name + ' )';
-                if (variant.url && product.url) {
-                    product.url = variant.url;
-                }
+            if (sale.variants) {
 
+                if (sale.variants[i] != null) {
+                    variant = Variants.findOne(sale.variants[i]);
+                    product.name += ' (' + variant.name + ' )';
+                    if (variant.url && product.url) {
+                        product.url = variant.url;
+                    }
+
+                }
             }
 
             products.push(product);
@@ -991,7 +960,7 @@ Meteor.methods({
         }
 
         // API purchases
-        if (products[0].type == 'api') {
+        if (products[0].type == 'course') {
 
             // Template
             SSR.compileTemplate('receiptEmail', Assets.getText('receipt_email_api.html'));
@@ -1022,9 +991,11 @@ Meteor.methods({
 
         }
 
+        var brand = Brands.findOne(sale.brandId);
+
         // Brand
-        var brandName = Meteor.call('getBrandName', sale.userId);
-        var brandEmail = Meteor.call('getBrandEmail', sale.userId);
+        var brandName = brand.name;
+        var brandEmail = brand.email;
 
         emailData.brandName = brandName;
         emailData.brandEmail = brandEmail;
@@ -1068,24 +1039,32 @@ Meteor.methods({
     getVAT: function(countryCode) {
         return rates[countryCode].standard_rate;
     },
-    // getUserLocation() {
+    getStoreUserLocation() {
 
-    //     // Get headers
-    //     var httpHeaders = headers.get(this);
+        // Get headers
+        var httpHeaders = headers.get(this);
 
-    //     if (httpHeaders['cf-ipcountry']) {
-    //         console.log('Using CloudFlare location')
-    //         var data = {};
-    //         data.country_code = httpHeaders['cf-ipcountry'];
-    //     } else {
-    //         console.log('Using direct IP location')
-    //         data = Meteor.call('UserLocation/get');
-    //         data.country_code = 'DE';
-    //     }
+        if (httpHeaders['cf-ipcountry']) {
+            console.log('Using CloudFlare location')
+            var data = {};
+            data.country_code = httpHeaders['cf-ipcountry'];
+        } else {
+            console.log('Using direct IP location')
+            data = Meteor.call('UserLocation/get');
+            data.country_code = 'DE';
+        }
 
-    //     return data;
+        // IP
+        if (httpHeaders['cf-connecting-ip']) {
+            ip = httpHeaders['cf-connecting-ip'];
+        } else {
+            ip = httpHeaders['x-forwarded-for'];
+        }
+        data.ip = ip;
 
-    // },
+        return data;
+
+    },
     // getOrigin: function(referer) {
 
     //     var origin = 'organic';

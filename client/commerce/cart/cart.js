@@ -31,7 +31,8 @@ Template.cart.rendered = function() {
                 productId: products[i]._id,
                 type: 'cart',
                 country: Session.get('countryCode'),
-                userId: Session.get('sellerId')
+                brandId: Session.get('selectedBrand'),
+                headers: headers.get()
             };
 
             // Origin & medium
@@ -54,7 +55,7 @@ Template.cart.rendered = function() {
 Template.cart.events({
 
     'click #checkout': function() {
-        Router.go('/checkout');
+        Router.go('/store/checkout');
     },
     'mousemove, mouseleave': function(event) {
 

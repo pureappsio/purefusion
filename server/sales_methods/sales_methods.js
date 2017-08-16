@@ -663,6 +663,8 @@ Meteor.methods({
                 subscriber.ip = sale.ip;
             }
 
+            console.log(subscriber);
+
             // Insert
             Subscribers.insert(subscriber);
 

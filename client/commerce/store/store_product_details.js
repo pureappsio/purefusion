@@ -25,10 +25,13 @@ Template.storeProductDetails.onRendered(function() {
     if (this.data) {
 
         // Session
-        var session = getSessionData({
+        var session = {
+            date: new Date(),
             type: 'visit',
-            productId: this.data._id
-        });
+            productId: this.data._id,
+            brandId: Session.get('selectedBrand'),
+            headers: headers.get()
+        };
 
         Meteor.call('insertSession', session);
 
@@ -116,19 +119,10 @@ Template.storeProductDetails.helpers({
 
     },
     reviewsEnabled: function() {
-        if (Metas.findOne({ type: 'reviewsEnable', userId: Session.get('sellerId') })) {
 
-            var value = Metas.findOne({ type: 'reviewsEnable', userId: Session.get('sellerId') }).value;
-
-            if (value == 'disable') {
-                return false;
-            } else {
-                return true;
-            }
-
-        } else {
-            return true;
-        }
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+        return brand.enableReviews;
+        
     },
     averageRating: function() {
 

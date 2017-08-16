@@ -564,8 +564,8 @@ Meteor.methods({
         // Send feedback
         // Meteor.call('sendFeedback', sale);
 
-        // // Enroll customer
-        // Meteor.call('enrollCustomer', sale);
+        // Enroll customer
+        Meteor.call('enrollCustomer', sale);
 
         // // Add to plan
         // Meteor.call('addCustomerPlan', sale);

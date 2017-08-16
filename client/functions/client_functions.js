@@ -14,6 +14,16 @@ getBrandId = function() {
 
 }
 
+isAppUser = function() {
+    
+    if (Meteor.user()) {
+
+        if (Meteor.user().role == 'appuser' || Meteor.user().role == 'admin') {
+            return true;
+        }
+    }
+}
+
 setDiscount = function(query) {
 
     if (query.discount) {

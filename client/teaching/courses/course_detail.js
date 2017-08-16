@@ -58,6 +58,15 @@ Template.courseDetails.events({
 
 Template.courseDetails.helpers({
 
+    comeBackLink: function() {
+
+        if (isAppUser()) {
+            return "/admin/courses";
+        } else {
+            return "/courses";
+        }
+
+    },
     modules: function() {
         if (Meteor.user().role == 'admin' || Meteor.user().role == 'appuser') {
             return Modules.find({ courseId: this._id }, { sort: { order: 1 } });
@@ -94,23 +103,5 @@ Template.courseDetails.helpers({
             return true;
         }
     }
-
-});
-
-Template.courseDetails.onRendered(function() {
-
-    // if (this.data) {
-
-    //     // Get right modules
-    //     console.log('Getting modules');
-    //     Meteor.call('getAllowedModules', Meteor.user()._id, this.data._id, function(err, modules) {
-    //         Session.set('allowedModules', modules);
-    //     });
-
-    //     // Get right bonuses
-    //     Meteor.call('getAllowedBonuses', Meteor.user()._id, this.data._id, function(err, bonuses) {
-    //         Session.set('allowedBonuses', bonuses);
-    //     });
-    // }
 
 });

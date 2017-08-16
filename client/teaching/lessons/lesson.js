@@ -17,3 +17,17 @@ Template.lesson.events({
     }
 
 });
+
+Template.lesson.helpers({
+
+    lessonLink: function() {
+
+        if (isAppUser()) {
+            return "/admin/lessons/" + this._id;
+        } else {
+            return "/lessons/" + this._id;
+        }
+
+    }
+
+});

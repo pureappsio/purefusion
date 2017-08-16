@@ -640,9 +640,31 @@ Meteor.methods({
 
         } else {
 
+            // Subscriber
             var subscriber = {
-
+                email: sale.email,
+                brandId: sale.brandId,
+                firstName: sale.firstName,
+                lastName: sale.lastName,
+                last_updated: new Date(),
+                date_added: new Date(),
+                confirmed: true,
+                status: 'new'
             }
+
+            // Other data
+            if (sale.country) {
+                subscriber.country = sale.country;
+            }
+            if (sale.origin) {
+                subscriber.origin = sale.origin;
+            }
+            if (sale.ip) {
+                subscriber.ip = sale.ip;
+            }
+
+            // Insert
+            Subscribers.insert(subscriber);
 
         }
 
@@ -704,21 +726,21 @@ Meteor.methods({
     },
     enrollCustomer: function(sale) {
 
-        // User
-        var user = Meteor.users.findOne(sale.userId);
+        // Courses list
+        var courses = [];
 
+        // Brand
         var brand = Brands.findOne(sale.brandId);
 
         // Get data
         var brandName = brand.name;
         var brandEmail = brand.email;
 
-        // Found courses?
+        // Not enrolling
         var enrolling = false;
 
         // Convert email to lowercase
         sale.email = (sale.email).toLowerCase();
-        console.log(sale.email);
 
         // Go through all products
         for (p in sale.products) {
@@ -727,78 +749,29 @@ Meteor.methods({
             var product = Products.findOne(sale.products[p]);
 
             // If API type, create account & send email
-            if (product.courses) {
+            if (product.type == 'course') {
 
-                console.log('Enrolling customer');
-
-                // Check for variants
-                if (sale.variants[p] != null) {
-
-                    // Get variant
-                    var variant = Variants.findOne(sale.variants[p]);
-                    productName = product.name + ' (' + variant.name + ' )';
-
-                    var enrollData = {
-                        email: sale.email,
-                        courses: variant.courses
-                    };
-
-                    if (user.role != 'admin') {
-                        enrollData.teacherEmail = user.emails[0].address;
-                    }
-
-                    if (variant.modules) {
-                        enrollData.modules = variant.modules;
-                    }
-                    if (variant.bonuses) {
-                        enrollData.bonuses = variant.bonuses;
-                    }
-
-                    // Make request to create account
-                    var integration = Integrations.findOne({ type: 'purecourses' });
-                    var url = "https://" + integration.url + "/api/users?key=" + integration.key;
-                    var answer = HTTP.post(url, { data: enrollData });
-                    if (enrolling == false) {
-                        var userData = answer.data;
-                        enrolling = true;
-                    }
-
-
-                } else {
-
-                    productName = product.name;
-
-                    var enrollData = {
-                        email: sale.email,
-                        courses: product.courses,
-                    };
-
-                    if (user.role != 'admin') {
-                        enrollData.teacherEmail = user.emails[0].address;
-                    }
-
-                    console.log('Enrollment data: ');
-                    console.log(enrollData);
-
-                    // Make request to create account
-                    var integration = Integrations.findOne({ type: 'purecourses' });
-                    var url = "https://" + integration.url + "/api/users?key=" + integration.key;
-                    var answer = HTTP.post(url, { data: enrollData });
-                    if (enrolling == false) {
-                        var userData = answer.data;
-                        enrolling = true;
-                    }
-
-                }
+                enrolling = true;
+                courses.push(product._id);
 
             }
 
         }
 
-        // Send email if enrolled
+        // Enrolling data
+        var enrollData = {
+            courses: courses,
+            email: sale.email,
+            brandId: brand._id
+        }
+
+        var answer = Meteor.call('createNewStudent', enrollData);
+        console.log(answer);
+
+        // Send email if new enrolling
         if (enrolling == true) {
 
-            if (userData.password) {
+            if (answer.new) {
 
                 // Template
                 SSR.compileTemplate('accessEmail', Assets.getText('access_email_new.html'));
@@ -806,9 +779,8 @@ Meteor.methods({
                 // Get data
                 emailData = {
                     email: sale.email,
-                    url: integration.url,
-                    password: userData.password,
-                    product: productName
+                    name: brand.name,
+                    password: answer.password
                 };
 
             } else {
@@ -819,8 +791,7 @@ Meteor.methods({
                 // Get data
                 emailData = {
                     email: sale.email,
-                    url: integration.url,
-                    product: productName
+                    name: brand.name
                 };
 
             }
@@ -1051,7 +1022,7 @@ Meteor.methods({
         } else {
             console.log('Using direct IP location')
             data = Meteor.call('UserLocation/get');
-            data.country_code = 'DE';
+            console.log(data);
         }
 
         // IP
@@ -1061,6 +1032,9 @@ Meteor.methods({
             ip = httpHeaders['x-forwarded-for'];
         }
         data.ip = ip;
+
+        console.log('Location data: ');
+        console.log(data);
 
         return data;
 
@@ -1098,22 +1072,30 @@ Meteor.methods({
         // Get headers
         var httpHeaders = headers.get(this);
 
+        // Answer
+        var answer = {}
+
         if (httpHeaders.referer) {
 
             var origin = Meteor.call('getOrigin', httpHeaders.referer);
             var medium = Meteor.call('getMedium', httpHeaders.referer);
 
-            return {
+            answer = {
                 origin: origin,
                 medium: medium
             }
 
         } else {
-            return {
+            answer = {
                 origin: 'organic',
                 medium: 'google'
             }
         }
+
+        console.log('Origin data: ');
+        console.log(answer);
+
+        return answer;
 
     }
 

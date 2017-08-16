@@ -15,6 +15,15 @@ Template.course.events({
 
 Template.course.helpers({
 
+    courseLink: function() {
+
+        if (isAppUser()) {
+            return "/admin/courses/" + this._id;
+        } else {
+            return "/courses/" + this._id;
+        }
+
+    },
     published: function() {
         if (this.status) {
 

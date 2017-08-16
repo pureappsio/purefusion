@@ -192,6 +192,29 @@ Template.subscriberDetails.helpers({
     //         return Automations.findOne(Session.get('subscriberData').sequenceEmail).order;
     //     }
     // },
+    isStudent: function() {
+
+        if (Meteor.users.findOne({ "emails.0.address": this.email })) {
+            return true;
+        }
+
+    },
+    coursesFollowed: function() {
+
+        coursesFollowed = [];
+
+        var user = Meteor.users.findOne({ "emails.0.address": this.email });
+
+        console.log('User');
+        console.log(user);
+
+        for (i in user.courses) {
+            coursesFollowed.push(Products.findOne(user.courses[i]));
+        }
+
+        return coursesFollowed;
+
+    },
     products: function() {
 
         return Events.find({ type: 'sale', subscriberId: this._id }).count();
@@ -202,7 +225,12 @@ Template.subscriberDetails.helpers({
 
         var ltv = 0;
         for (i in events) {
-            ltv += parseFloat(Sales.findOne(events[i].saleId).amount);
+            if (events[i].saleId) {
+                if (Sales.findOne(events[i].saleId)) {
+                    ltv += parseFloat(Sales.findOne(events[i].saleId).amount);
+                }
+            }
+
         }
 
         return '$' + ltv;

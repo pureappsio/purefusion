@@ -134,9 +134,6 @@ Meteor.methods({
                 if (visitor.origin) {
                     stat.origin = visitor.origin;
                 }
-                if (visitor.userId) {
-                    stat.userId = visitor.userId;
-                }
                 if (visitor.country) {
                     stat.country = visitor.country;
                 }

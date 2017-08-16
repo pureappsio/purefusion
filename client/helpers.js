@@ -26,8 +26,7 @@ Template.registerHelper("langEN", function() {
 
     if (brand.language == 'en') {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 
@@ -105,76 +104,83 @@ Template.registerHelper("startCurrency", function() {
 
 Template.registerHelper("getDiscountPrice", function(price, location, productId) {
 
+    // Rates
+    var rates = Metas.findOne({ type: 'rates' }).value;
+
+    // Brand
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    // If currency is defined
     if (Session.get('currency')) {
 
-        if (price[Session.get('currency')]) {
+        // Price
+        if (Session.get('currency') == brand.store.baseCurrency) {
+            var currencyPrice = price;
+        } else if (brand.store.baseCurrency == 'EUR') {
+            var currencyPrice = price * rates[Session.get('currency')];
+        }
+        else {
 
-            var currencyPrice = price[Session.get('currency')]
+            // Get EUR price
+            var eurPrice = price / rates[brand.store.baseCurrency];
+            var currencyPrice = price * rates[Session.get('currency')];
 
-            // Discount
-            if (Session.get('usingDiscount')) {
+        }
 
-                var discount = Session.get('usingDiscount');
-                var discounted = true;
+        // Discount
+        if (Session.get('usingDiscount')) {
 
-                if (discount.productId) {
+            var discount = Session.get('usingDiscount');
+            var discounted = true;
 
-                    if (discount.productId != productId) {
-                        discounted = false;
-                    }
+            if (discount.productId) {
 
+                if (discount.productId != productId) {
+                    discounted = false;
                 }
-
-                if (discounted == true) {
-                    if (discount.type == 'amount') {
-                        currencyPrice = currencyPrice - parseFloat(Session.get('usingDiscount').amount);
-                    } else {
-                        currencyPrice = currencyPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
-                    }
-                }
-
-
 
             }
 
-            return currencyPrice.toFixed(2);
-
-        } else {
-
-            var rates = Metas.findOne({ type: 'rates' }).value;
-            var finalPrice = price.EUR * rates[Session.get('currency')];
-
-            console.log(Session.get('usingDiscount'));
-
-            // Discount
-            if (Session.get('usingDiscount')) {
+            if (discounted == true) {
                 if (discount.type == 'amount') {
-                    finalPrice = finalPrice - parseFloat(Session.get('usingDiscount').amount);
+                    currencyPrice = currencyPrice - parseFloat(Session.get('usingDiscount').amount);
                 } else {
-                    finalPrice = finalPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+                    currencyPrice = currencyPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
                 }
-
             }
 
-            return finalPrice.toFixed(0) + '.99';
+        }
 
+        if (Session.get('currency') == brand.store.baseCurrency) {
+            return currencyPrice.toFixed(2);
+        }
+        else {
+            if (currencyPrice == 0) {
+                return 0;
+            }
+            else {
+                return currencyPrice.toFixed(0) + '.99';
+            }
+            
         }
 
     } else {
 
+        // Price
+        var finalPrice = price;
+
         // Discount
         if (Session.get('usingDiscount')) {
             if (discount.type == 'amount') {
-                if (location != 'store') {
-                    price = price - parseFloat(Session.get('usingDiscount').amount);
-                }
+                finalPrice = finalPrice - parseFloat(Session.get('usingDiscount').amount);
             } else {
-                price = price * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+                finalPrice = finalPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
             }
 
         }
 
-        return price;
+        return finalPrice.toFixed(2);
+
     }
 
 });
@@ -182,14 +188,39 @@ Template.registerHelper("getDiscountPrice", function(price, location, productId)
 
 Template.registerHelper("getPrice", function(price) {
 
+    // Brand
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    // Rates
+    var rates = Metas.findOne({ type: 'rates' }).value;
+
     if (Session.get('currency')) {
 
-        if (price[Session.get('currency')]) {
-            return price[Session.get('currency')];
-        } else {
-            var rates = Metas.findOne({ type: 'rates' }).value;
-            var finalPrice = price.EUR * rates[Session.get('currency')];
-            return finalPrice.toFixed(0) + '.99';
+        // Price
+        if (Session.get('currency') == brand.store.baseCurrency) {
+            var currencyPrice = price;
+        } else if (brand.store.baseCurrency == 'EUR') {
+            var currencyPrice = price * rates[Session.get('currency')];
+        }
+        else {
+
+            // Get EUR price
+            var eurPrice = price / rates[brand.store.baseCurrency];
+            var currencyPrice = price * rates[Session.get('currency')];
+
+        }
+
+        if (Session.get('currency') == brand.store.baseCurrency) {
+            return currencyPrice.toFixed(2);
+        }
+        else {
+            if (currencyPrice == 0) {
+                return 0;
+            }
+            else {
+                return currencyPrice.toFixed(0) + '.99';
+            }
+            
         }
 
     } else {

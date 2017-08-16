@@ -22,7 +22,7 @@ Template.element.helpers({
 
     videoUrl: function() {
         if (this.videoId) {
-            return Session.get('videoLink' + this.videoId);
+            return Images.findOne(this.videoId).link();
         }
     },
     imgUrl: function() {
@@ -77,23 +77,23 @@ Template.element.onRendered(function() {
 
     if (this.data) {
 
-        if (this.data.videoId) {
+        // if (this.data.videoId) {
 
-            var videoId = this.data.videoId;
+        //     var videoId = this.data.videoId;
 
-            Meteor.call('getFileLink', videoId, function(err, data) {
+        //     Meteor.call('getFileLink', videoId, function(err, data) {
 
-                Session.set('videoLink' + videoId, data);
+        //         Session.set('videoLink' + videoId, data);
 
-            });
-        }
+        //     });
+        // }
 
         if (videojs.getPlayers()['lesson-video-' + this.data._id]) {
             delete videojs.getPlayers()['lesson-video-' + this.data._id];
         }
 
         // Url
-        var videoUrl = this.data.url;
+        // var videoUrl = this.data.url;
 
         videojs("lesson-video-" + this.data._id, {}, function() {
 

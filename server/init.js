@@ -1,8 +1,8 @@
 Meteor.startup(function() {
 
     // console.log(Elements.find({ type: 'lessonElement' }).fetch());
-    console.log(Meteor.users.find({ role: 'admin' }).fetch()[0]);
-    // console.log(Brands.find({}).fetch());
+    console.log(Products.find({}).fetch());
+    // console.log(Meteor.users.findOne({ "emails.0.address": "marcolivier.schwartz@gmail.com" }));
 
     // var pages = Pages.find({}).fetch();
     // for (i in pages) {
@@ -49,5 +49,13 @@ Meteor.startup(function() {
 
     // Grab conversion rates
     Meteor.call('updateConversionRates');
+
+    // Allow delete users
+    Meteor.users.allow({
+        remove: function() {
+            return true;
+        }
+    });
+
 
 });

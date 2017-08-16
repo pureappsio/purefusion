@@ -46,11 +46,16 @@
                         </a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{pathFor 'products'}}">Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{pathFor 'sales'}}">Sales</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{pathFor 'products'}}" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Commerce</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{{pathFor 'products'}}">
+                            Products
+                        </a>
+                        <a class="dropdown-item" href="{{pathFor 'sales'}}">
+                            Sales
+                        </a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'social'}}">Social</a>

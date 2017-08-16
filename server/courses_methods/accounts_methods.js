@@ -162,82 +162,71 @@ Meteor.methods({
         return answer;
 
     },
-    // createNewUser: function(data) {
+    createNewStudent: function(data) {
 
-    //     console.log(data);
+        console.log(data);
 
-    //     // Prepare answer
-    //     answer = {};
+        // Answer
+        var answer = {};
 
-    //     // Check if exist
-    //     if (Meteor.users.findOne({ "emails.0.address": data.email })) {
+        // Check if exist
+        if (Meteor.users.findOne({ "emails.0.address": data.email })) {
 
-    //         console.log('Updating existing user');
-    //         var userId = Meteor.users.findOne({ "emails.0.address": data.email })._id;
-    //         answer.message = "User updated";
+            console.log('Updating existing student');
+            var userId = Meteor.users.findOne({ "emails.0.address": data.email });
+            answer.new = false;
 
-    //     } else {
+        } else {
 
-    //         console.log('Creating new user');
+            console.log('Creating new student');
 
-    //         if (data.password) {
-    //             password = data.password;
-    //         } else {
+            // Generate password
+            var password = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    //             // Generate password
-    //             var password = "";
-    //             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 8; i++) {
+                password += possible.charAt(Math.floor(Math.random() * possible.length));
+            }
 
-    //             for (var i = 0; i < 8; i++) {
-    //                 password += possible.charAt(Math.floor(Math.random() * possible.length));
-    //             }
-    //         }
+            // Create
+            var userId = Accounts.createUser({
+                email: data.email,
+                password: password
+            });
 
-    //         // Get teacher user
-    //         if (data.teacherEmail) {
-    //             var teacherUser = Meteor.users.findOne({ 'emails.address': data.teacherEmail });
-    //         } else {
-    //             var teacherUser = Meteor.users.findOne({ role: 'admin' });
-    //         }
+            console.log('Student created');
 
-    //         // Create
-    //         var userId = Accounts.createUser({
-    //             email: data.email,
-    //             password: password
-    //         });
+            // Update
+            Meteor.users.update(userId, {
+                $set: {
+                    role: 'student',
+                    brandId: data.brandId
+                }
+            });
 
-    //         // Update
-    //         Meteor.users.update(userId, {
-    //             $set: {
-    //                 role: 'student',
-    //                 teacherId: teacherUser._id
-    //             }
-    //         });
+            console.log('Student updated');
 
-    //         // Return password
-    //         answer.password = password;
-    //         answer.message = "User created";
+            // Return password
+            answer.password = password;
+            answer.new = true;
 
-    //     }
+        }
 
-    //     // Return userID
-    //     answer.userId = userId;
+        console.log(answer);
 
-    //     // Update products
-    //     Meteor.call('assignCourse', userId, data.courses);
+        // Update products
+        Meteor.call('assignCourses', userId, data.courses);
 
-    //     if (data.modules) {
-    //         Meteor.call('assignModules', userId, data.courses, data.modules);
-    //     }
-    //     if (data.bonuses) {
-    //         Meteor.call('assignBonuses', userId, data.courses, data.bonuses);
-    //     }
+        if (data.modules) {
+            Meteor.call('assignModules', userId, data.courses, data.modules);
+        }
+        if (data.bonuses) {
+            Meteor.call('assignBonuses', userId, data.courses, data.bonuses);
+        }
 
-    //     console.log(Meteor.users.findOne(userId));
+        return answer;
 
-    //     return answer;
-
-    // },
+    },
 
     deleteUser: function(userId) {
 
@@ -335,13 +324,17 @@ Meteor.methods({
             var existingCourses = [];
         }
 
+        console.log(existingCourses)
+        console.log(courses);
+
         // Assign new courses
-        if (existingCourses.indexOf(courses) == -1) {
-            existingCourses.push(courses);
+        for (i in courses) {
+            if (existingCourses.indexOf(courses[i]) == -1) {
+                existingCourses.push(courses[i]);
+            }
         }
 
         // Update
-        console.log(existingCourses);
         Meteor.users.update(userId, { $set: { courses: existingCourses } });
 
     },

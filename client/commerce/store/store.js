@@ -3,11 +3,13 @@
 Template.store.rendered = function() {
 
     // Find Store front
-    if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') })) {
-        if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') }).value == 'yes') {
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    if (brand.useStoreFront) {
+        if (brand.useStoreFront) {
 
             // Add background image
-            var pictureId = Metas.findOne({ type: 'storeFrontPicture', userId: Session.get('sellerId') }).value;
+            var pictureId = brand.storeFrontPicture;
             $('.heading-row').css('background-image', 'url(' + Images.findOne(pictureId).link() + ')');
         }
     }
@@ -20,7 +22,7 @@ Template.store.rendered = function() {
         date: new Date(),
         type: 'store',
         country: Session.get('countryCode'),
-        userId: Session.get('sellerId')
+        brandId: Session.get('selectedBrand')
     };
 
     // Origin & medium
@@ -33,6 +35,9 @@ Template.store.rendered = function() {
         session.medium = Session.get('medium');
     }
 
+    // Headers
+    session.headers = headers.get();
+    
     // Mobile or Desktop
     if (/Mobi/.test(navigator.userAgent)) {
         session.browser = 'mobile';
@@ -50,7 +55,7 @@ Template.store.rendered = function() {
 
             // Check scroll 
             $(window).unbind('scroll');
-            
+
             $(window).scroll(function() {
                 var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
                 showMobileExitIntent(percent, 'storefront', 'offer');
@@ -79,8 +84,10 @@ Template.store.helpers({
 
     useStoreFront: function() {
 
-        if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') })) {
-            if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') }).value == 'yes') {
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+
+        if (brand.useStoreFront) {
+            if (brand.useStoreFront == 'yes') {
                 return true;
             }
         }
@@ -88,20 +95,27 @@ Template.store.helpers({
     },
 
     emailContact: function() {
-        return 'mailto:' + Metas.findOne({ type: 'brandEmail', userId: Session.get('sellerId') }).value;
+
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+
+        return 'mailto:' + brand.email;
     },
     storeName: function() {
-        return Metas.findOne({ type: 'brandName', userId: Session.get('sellerId') }).value;
+
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+        return brand.name;
     },
     mainPicture: function() {
         return Session.get('mainPicture');
     },
     products: function() {
 
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+
         // var products = Products.find({ show: true, userId: Session.get('sellerId') }, { sort: { _id: -1 } }).fetch();
 
         // Get products
-        var products = Products.find({ userId: Session.get('sellerId') }, { sort: { name: 1 } }).fetch();
+        var products = Products.find({ brandId: Session.get('selectedBrand') }, { sort: { name: 1 } }).fetch();
 
         // Add sales
         for (i in products) {
@@ -125,8 +139,8 @@ Template.store.helpers({
         var storeProductsRow = [];
         groupIndex = 0;
 
-        if (Metas.findOne({ type: 'articlesLine', userId: Session.get('sellerId') })) {
-            productsLine = Metas.findOne({ type: 'articlesLine', userId: Session.get('sellerId') }).value;
+        if (brand.articlesLine) {
+            productsLine = brand.articlesLine;
         } else {
             productsLine = 3;
         }

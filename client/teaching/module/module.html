@@ -1,12 +1,14 @@
 <template name="module">
     <div class='row'>
+        {{#if isAppUser}}
         <div class='col-md-1'>
             <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="button" class="module-up btn btn-secondary"><i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>
                 <button type="button" class="module-down btn btn-secondary"><i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>
             </div>
         </div>
-        <div class='col-md-9 teaching-text'><a href='/admin/modules/{{_id}}'>{{name}}</a></div>
+        {{/if}}
+        <div class='col-md-9 teaching-text'><a href='{{moduleLink}}'>{{name}}</a></div>
         {{#if isAppUser}}
         <div class='col-md-2'>
             <a class='btn btn-secondary' href='/admin/modules/{{_id}}/edit'>

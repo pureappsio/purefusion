@@ -17,3 +17,17 @@ Template.module.events({
     }
 
 });
+
+Template.module.helpers({
+
+    moduleLink: function() {
+
+        if (isAppUser()) {
+            return "/admin/modules/" + this._id;
+        } else {
+            return "/modules/" + this._id;
+        }
+
+    }
+
+});

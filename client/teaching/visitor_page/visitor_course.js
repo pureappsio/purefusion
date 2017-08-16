@@ -25,7 +25,7 @@ Template.visitorCourse.events({
         if (this.salesPage) {
             window.location.href = this.salesPage;
         } else {
-            Router.go('signup');
+            window.location.href = '/store/checkout?product_id=' + this._id;
         }
     }
 

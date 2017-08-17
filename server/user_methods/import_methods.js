@@ -444,7 +444,13 @@ Meteor.methods({
         var posts = Meteor.call('getPureData', integration, 'posts');
         for (i in posts) {
             posts[i].brandId = data.brandId;
-            Posts.insert(posts[i], { selector: { category: posts[i].category } });
+
+            if (Posts.findOne(posts[i]._id)) {
+                console.log('Existing post');
+            } else {
+                Posts.insert(posts[i], { selector: { category: posts[i].category } });
+            }
+
         }
 
         // Pages
@@ -452,15 +458,33 @@ Meteor.methods({
         var pages = Meteor.call('getPureData', integration, 'pages');
         for (i in pages) {
             pages[i].brandId = data.brandId;
-            Pages.insert(pages[i]);
+
+            if (pages[i].type != 'link' && pages[i].type != 'purepages') {
+
+                console.log(pages[i]);
+
+                if (Pages.findOne(pages[i]._id)) {
+                    console.log('Existing page');
+                } else {
+                    Pages.insert(pages[i], { selector: { type: pages[i].type } });
+                }
+            }
+
         }
 
         // Metas
         console.log('Importing metas');
         var metas = Meteor.call('getPureData', integration, 'metas');
         for (i in metas) {
+
             metas[i].brandId = data.brandId;
-            Meteor.call('insertMeta', metas[i]);
+
+            if (Metas.findOne(metas[i]._id)) {
+                console.log('Existing meta');
+            } else {
+                Meteor.call('insertMeta', metas[i]);
+            }
+
         }
 
         // Elements
@@ -468,8 +492,20 @@ Meteor.methods({
         var elements = Meteor.call('getPureData', integration, 'elements');
         for (i in elements) {
             elements[i].brandId = data.brandId;
-            console.log(elements[i]);
-            Elements.insert(elements[i], { selector: { type: elements[i].type } });
+
+            // Affiliate
+            if (!elements[i].type && elements[i].rank && elements[i].rating) {
+                elements[i].type = 'affiliate';
+            }
+
+            if (Elements.findOne(elements[i]._id)) {
+                console.log('Existing element');
+                Elements.update(elements[i]._id, { $set: { brandId: data.brandId } }, { selector: { type: elements[i].type } });
+            } else {
+                console.log(elements[i]);
+                Elements.insert(elements[i], { selector: { type: elements[i].type } });
+            }
+
         }
 
         // Images
@@ -477,7 +513,15 @@ Meteor.methods({
         var images = Meteor.call('getPureData', integration, 'files');
         for (i in images) {
             images[i].brandId = data.brandId;
-            Images.collection.insert(images[i]);
+
+            if (Images.collection.findOne(images[i]._id)) {
+                console.log('Existing file');
+                Images.collection.update(images[i]._id, { $set: { brandId: data.brandId } });
+            } else {
+                Images.collection.insert(images[i]);
+
+            }
+
         }
 
         // Menus
@@ -485,7 +529,15 @@ Meteor.methods({
         var menus = Meteor.call('getPureData', integration, 'menus');
         for (i in menus) {
             menus[i].brandId = data.brandId;
-            Menus.insert(menus[i]);
+
+            if (Menus.findOne(menus[i]._id)) {
+                console.log('Existing menu');
+                Menus.update(menus[i]._id, { $set: { brandId: data.brandId } });
+            } else {
+                console.log(menus[i]);
+                Menus.insert(menus[i]);
+            }
+
         }
 
         // Boxes
@@ -493,7 +545,14 @@ Meteor.methods({
         var boxes = Meteor.call('getPureData', integration, 'boxes');
         for (i in boxes) {
             boxes[i].brandId = data.brandId;
-            Boxes.insert(boxes[i]);
+
+            if (Boxes.findOne(boxes[i]._id)) {
+                console.log('Existing signup box');
+            } else {
+                console.log(boxes[i]);
+                Boxes.insert(boxes[i]);
+            }
+
         }
 
         // Categories
@@ -501,7 +560,15 @@ Meteor.methods({
         var categories = Meteor.call('getPureData', integration, 'categories');
         for (i in categories) {
             categories[i].brandId = data.brandId;
-            Categories.insert(categories[i]);
+
+            if (categories[i].name != '') {
+                if (Categories.findOne(categories[i]._id)) {
+                    console.log('Existing categories');
+                } else {
+                    console.log(categories[i]);
+                    Categories.insert(categories[i]);
+                }
+            }
         }
 
         // Pricing
@@ -528,13 +595,15 @@ Meteor.methods({
             Recordings.insert(recordings[i]);
         }
 
-        // Stats
-        console.log('Importing stats');
-        var stats = Meteor.call('getPureData', integration, 'stats');
-        for (i in stats) {
-            stats[i].brandId = data.brandId;
-            Events.insert(stats[i]);
-        }
+        // // Stats
+        // console.log('Importing stats');
+        // var stats = Meteor.call('getPureData', integration, 'stats');
+        // for (i in stats) {
+        //     stats[i].brandId = data.brandId;
+        //     Events.insert(stats[i]);
+        // }
+
+        console.log('Importation done');
 
         // Localise
         Meteor.call('localisteAllPosts', data.brandId);

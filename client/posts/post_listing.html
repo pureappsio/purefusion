@@ -1,6 +1,7 @@
 <template name='postListing'>
     <div class='row'>
-        <div class="col-md-4"><a href='/admin/posts/{{_id}}'>{{title}}</a></div>
+        <div class="col-md-1"><img src='{{featPic}}' class='img-fluid'></div>
+        <div class="col-md-3"><a href='/admin/posts/{{_id}}'>{{title}}</a></div>
         <div class="col-md-2">{{postCategoryDisplay}}</div>
         <div class="col-md-3">{{url}}</div>
         <div class="col-md-2">

@@ -13,6 +13,17 @@ Template.postListing.events({
 
 Template.postListing.helpers({
 
+    featPic: function() {
+
+        if (this.featuredPicture) {
+
+            if (Images.findOne(this.featuredPicture)) {
+                var pictureUrl = Images.findOne(this.featuredPicture).link();
+                return pictureUrl;
+            }
+        }
+
+    },
     tagsName: function() {
 
         var tags = this.tags;
@@ -86,7 +97,7 @@ Template.postListing.helpers({
         if (this.postCategory) {
             return Categories.findOne(this.postCategory).name;
         }
-        
+
     },
     statusBadLinks: function() {
         if (this.badLinks) {

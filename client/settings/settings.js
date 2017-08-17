@@ -10,6 +10,11 @@ Template.settings.events({
 
         Meteor.call('insertMeta', meta);
 
-    }
+    },
+    'click #localise': function() {
+
+        Meteor.call('localiseAll');
+
+    }    
 
 });

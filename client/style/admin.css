@@ -9,6 +9,10 @@
     margin-right: 5px !important;
 }
 
+.brand-fav {
+    max-height: 50px;
+}
+
 h3 {
     margin-top: 15px !important;
 }

@@ -191,7 +191,10 @@ Meteor.methods({
             },
             imageUrl: function() {
                 if (parameters.post.featuredPicture) {
-                    return Images.findOne(parameters.post.featuredPicture).link();
+                    if (Images.findOne(parameters.post.featuredPicture)) {
+                        return Images.findOne(parameters.post.featuredPicture).link();
+                    }
+                    
                 }
             },
             postUrl: function() {

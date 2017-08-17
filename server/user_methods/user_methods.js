@@ -4,7 +4,17 @@ Future = Npm.require('fibers/future');
 import Images from '/lib/images.collection.js';
 
 Meteor.methods({
-    
+
+    localiseAll: function() {
+
+        var brands = Brands.find({}).fetch();
+
+        for (i in brands) {
+            Meteor.call('localisteAllPosts', brands[i]._id);
+            Meteor.call('flushCache');
+        }
+        
+    },
     getVisitorBrand: function(document) {
 
         var hostnameArray = document.location.hostname.split(".");
@@ -249,6 +259,8 @@ Meteor.methods({
             }
 
         });
+
+        console.log(localisations);
 
         for (c in countryCodes) {
 
@@ -698,48 +710,6 @@ Meteor.methods({
 
     },
 
-    // getEmailLists: function() {
-
-    //     // Get integration
-    //     if (Integrations.findOne({ type: 'puremail' })) {
-
-    //         var integration = Integrations.findOne({ type: 'puremail' });
-
-    //         // Get lists
-    //         var url = "https://" + integration.url + "/api/lists?key=" + integration.key;
-
-    //         try {
-    //             var answer = HTTP.get(url);
-    //             return answer.data.lists;
-
-    //         } catch (e) {
-    //             return [];
-    //         }
-
-    //     } else {
-    //         return [];
-    //     }
-
-    // },
-    // getListSequences: function() {
-
-    //     // Get integration
-    //     if (Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
-
-    //         // Get integration
-    //         var integration = Integrations.findOne({ type: 'puremail' });
-
-    //         // Get sequences
-    //         var url = "https://" + integration.url + "/api/sequences?key=" + integration.key;
-    //         url += '&list=' + integration.list;
-    //         var answer = HTTP.get(url);
-    //         return answer.data.sequences;
-
-    //     } else {
-    //         return [];
-    //     }
-
-    // },
     createUsers: function() {
 
         // Create admin user

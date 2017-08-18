@@ -3,6 +3,27 @@
  
     {{> quickForm collection="Pages" doc=this id="updatePageForm" type="update" autosave=true}}
 
+    {{#if isGeneric}}
+
+    <h3>Elements</h3>
+
+    {{#autoForm collection="Elements" doc=defaultElement id="insertPageElementForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='brandId' type='hidden'}}
+        {{> afQuickField name='type'}}
+        {{> afQuickField name='pageId' type='hidden'}}
+        {{> afQuickField name='order' type='hidden'}}
+    </fieldset>
+
+    <button type="submit" class="btn btn-block btn-primary">
+        Add Element
+    </button>
+    {{/autoForm}} 
+
+    {{#each elements}} {{> elementListing}} {{/each}}
+
+    {{/if}}
+
     <div class='row'>
         <div class="col-md-4">
             <a class='btn btn-secondary btn-block' href='/admin/pages'>Come Back</a>

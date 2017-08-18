@@ -6,6 +6,9 @@ Meteor.methods({
 
     renderEmailBox: function(post, query) {
 
+        // Brand
+        var brand = Brands.findOne(post.brandId);
+
         // Compile header
         SSR.compileTemplate('box', Assets.getText('posts/email_box_template.html'));
 
@@ -21,7 +24,7 @@ Meteor.methods({
                 }
 
             },
-            boxId: function(){
+            boxId: function() {
 
                 if (post.signupBox) {
                     return post.signupBox;
@@ -33,9 +36,9 @@ Meteor.methods({
             },
             langEN: function() {
 
-                if (Metas.findOne({ userId: post.userId, type: 'language' })) {
+                if (brand.language) {
 
-                    if (Metas.findOne({ userId: post.userId, type: 'language' }).value == 'fr') {
+                    if (brand.language == 'fr') {
                         return false;
                     } else {
                         return true;
@@ -96,6 +99,8 @@ Meteor.methods({
 
         console.log('Rendering modal');
 
+        var brand = Brands.findOne(parameters.brandId);
+
         // Compile navbar
         SSR.compileTemplate('modal', Assets.getText('modals/exit_modal_template.html'));
 
@@ -124,9 +129,9 @@ Meteor.methods({
             },
             langEN: function() {
 
-                if (Metas.findOne({ userId: parameters.userId, type: 'language' })) {
+                if (brand.language) {
 
-                    if (Metas.findOne({ userId: parameters.userId, type: 'language' }).value == 'fr') {
+                    if (brand.language == 'fr') {
                         return false;
                     } else {
                         return true;
@@ -194,7 +199,7 @@ Meteor.methods({
                     if (Images.findOne(parameters.post.featuredPicture)) {
                         return Images.findOne(parameters.post.featuredPicture).link();
                     }
-                    
+
                 }
             },
             postUrl: function() {

@@ -1,0 +1,13 @@
+<template name='elementEditPage'>
+
+    <h3>Editing Element</h3>
+
+    {{> quickForm collection="Elements" doc=this id="updateElementForm" type="update" autosave=true}}
+
+    <div class='row'>
+        <div class="col-md-4">
+            <a class='btn btn-primary btn-block' href='/admin/pages/{{pageId}}'>Come Back</a>
+        </div>
+    </div>
+
+</template>

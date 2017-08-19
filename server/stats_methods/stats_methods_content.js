@@ -189,11 +189,13 @@ Meteor.methods({
         Meteor.call('updateConversionStat', 'posts', 'affiliateClick', 'visit', brandId);
         Meteor.call('getEstimatedAmazonEarnings', brandId)
         Meteor.call('updateVariationStat', { metric: 'affiliateClick', brandId: brandId });
+        Meteor.call('updateVariationStat', { metric: 'affiliateEarnings', brandId: brandId });
         Meteor.call('getConvData', 'affiliateClick', brandId);
         Meteor.call('updateAggregateStat', { metric: 'affiliateClick', brandId: brandId });
 
         // Sales
         Meteor.call('updateVariationStat', { metric: 'sale', brandId: brandId });
+        Meteor.call('updateVariationStat', { metric: 'earnings', brandId: brandId });
 
         // Emails
         Meteor.call('updateConversionStat', 'posts', 'subscribed', 'visit', brandId);
@@ -233,7 +235,6 @@ Meteor.methods({
 
         // Current
         var query = {
-            type: parameters.metric,
             date: { $gte: limitDate },
             brandId: parameters.brandId
         };
@@ -247,11 +248,53 @@ Meteor.methods({
             query.medium = parameters.medium;
         }
 
-        var current = Events.find(query).count();
+        // Get data
+        if (parameters.metric == 'sale') {
+
+            // Use sales
+            var current = Sales.find(query).count();
+
+        } else if (parameters.metric == 'earnings') {
+
+            // Use sales
+            var sales = Sales.find(query).fetch();
+            var earnings = 0;
+
+            for (i in sales) {
+                earnings += parseFloat(sales[i].amount);
+            }
+            var current = earnings;
+
+        } 
+        else if (parameters.metric == 'affiliateEarnings') {
+
+            // Query
+            query.earnings = { $exists: true };
+
+            var events = Events.find(query).fetch();
+            var earnings = 0;
+
+            for (i in events) {
+                earnings += parseFloat(events[i].earnings);
+            }
+
+            var current = earnings;
+
+        }
+        else {
+
+            // Use events
+            query.type = parameters.metric;
+
+            if (parameters.metric == 'affiliateEarnings') {
+                query.earnings = { $exists: true };
+            }
+
+            var current = Events.find(query).count();
+        }
 
         // Past
         var pastQuery = {
-            type: parameters.metric,
             date: { $gte: beforeDate, $lte: limitDate },
             brandId: parameters.brandId
         };
@@ -265,7 +308,43 @@ Meteor.methods({
             query.medium = parameters.medium;
         }
 
-        var past = Events.find(pastQuery).count();
+        // Get data
+        if (parameters.metric == 'sale') {
+
+            // Use sales
+            var past = Sales.find(pastQuery).count();
+
+        } else if (parameters.metric == 'earnings') {
+
+            // Use sales
+            var sales = Sales.find(query).fetch();
+            var earnings = 0;
+
+            for (i in sales) {
+                earnings += parseFloat(sales[i].amount);
+            }
+            var past = earnings;
+
+        } else if (parameters.metric == 'affiliateEarnings') {
+
+            // Query
+            pastQuery.earnings = { $exists: true };
+
+            var events = Events.find(pastQuery).fetch();
+            var earnings = 0;
+
+            for (i in events) {
+                earnings += parseFloat(events[i].earnings);
+            }
+            var past = earnings;
+
+        } else {
+
+            // Use events
+            pastQuery.type = parameters.metric;
+
+            var past = Events.find(pastQuery).count();
+        }
 
         // Variation
         if (past != 0) {
@@ -291,6 +370,10 @@ Meteor.methods({
         }
         if (parameters.medium) {
             statName += parameters.medium;
+        }
+
+        if (parameters.metric == 'earnings') {
+            console.log(completeStat);
         }
 
         Meteor.call('updateStatistic', statName, completeStat, parameters.brandId);

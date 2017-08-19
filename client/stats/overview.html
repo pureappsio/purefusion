@@ -16,7 +16,9 @@
         </div>
         <div class='col-md-2 col-center'>
             <div>Revenue</div>
-            <div class='stats-title'>{{allRevenue}}</div>
+            <div class='stats-title'>${{allRevenue.current}}<span class="stats-variation {{variationColor allRevenue.variation}}">
+                <i class="fa fa-arrow-circle-o-{{variationDirection allRevenue.variation}}" aria-hidden="true"></i> {{allRevenue.variation}}%
+            </span></div>
         </div>
     </div>
     <div class="row voffset30 row-title row-stats">

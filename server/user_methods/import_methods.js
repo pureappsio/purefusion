@@ -187,12 +187,15 @@ Meteor.methods({
 
             // Fix unwanted
             delete files[i].userId;
+            files[i].meta.bucket = files[i].bucket;
 
             // Insert
             if (Images.collection.findOne(files[i]._id)) {
                 console.log('Existing file');
+
+                Images.collection.update(files[i]._id, { $set: { meta: files[i].meta } });
+
             } else {
-                console.log(files[i]);
                 Images.collection.insert(files[i]);
             }
 
@@ -428,8 +431,7 @@ Meteor.methods({
                             console.log('Replacing product in sales');
                             if (Array.isArray(products[s].courses)) {
                                 sales[i].products[p] = products[s].courses[0];
-                            } 
-                            else {
+                            } else {
                                 sales[i].products[p] = products[s].courses;
                             }
 

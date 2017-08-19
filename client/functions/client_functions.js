@@ -23,7 +23,15 @@ getAllStats = function(metric) {
         variation: 0
     };
 
-    var visitStat = Statistics.find({ type: metric }).fetch();
+    if (metric == 'revenue') {
+        var earnings = Statistics.find({ type: 'earnings' }).fetch();
+        var affEarnings = Statistics.find({ type: 'affiliateEarnings' }).fetch();
+
+        var visitStat = earnings.concat(affEarnings);
+    }
+    else {
+        var visitStat = Statistics.find({ type: metric }).fetch();
+    }
 
     // Count all
     for (i in visitStat) {
@@ -40,6 +48,9 @@ getAllStats = function(metric) {
 
     allVisits.current = convertBigNumber(allVisits.current);
     allVisits.past = convertBigNumber(allVisits.past);
+
+    console.log('allVisits');
+    console.log(allVisits);
 
     return allVisits;
 

@@ -13,6 +13,11 @@ Template.overview.helpers({
 
         return getAllStats('subscribed');
 
+    },
+    allRevenue: function() {
+
+        return getAllStats('revenue');
+
     }
 
 });

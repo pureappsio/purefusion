@@ -14,8 +14,54 @@ getBrandId = function() {
 
 }
 
+getAllStats = function(metric) {
+
+    // Visits
+    var allVisits = {
+        current: 0,
+        past: 0,
+        variation: 0
+    };
+
+    var visitStat = Statistics.find({ type: metric }).fetch();
+
+    // Count all
+    for (i in visitStat) {
+        allVisits.current += parseInt(visitStat[i].value.current);
+        allVisits.past += parseInt(visitStat[i].value.past);
+    }
+
+    // Variation
+    if (allVisits.past != 0) {
+        allVisits.variation = ((allVisits.current - allVisits.past) / allVisits.past * 100).toFixed(2);
+    } else {
+        allVisits.variation = 0;
+    }
+
+    allVisits.current = convertBigNumber(allVisits.current);
+    allVisits.past = convertBigNumber(allVisits.past);
+
+    return allVisits;
+
+}
+
+convertBigNumber = function(number) {
+
+    result = number;
+
+    if (number > 1000 && number < 100000) {
+        result = (number / 1000).toFixed(1) + 'k'
+    }
+    if (number > 100000) {
+        result = (number / 1000).toFixed(0) + 'k'
+    }
+
+    return result;
+
+}
+
 isAppUser = function() {
-    
+
     if (Meteor.user()) {
 
         if (Meteor.user().role == 'appuser' || Meteor.user().role == 'admin') {

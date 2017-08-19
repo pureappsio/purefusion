@@ -17,6 +17,11 @@ h3 {
     margin-top: 15px !important;
 }
 
+.row-stats {
+    font-size: 24px;
+    vertical-align: middle;
+}
+
 .btn-warning {
     color: white !important;
 }

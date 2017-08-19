@@ -193,6 +193,7 @@ Meteor.methods({
         Meteor.call('updateAggregateStat', { metric: 'affiliateClick', brandId: brandId });
 
         // Sales
+        Meteor.call('updateVariationStat', { metric: 'sale', brandId: brandId });
 
         // Emails
         Meteor.call('updateConversionStat', 'posts', 'subscribed', 'visit', brandId);
@@ -303,6 +304,7 @@ Meteor.methods({
         // Get brands
         var brands = Brands.find({}).fetch();
 
+        // Update all brands
         for (i in brands) {
 
             console.log('Updating brand ' + brands[i].name);

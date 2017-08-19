@@ -324,43 +324,44 @@ Meteor.methods({
             key: data.key
         }
 
-        // Products
-        // console.log('Importing products');
-        // var products = Meteor.call('getPureData', integration, 'products');
-        // console.log(products.length);
-        // for (i in products) {
+        Products
+        console.log('Importing products');
+        var products = Meteor.call('getPureData', integration, 'products');
+        console.log(products.length);
+        for (i in products) {
 
-        //     // Set brand
-        //     products[i].brandId = data.brandId;
+            // Set brand
+            products[i].brandId = data.brandId;
 
-        //     // Fix unwanted
-        //     delete products[i].userId;
-        //     products[i].price = products[i].price.USD;
+            // Fix unwanted
+            delete products[i].userId;
+            products[i].price = products[i].price.USD;
 
-        //     if (!products[i].shortName) {
-        //         url = (products[i].name).replace(/ /g, "-");
-        //         url = url.replace(/:/g, "");
-        //         products[i].shortName = url.toLowerCase();
-        //     }
+            if (!products[i].shortName) {
+                url = (products[i].name).replace(/ /g, "-");
+                url = url.replace(/:/g, "");
+                products[i].shortName = url.toLowerCase();
+            }
 
-        //     if (products[i].type == 'api') {
-        //         products[i].type = 'course';
-        //     }
+            if (products[i].type == 'api') {
+                products[i].type = 'course';
+            }
 
-        //     if (!products[i].type) {
-        //         products[i].type = 'download';
-        //     }
+            if (!products[i].type) {
+                products[i].type = 'download';
+            }
 
-        //     products[i].show = true;
+            products[i].show = true;
 
-        //     // Insert
-        //     if (Products.findOne(products[i]._id)) {
-        //         console.log('Existing product');
-        //     } else {
-        //         Products.insert(products[i]);
-        //     }
+            // Insert
+            if (Products.findOne(products[i]._id)) {
+                console.log('Existing product');
+            } else {
+                // Products.insert(products[i]);
+                console.log(products[i]);
+            }
 
-        // }
+        }
 
         // console.log('Importing elements');
         // var elements = Meteor.call('getPureData', integration, 'elements');
@@ -418,11 +419,30 @@ Meteor.methods({
                 }
             }
 
+            // Replace products
+            if (sales[i].products) {
+                for (p in sales[i].products) {
+                    for (s in products) {
+                        if (sales[i].products[p] == products[s]._id) {
+
+                            console.log('Replacing product in sales');
+                            if (Array.isArray(products[s].courses)) {
+                                sales[i].products[p] = products[s].courses[0];
+                            } 
+                            else {
+                                sales[i].products[p] = products[s].courses;
+                            }
+
+                        }
+                    }
+                }
+            }
+
             // Insert
             if (Sales.findOne(sales[i]._id)) {
                 console.log('Existing sale');
             } else {
-                console.log(sales[i]);
+                // console.log(sales[i]);
                 Sales.insert(sales[i]);
             }
 

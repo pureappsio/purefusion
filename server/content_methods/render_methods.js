@@ -669,10 +669,10 @@ Meteor.methods({
         var postHtml = SSR.render('allPosts');
 
         // Add exit intent?
-        if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
+        if (brand.exitStatus) {
 
             // Check value
-            var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
+            var exitStatus = brand.exitStatus;
 
             if (exitStatus == 'on') {
                 var exitHtml = Meteor.call('renderExitModal', {
@@ -866,10 +866,10 @@ Meteor.methods({
                         }
 
                         // Add exit intent?
-                        if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
+                        if (brand.exitStatus) {
 
                             // Check value
-                            var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
+                            var exitStatus = brand.exitStatus;
 
                             if (exitStatus == 'on') {
                                 var exitHtml = Meteor.call('renderExitModal', {
@@ -1683,10 +1683,10 @@ Meteor.methods({
                     }
 
                     // Add exit intent?
-                    if (Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId })) {
+                    if (brand.exitStatus) {
 
                         // Check value
-                        var exitStatus = Metas.findOne({ type: 'exitStatus', brandId: parameters.brandId }).value;
+                        var exitStatus = brand.exitStatus;
 
                         if (exitStatus == 'on') {
                             var exitHtml = Meteor.call('renderExitModal', {

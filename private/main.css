@@ -303,7 +303,7 @@ h2 {
 
 .affiliate-picture-table {
     margin-top: 10px;
-    min-width: 160px !important;
+    max-width: 200px !important;
 }
 
 .affiliate-short {
@@ -313,6 +313,7 @@ h2 {
 .affiliate-img {
     float: left;
     display: inline !important;
+    max-width: 200px !important;
 }
 
 @media screen and (min-width: 480px) {

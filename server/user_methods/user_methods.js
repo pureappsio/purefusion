@@ -251,6 +251,9 @@ Meteor.methods({
             if (Meteor.call('isAmazonLink', $(elem)[0].attribs.href)) {
 
                 var asin = Meteor.call('extractAsin', $(elem)[0].attribs.href);
+                
+                console.log(asin);
+
                 var answer = HTTP.get('https://localizer.schwartzindustries.com/links/' + asin);
                 link = answer.data;
 

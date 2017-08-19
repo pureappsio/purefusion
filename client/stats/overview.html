@@ -1,0 +1,29 @@
+<template name="overview">
+    <h3>Overview</h3>
+    <div class='row voffset15 justify-content-center'>
+        <div class='col-md-2 col-center'>
+            <div>Last 30 Days Page Views</div>
+            <div class='stats-title'>{{allVisits.current}}
+                <span class="stats-variation {{variationColor allVisits.variation}}">
+                <i class="fa fa-arrow-circle-o-{{variationDirection allVisits.variation}}" aria-hidden="true"></i> {{allVisits.variation}}%
+            </span></div>
+        </div>
+        <div class='col-md-2 col-center'>
+            <div>Subscribers</div>
+            <div class='stats-title'>{{allSubscribers.current}}<span class="stats-variation {{variationColor allSubscribers.variation}}">
+                <i class="fa fa-arrow-circle-o-{{variationDirection allSubscribers.variation}}" aria-hidden="true"></i> {{allSubscribers.variation}}%
+            </span></div>
+        </div>
+        <div class='col-md-2 col-center'>
+            <div>Revenue</div>
+            <div class='stats-title'>{{allRevenue}}</div>
+        </div>
+    </div>
+    <div class="row voffset30 row-title row-stats">
+        <div class='col-md-4'>Brand</div>
+        <div class='col-md-2 col-centered'>Visitors</div>
+        <div class='col-md-2 col-centered'>Subscribers</div>
+        <div class='col-md-2 col-centered'>Revenue</div>
+    </div>
+    {{#each brands}} {{> brandStats}} {{/each}}
+</template>

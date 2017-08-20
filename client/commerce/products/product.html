@@ -1,13 +1,10 @@
 <template name="product">
     <tr>
         <td><a href='/store/checkout?product_id={{_id}}'>Link</a></td>
-        <td>{{#if productPicture}}<img class='img-fluid product-listing-picture' src='{{productPicture}}'>{{/if}} {{name}} {{#if isBundle}}(Bundle){{/if}}</td>
+        <td>{{#if productPicture}}<img class='img-fluid product-listing-picture' src='{{productPicture}}'>{{/if}} <a href='/admin/products/{{_id}}'>{{name}}</a> {{#if isBundle}}(Bundle){{/if}}</td>
         <td>
             {{price}}
         </td>
-        <td>{{sessions}}</td>
-        <td>{{sales}}</td>
-        <td>{{conversions}}%</td>
         <td>
             <a class='btn btn-secondary' href='/admin/products/{{_id}}'>
                 <i class="fa fa-pencil edit-product" aria-hidden="true"></i>

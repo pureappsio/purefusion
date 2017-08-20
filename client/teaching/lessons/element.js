@@ -22,7 +22,18 @@ Template.element.helpers({
 
     videoUrl: function() {
         if (this.videoId) {
-            return Images.findOne(this.videoId).link();
+            var videoFile = Images.findOne(this.videoId);
+
+            console.log(videoFile);
+
+            if (videoFile.meta.bucket) {
+                var path = videoFile.versions.original.meta.pipePath;
+                return 'https://s3-us-west-2.amazonaws.com/' + videoFile.meta.bucket + '/' + path;
+            }
+            else {
+                return videoFile.link();
+            }
+            
         }
     },
     imgUrl: function() {

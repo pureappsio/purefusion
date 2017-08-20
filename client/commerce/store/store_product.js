@@ -28,16 +28,13 @@ Template.storeProduct.helpers({
         if (Elements.findOne({ storePicture: true, productId: this._id, type: 'productPictures' })) {
 
             var pictureId = Elements.findOne({ storePicture: true, productId: this._id, type: 'productPictures' }).imageId;
-            return Images.findOne(pictureId).link();
+            return getFileLink(pictureId);
 
         } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
             var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
-            return Images.findOne(pictureId).link();
+            return getFileLink(pictureId);
         }
-
-        if (this.imageId) {
-            return Images.findOne(this.imageId).link();
-        }
+        
     },
     productsLine: function() {
         if (Metas.findOne({ type: 'articlesLine' })) {

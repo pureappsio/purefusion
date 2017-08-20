@@ -176,6 +176,50 @@ Meteor.methods({
 
         }
 
+        // Bonuses
+        var bonuses = Meteor.call('getPureData', integration, 'bonuses');
+        console.log(bonuses.length);
+
+        for (i in bonuses) {
+
+            // Set brand
+            bonuses[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete bonuses[i].userId;
+
+            // Insert
+            if (Bonuses.findOne(bonuses[i]._id)) {
+                console.log('Existing bonus');
+            } else {
+                console.log(bonuses[i]);
+                Bonuses.insert(bonuses[i]);
+            }
+
+        }
+
+        // Resources
+        var resources = Meteor.call('getPureData', integration, 'resources');
+        console.log(resources.length);
+
+        for (i in resources) {
+
+            // Set brand
+            resources[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete resources[i].userId;
+
+            // Insert
+            if (Resources.findOne(resources[i]._id)) {
+                console.log('Existing resource');
+            } else {
+                console.log(resources[i]);
+                Resources.insert(resources[i]);
+            }
+
+        }
+
         // Files
         var files = Meteor.call('getPureData', integration, 'files');
         console.log(files.length);
@@ -359,6 +403,7 @@ Meteor.methods({
             // Insert
             if (Products.findOne(products[i]._id)) {
                 console.log('Existing product');
+
             } else {
                 // Products.insert(products[i]);
                 console.log(products[i]);
@@ -366,89 +411,146 @@ Meteor.methods({
 
         }
 
-        // console.log('Importing elements');
-        // var elements = Meteor.call('getPureData', integration, 'elements');
-        // console.log(elements.length);
+        // Make correspondance table
+        var table = {};
+        var inverseTable = {};
 
-        // for (i in elements) {
-
-        //     // Set brand
-        //     elements[i].brandId = data.brandId;
-
-        //     // Fix unwanted
-        //     delete elements[i].userId;
-        //     if (elements[i].type == 'additionalPicture') {
-        //         elements[i].type = 'productPictures';
-        //     }
-
-        //     // Insert
-        //     if (Elements.findOne(elements[i]._id)) {
-        //         console.log('Existing element');
-        //     } else {
-        //         console.log(elements[i]);
-        //         Elements.insert(elements[i]);
-        //     }
-
-        // }
-
-        // console.log('Importing files');
-        // var files = Meteor.call('getPureData', integration, 'files');
-        // console.log(files.length);
-
-        // for (i in files) {
-
-        //     // Set brand
-        //     files[i].brandId = data.brandId;
-
-        //     // Insert
-        //     Images.collection.insert(files[i]);
-
-        // }
-
-        console.log('Importing sales');
-        var sales = Meteor.call('getPureData', integration, 'sales');
-        console.log(sales.length);
-
-        for (i in sales) {
-
-            // Set brand
-            sales[i].brandId = data.brandId;
-
-            // Fix unwanted
-            delete sales[i].userId;
-            if (sales[i].variants) {
-                if (sales[i].variants[0] == null) {
-                    delete sales[i].variants;
+        for (i in products) {
+            if (products[i].type = 'course') {
+                if (products[i].courses) {
+                    table[products[i]._id] = products[i].courses;
+                    inverseTable[products[i].courses] = products[i];
                 }
             }
+        }
 
-            // Replace products
-            if (sales[i].products) {
-                for (p in sales[i].products) {
-                    for (s in products) {
-                        if (sales[i].products[p] == products[s]._id) {
+        // Update existing courses
+        var courses = Products.find({}).fetch();
 
-                            console.log('Replacing product in sales');
-                            if (Array.isArray(products[s].courses)) {
-                                sales[i].products[p] = products[s].courses[0];
-                            } else {
-                                sales[i].products[p] = products[s].courses;
-                            }
+        for (i in courses) {
 
-                        }
-                    }
+            if (inverseTable[courses[i]._id]) {
+
+                var product = inverseTable[courses[i]._id];
+
+                console.log('Updating course');
+
+                if (product.price.USD) {
+                    var price = product.price.USD;
                 }
-            }
+                else {
+                    var price = product.price;
+                }
 
-            // Insert
-            if (Sales.findOne(sales[i]._id)) {
-                console.log('Existing sale');
-            } else {
-                // console.log(sales[i]);
-                Sales.insert(sales[i]);
+                Products.update(courses[i]._id, { $set: { description: product.description } });
+                Products.update(courses[i]._id, { $set: { price: price } });
+
             }
 
         }
+
+        console.log('Importing elements');
+        var elements = Meteor.call('getPureData', integration, 'elements');
+        console.log(elements.length);
+
+        for (i in elements) {
+
+            // Set brand
+            elements[i].brandId = data.brandId;
+
+            // Fix unwanted
+            delete elements[i].userId;
+            if (elements[i].type == 'additionalPicture') {
+                elements[i].type = 'productPictures';
+            }
+
+            // Replace product ID
+            if (table[elements[i].productId]) {
+                console.log('Updating product ID')
+                elements[i].productId = table[elements[i].productId];
+            }
+
+            // Insert
+            if (Elements.findOne(elements[i]._id)) {
+                console.log('Existing element');
+                Elements.update(elements[i]._id, { $set: { productId: elements[i].productId } }, { selector: { type: 'productPictures' } });
+            } else {
+                console.log(elements[i]);
+                Elements.insert(elements[i]);
+            }
+
+        }
+
+        console.log('Importing files');
+        var files = Meteor.call('getPureData', integration, 'files');
+        console.log(files.length);
+
+        for (i in files) {
+
+            // Set brand
+            files[i].brandId = data.brandId;
+
+            files[i].meta.bucket = files[i].bucket;
+
+            // Insert
+            if (Images.collection.findOne(files[i]._id)) {
+                console.log('Existing file');
+
+                Images.collection.update(files[i]._id, { $set: { meta: files[i].meta } });
+
+            } else {
+
+                console.log(files[i]);
+
+                Images.collection.insert(files[i]);
+            }
+
+        }
+
+        // console.log('Importing sales');
+        // var sales = Meteor.call('getPureData', integration, 'sales');
+        // console.log(sales.length);
+
+        // for (i in sales) {
+
+        //     // Set brand
+        //     sales[i].brandId = data.brandId;
+
+        //     // Fix unwanted
+        //     delete sales[i].userId;
+        //     if (sales[i].variants) {
+        //         if (sales[i].variants[0] == null) {
+        //             delete sales[i].variants;
+        //         }
+        //     }
+
+        //     // Replace products
+        //     if (sales[i].products) {
+        //         for (p in sales[i].products) {
+        //             for (s in products) {
+        //                 if (sales[i].products[p] == products[s]._id) {
+
+        //                     console.log('Replacing product in sales');
+        //                     if (Array.isArray(products[s].courses)) {
+        //                         sales[i].products[p] = products[s].courses[0];
+        //                     } else {
+        //                         sales[i].products[p] = products[s].courses;
+        //                     }
+
+        //                 }
+        //             }
+        //         }
+        //     }
+
+        //     // Insert
+        //     if (Sales.findOne(sales[i]._id)) {
+        //         console.log('Existing sale');
+        //     } else {
+        //         // console.log(sales[i]);
+        //         Sales.insert(sales[i]);
+        //     }
+
+        // }
 
         // console.log('Importing sessions');
         // var sessions = Meteor.call('getPureData', integration, 'sessions');

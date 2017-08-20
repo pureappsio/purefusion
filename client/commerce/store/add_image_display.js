@@ -1,7 +1,7 @@
 Template.addImageDisplay.helpers({
 
     imageLink: function(imageId) {
-        return Images.findOne(imageId).link();
+        return getFileLink(imageId);
     },
     isVideo: function() {
 
@@ -32,7 +32,10 @@ Template.addImageDisplay.events({
             // Load new video
             $('#product-video-' + this.productId).show();
             $('#product-image-' + this.productId).hide();
-            videojs.getPlayers()['product-video-' + this.productId].src({ type: "video/mp4", src: media.link() });
+            videojs.getPlayers()['product-video-' + this.productId].src({ 
+                type: "video/mp4", 
+                src: getFileLink(Session.get('selectedPicture_' + this.productId)) 
+            });
 
 
         } else {

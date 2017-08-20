@@ -14,6 +14,18 @@ getBrandId = function() {
 
 }
 
+getFileLink = function(fileId) {
+
+    var fileRef = Images.findOne(fileId);
+
+    if (fileRef.meta.bucket) {
+        var path = fileRef.versions.original.meta.pipePath;
+        return 'https://s3-us-west-2.amazonaws.com/' + fileRef.meta.bucket + '/' + path;
+    } else {
+        return fileRef.link();
+    }
+}
+
 getAllStats = function(metric) {
 
     // Visits
@@ -28,8 +40,7 @@ getAllStats = function(metric) {
         var affEarnings = Statistics.find({ type: 'affiliateEarnings' }).fetch();
 
         var visitStat = earnings.concat(affEarnings);
-    }
-    else {
+    } else {
         var visitStat = Statistics.find({ type: metric }).fetch();
     }
 

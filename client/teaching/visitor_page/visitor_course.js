@@ -3,7 +3,7 @@ Template.visitorCourse.helpers({
     url: function() {
 
         var element = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true });
-        return Images.findOne(element.imageId).link();
+        return getFileLink(element.imageId);
 
     },
     pricing: function() {

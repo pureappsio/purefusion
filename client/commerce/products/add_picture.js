@@ -1,7 +1,7 @@
 Template.addPicture.helpers({
 
-    imageLink: function(imageId) {
-        return Images.findOne(imageId).link();
+    imageLink: function() {
+        return getFileLink(this.imageId);
     },
     isVideo: function() {
 

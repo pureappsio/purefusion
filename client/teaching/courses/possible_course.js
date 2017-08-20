@@ -8,8 +8,10 @@ Template.possibleCourse.helpers({
             userId = Meteor.user().teacherId;
         }
 
-        if (Metas.findOne({ type: 'coursesLine', userId: userId })) {
-            return Metas.findOne({ type: 'coursesLine', userId: userId }).value;
+        var brand = Brands.findOne(Session.get('selectedBrand'));
+
+        if (brand.teaching.coursesLine) {
+            return brand.teaching.coursesLine;
         } else {
             return 4;
         }
@@ -24,7 +26,7 @@ Template.possibleCourse.helpers({
     url: function() {
 
        var element = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true });
-       return Images.findOne(element.imageId).link();
+       return getFileLink(element.imageId);
 
     }
 

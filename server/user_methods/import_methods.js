@@ -437,8 +437,7 @@ Meteor.methods({
 
                 if (product.price.USD) {
                     var price = product.price.USD;
-                }
-                else {
+                } else {
                     var price = product.price;
                 }
 
@@ -609,6 +608,18 @@ Meteor.methods({
 
                 console.log(pages[i]);
 
+                if (pages[i].type == 'resources') {
+                    pages[i].type = 'generic';
+                }
+
+                if (pages[i].type == 'start') {
+                    pages[i].type = 'generic';
+                }
+
+                if (pages[i].type == 'portfolio') {
+                    pages[i].type = 'generic';
+                }
+
                 if (Pages.findOne(pages[i]._id)) {
                     console.log('Existing page');
                 } else {
@@ -644,12 +655,14 @@ Meteor.methods({
                 elements[i].type = 'affiliate';
             }
 
-            if (Elements.findOne(elements[i]._id)) {
-                console.log('Existing element');
-                Elements.update(elements[i]._id, { $set: { brandId: data.brandId } }, { selector: { type: elements[i].type } });
-            } else {
-                console.log(elements[i]);
-                Elements.insert(elements[i], { selector: { type: elements[i].type } });
+            if (elements[i].type != 'store') {
+                if (Elements.findOne(elements[i]._id)) {
+                    console.log('Existing element');
+                    Elements.update(elements[i]._id, { $set: { brandId: data.brandId } }, { selector: { type: elements[i].type } });
+                } else {
+                    console.log(elements[i]);
+                    Elements.insert(elements[i], { selector: { type: elements[i].type } });
+                }
             }
 
         }
@@ -676,11 +689,12 @@ Meteor.methods({
         for (i in menus) {
             menus[i].brandId = data.brandId;
 
+            console.log(menus[i]);
+
             if (Menus.findOne(menus[i]._id)) {
                 console.log('Existing menu');
                 Menus.update(menus[i]._id, { $set: { brandId: data.brandId } });
             } else {
-                console.log(menus[i]);
                 Menus.insert(menus[i]);
             }
 
@@ -730,7 +744,12 @@ Meteor.methods({
         var tags = Meteor.call('getPureData', integration, 'tags');
         for (i in tags) {
             tags[i].brandId = data.brandId;
-            Tags.insert(tags[i]);
+            if (Tags.findOne(tags[i]._id)) {
+                console.log('Existing tag');
+            } else {
+                console.log(tags[i]);
+                Tags.insert(tags[i]);
+            }
         }
 
         // Recordings

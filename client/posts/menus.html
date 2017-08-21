@@ -1,5 +1,5 @@
 <template name="menus">
-    <h3>Menus</h3> {{#autoForm collection="Menus" id="insertMenuForm" type="insert"}}
+    <h3>Menus</h3> {{#autoForm collection="Menus" id="insertMenuForm" doc=defaultMenu type="insert"}}
     <fieldset>
         {{> afQuickField name='name'}} {{> afQuickField name='type'}} {{> afQuickField name='order'}} {{> afQuickField name='style'}} {{> afQuickField name='link'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
     </fieldset>

@@ -4,6 +4,9 @@ Meteor.methods({
 
     calculateSalesPrice: function(productData, discount, currency) {
 
+        console.log('Product data: ');
+        console.log(productData);
+
         if (currency == 'USD') {
             var price = parseFloat(productData.price);
         } else {
@@ -21,6 +24,8 @@ Meteor.methods({
         } else {
             price = price.toFixed(2) + ' €';
         }
+
+        console.log(price);
 
         return price;
 

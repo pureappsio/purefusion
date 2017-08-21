@@ -7,30 +7,33 @@ Meteor.methods({
 
     getBusinessReport: function(month, year) {
 
-        if (Integrations.findOne({ type: 'puremetrics' })) {
+        // if (Integrations.findOne({ type: 'puremetrics' })) {
 
-            var integration = Integrations.findOne({ type: 'puremetrics' });
+        //     var integration = Integrations.findOne({ type: 'puremetrics' });
 
-            // Build individual positions
-            var url = 'https://' + integration.url + '/api/report?key=' + integration.key;
-            url += '&month=' + month + '&year=' + year;
-            var report = HTTP.get(url).data;
+        //     // Build individual positions
+        //     var url = 'https://' + integration.url + '/api/report?key=' + integration.key;
+        //     url += '&month=' + month + '&year=' + year;
+        //     var report = HTTP.get(url).data;
 
-            return report;
+        //     return report;
 
-        } else {
-            return {};
-        }
+        // } else {
+        //     return {};
+        // }
+
+        // Get report
+        var report = Meteor.call('buildMonthlyReport', { month: month, year: year });
+
+        return report;
 
     },
     getInvestmentReport: function(month, year) {
 
-        if (Integrations.findOne({ type: 'pureportfolio' })) {
-
-            var integration = Integrations.findOne({ type: 'pureportfolio' });
+        if (Meteor.settings.portfolio) {
 
             // Build individual positions
-            var url = 'https://' + integration.url + '/api/report';
+            var url = 'https://' + Meteor.settings.portfolio.url + '/api/report';
             url += '?month=' + month + '&year=' + year;
             console.log(url);
 
@@ -80,7 +83,7 @@ Meteor.methods({
         // Remove from all posts
         var posts = Posts.find({ tags: tagId }).fetch();
         for (i in posts) {
-            Posts.update(posts[i]._id, { $pull: { tags: tagId } }, { selector: { category: posts[i].category }});
+            Posts.update(posts[i]._id, { $pull: { tags: tagId } }, { selector: { category: posts[i].category } });
         }
 
     },

@@ -23,13 +23,13 @@ Meteor.methods({
             // Link
             var link = $(elem)[0].attribs.href;
 
-            console.log(link);
+            // console.log(link);
 
             // Decode query
             var linkUrl = parse(link, true);
             parsedQuery = linkUrl.query;
 
-            console.log(linkUrl);
+            // console.log(linkUrl);
 
             if (discount.useDiscount == true) {
                 parsedQuery.discount = discount.code;
@@ -60,7 +60,7 @@ Meteor.methods({
         });
 
         // Process each page type
-        if (page.model == 'leadgen') {
+        if (page.type == 'leadgen') {
 
             if (query.origin) {
                 $('#origin').val(query.origin);
@@ -68,7 +68,7 @@ Meteor.methods({
 
         }
 
-        if (page.model == 'tripwire') {
+        if (page.type == 'tripwire') {
 
             // Get location
             if (query.location) {
@@ -79,8 +79,7 @@ Meteor.methods({
             var usdLocations = Meteor.call('getUSDLocations');
 
             // Get product data
-            var productData = Meteor.call('getProductData', page._id);
-            console.log(productData);
+            var productData = Products.findOne(page.productId);
 
             // Sales price
             if (usdLocations.indexOf(location) != -1) {
@@ -108,7 +107,7 @@ Meteor.methods({
 
         }
 
-        if (page.model == 'salespage') {
+        if (page.type == 'salespage') {
 
             // Get location
             if (query.location) {
@@ -119,11 +118,15 @@ Meteor.methods({
             var usdLocations = Meteor.call('getUSDLocations');
 
             // Get product data
-            var productData = Meteor.call('getProductData', page._id);
-            console.log(productData);
+            var productData = Products.findOne(page.productId);
 
             // Get variants
-            var variants = productData.variants;
+            if (productData.variants) {
+                var variants = productData.variants;
+            }
+            else {
+                var variants = [];
+            }
 
             // Product price
             if (variants.length > 0) {
@@ -155,7 +158,7 @@ Meteor.methods({
                 price = Meteor.call('calculateBasePrice', productData, discount, 'EUR');
             }
 
-            console.log(price);
+            // console.log(price);
 
             $('#bottom-base-sales-price').text(price);
             $('#middle-base-sales-price').text(price);
@@ -176,7 +179,7 @@ Meteor.methods({
 
                     variant = variants[i];
 
-                    console.log(elem);
+                    // console.log(elem);
 
                     // Base price
                     if (usdLocations.indexOf(location) != -1) {

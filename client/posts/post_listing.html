@@ -2,15 +2,23 @@
     <div class='row'>
         <div class="col-md-1"><img src='{{featPic}}' class='img-fluid'></div>
         <div class="col-md-3"><a href='/admin/posts/{{_id}}'>{{title}}</a></div>
-        <div class="col-md-2">{{postCategoryDisplay}}</div>
+        <div class="col-md-1">{{postCategoryDisplay}}</div>
         <div class="col-md-3">{{url}}</div>
         <div class="col-md-2">
             {{#if areBadLinks}}
             <span class="badge badge-{{statusBadLinks}}">{{badLinks}}</span> {{/if}}
             <span class="badge badge-{{statusLabel}}">{{statusMessage}}</span> {{#each tagsName}} {{> tagDisplay}} {{/each}}
         </div>
-        <div class="col-md-1">
-            <button class='btn btn-danger delete-post' data-toggle="modal" data-target="#deleteConfirm-{{_id}}"><i class="fa fa-trash delete" aria-hidden="true"></i></button>
+        <div class="col-md-2">
+            <a target="_blank" class='btn btn-info' href='/{{url}}'>
+                <i class="fa fa-external-link edit-element" aria-hidden="true"></i>
+            </a>
+            <a class='btn btn-warning' href='/admin/posts/{{_id}}'>
+                <i class="fa fa-pencil edit-element" aria-hidden="true"></i>
+                </a>
+            <button class='btn btn-danger delete-post' data-toggle="modal" data-target="#deleteConfirm-{{_id}}">
+                <i class="fa fa-trash delete" aria-hidden="true"></i>
+            </button>
         </div>
     </div>
     <div id="deleteConfirm-{{_id}}" class="modal fade" role="dialog">

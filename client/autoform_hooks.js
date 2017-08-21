@@ -7,3 +7,13 @@ AutoForm.hooks({
         }
     }
 });
+
+AutoForm.hooks({
+    updatePageForm: {
+        onSuccess: function(type, id) {
+
+            Meteor.call('flushPage', this.currentDoc._id);
+            
+        }
+    }
+});

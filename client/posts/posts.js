@@ -1,7 +1,7 @@
 Template.posts.helpers({
 
     posts: function() {
-        return Posts.find({ brandId: Session.get('selectedBrand') });
+        return Posts.find({ brandId: Session.get('selectedBrand') }, { sort: { creationDate: -1 } });
     },
     selectedBrand: function() {
         return Session.get('selectedBrand');

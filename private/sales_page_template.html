@@ -63,7 +63,7 @@
             </div>
         </div>
         <!-- Included -->
-        {{#if includedElements}}
+        {{#if included.elements}}
         <div class='row sales-included-row'>
             <div class='col-md-2'></div>
             <div class='col-md-8 sales-row'>
@@ -77,7 +77,7 @@
         </div>
         {{/if}}
         <!-- Benefits -->
-        {{#if benefitElements}}
+        {{#if benefits.elements}}
         <div class='row sales-benefits-row'>
             <div class='col-md-2'></div>
             <div class='col-md-8 sales-row'>
@@ -113,7 +113,7 @@
                 </div> {{/each}}
             </div>
         </div>
-        {{else}} {{#if moduleElements}}
+        {{else}} {{#if modules.elements}}
         <div class='row sales-modules-row'>
             <div class='col-md-2'></div>
             <div class='col-md-8 sales-row'>
@@ -123,7 +123,7 @@
                     <div class='row module-container'>
                         <div class='col-md-4'><img class='img-fluid' src='{{moduleImage module}}'></div>
                         <div class='col-md-8'>
-                            <div class='module-title'>Module #{{module.number}}: {{module.title}}</div>
+                            <div class='module-title'>Module #{{printIndex @index}}: {{module.title}}</div>
                             <div class='module-content'>{{{module.content}}}</div>
                         </div>
                     </div> {{/each}}
@@ -132,7 +132,7 @@
         </div>
         {{/if}} {{/if}}
         <!-- Bonuses -->
-        {{#if bonusElements}}
+        {{#if bonuses.elements}}
         <div class='row sales-bonuses-row'>
             <div class='col-md-2'></div>
             <div class='col-md-8 sales-row'>
@@ -141,7 +141,7 @@
                     {{#each bonuses.elements}}
                     <div class='row bonus-container'>
                         <div class='col-md-12'>
-                            <div class='module-title'>Bonus #{{number}} - {{title}}</div>
+                            <div class='module-title'>Bonus #{{printIndex @index}} - {{title}}</div>
                             <div class='module-content'>{{{content}}}</div>
                         </div>
                     </div>
@@ -151,7 +151,7 @@
         </div>
         {{/if}}
         <!-- Who -->
-        {{#if whoElements}}
+        {{#if who.elements}}
         <div class='row sales-who-row'>
             <div class='col-md-2'></div>
             <div style='{{greenTheme}}' class='col-md-8 sales-row'>
@@ -189,7 +189,7 @@
                 </div>
             </div>
         </div>
-        {{#if faqElements}}
+        {{#if faq.elements}}
         <!-- FAQ -->
         <div class='row sales-faq-row'>
             <div class='col-md-2'></div>
@@ -205,7 +205,7 @@
         </div>
         {{/if}}
         <!-- Testimonials -->
-        {{#if testimonialElements}}
+        {{#if testimonials.elements}}
         <div class='row sales-testimonials-row'>
             <div class='col-md-2'></div>
             <div class='col-md-8 sales-row'>

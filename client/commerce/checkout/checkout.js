@@ -1,7 +1,5 @@
 Template.checkout.rendered = function() {
 
-    Session.set('useHeader', false);
-
     if (Session.get('checkoutExitIntent') != 'fired') {
         Session.set('checkoutExitIntent', 'armed');
     }

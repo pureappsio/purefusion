@@ -239,12 +239,14 @@ Meteor.methods({
         // Compile header
         SSR.compileTemplate('comments', Assets.getText('posts/disqus_template.html'));
 
+        var brand = Brands.findOne(parameters.brandId);
+
         // Helpers
         Template.comments.helpers({
 
             disqusId: function() {
-                if (Metas.findOne({ userId: parameters.userId, type: 'disqus' })) {
-                    return Metas.findOne({ userId: parameters.userId, type: 'disqus' }).value;
+                if (brand.disqus) {
+                    return brand.disqus;
                 }
 
             },

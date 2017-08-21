@@ -19,7 +19,10 @@ Meteor.methods({
 
         var hostnameArray = document.location.hostname.split(".");
 
-        if (hostnameArray.length == 3) {
+        console.log('HostnameArray: ');
+        console.log(hostnameArray);
+
+        if (hostnameArray.length == 2 || hostnameArray.length == 3) {
 
             var domain = hostnameArray[0];
 
@@ -30,6 +33,9 @@ Meteor.methods({
         } else {
             var domain = "admin"
         }
+
+        console.log('Domain: ');
+        console.log(domain);
 
         var brand = Meteor.call('getBrandDomain', domain);
 

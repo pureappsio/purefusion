@@ -9,6 +9,9 @@ Meteor.methods({
         console.log('Flushing page');
         console.log(pageId);
 
+        var page = Pages.findOne(pageId);
+        Pages.update(page._id, { $set: { cached: false } }, { selector: { type: page.type } });
+
     },
     renderHeader: function(options) {
 
@@ -217,6 +220,8 @@ Meteor.methods({
         var absoluteURL = Meteor.absoluteUrl();
 
         console.log('Page not cached, rendering');
+
+        // console.log(page);
 
         if (page.type == 'leadgen') {
 
@@ -526,12 +531,11 @@ Meteor.methods({
 
             // Get variants
             if (productData.variants) {
-                 var variants = productData.variants;
+                var variants = productData.variants;
+            } else {
+                var variants = [];
             }
-            else {
-                 var variants = [];
-            }
-           
+
             // Build salesElements
             if (variants.length > 0) {
                 for (v = 0; v < variants.length; v++) {
@@ -566,8 +570,13 @@ Meteor.methods({
             // Get course data
             if (productData.type == 'course' && page.theme == 'course') {
 
-                var modules = Modules.find({ courseId: page.productId });
-                console.log(modules);
+                // Modules
+                var modules = Modules.find({ courseId: page.productId }).fetch();
+
+                // Get all lessons
+                for (m in modules) {
+                    modules[m].lessons = Lessons.find({ moduleId: modules[m]._id }).fetch();
+                }
 
             }
 
@@ -578,6 +587,11 @@ Meteor.methods({
             // Helpers
             helpers = {
 
+                printIndex: function(count) {
+
+                    return count + 1;
+
+                },
                 course: function() {
 
                     if (productData.type == 'course' && page.theme == 'course') {
@@ -716,7 +730,7 @@ Meteor.methods({
                     return discount.useDiscount;
                 },
                 meteorURL: function() {
-                    return 'https://' + headers.host;
+                    return absoluteURL;
                 },
 
                 productName: function() {
@@ -806,8 +820,11 @@ Meteor.methods({
                 //     return Elements.find({ type: 'payment', pageId: this._id }, { sort: { number: 1 } });
                 // },
                 moduleImage: function(module) {
-                    var page = Pages.findOne(module.pageId);
-                    return Images.findOne(page.modules.image).link();
+                    if (module.pageId) {
+                        var page = Pages.findOne(module.pageId);
+                        return Images.findOne(page.modules.image).link();
+                    }
+
                 }
 
             }

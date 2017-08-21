@@ -144,9 +144,9 @@ Meteor.methods({
         // Load css
         var css = Assets.getText('main.css');
 
-        if (Metas.findOne({ brandId: parameters.brandId, type: 'theme' })) {
+        if (brand.navbarTheme) {
 
-            var value = Metas.findOne({ brandId: parameters.brandId, type: 'theme' }).value;
+            var value = brand.navbarTheme;
 
             if (value == 'black') {
                 var navStyle = Assets.getText('nav_dark.css');
@@ -440,8 +440,8 @@ Meteor.methods({
             backgroundColor: function() {
 
                 // Check style
-                if (Metas.findOne({ brandId: brandId, type: 'theme' })) {
-                    var theme = Metas.findOne({ brandId: brandId, type: 'theme' }).value;
+                if (brand.navbarTheme) {
+                    var theme = brand.navbarTheme;
 
                     if (theme == 'black') {
                         return 'background-color: #000000;';
@@ -456,8 +456,8 @@ Meteor.methods({
             navbarStyle: function() {
 
                 // Check style
-                if (Metas.findOne({ brandId: brandId, type: 'theme' })) {
-                    var theme = Metas.findOne({ brandId: brandId, type: 'theme' }).value;
+                if (brand.navbarTheme) {
+                    var theme = brand.navbarTheme;
 
                     if (theme == 'black') {
                         return 'navbar-light navbar-inverse';
@@ -851,8 +851,8 @@ Meteor.methods({
                             }
 
                             // Add disqus?
-                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
-                                if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
+                            if (brand.disqus) {
+                                if (brand.disqus != "") {
                                     parameters = {
                                         url: post.url,
                                         websiteUrl: websiteUrl,
@@ -923,14 +923,10 @@ Meteor.methods({
                             // Build portfolio
                             if (Meteor.call('hasElement', post._id, 'portfolio')) {
 
-                                if (Integrations.findOne({ type: 'pureportfolio' })) {
-
-                                    // Get integration
-                                    // console.log('Grabing portfolio');
-                                    var integration = Integrations.findOne({ type: 'pureportfolio' });
+                                if (Meteor.settings.portfolio) {
 
                                     // Get portfolio
-                                    var portfolio = HTTP.get('https://' + integration.url + '/api/portfolio?option=array').data;
+                                    var portfolio = HTTP.get('https://' + Meteor.settings.portfolio.url + '/api/portfolio?option=array').data;
 
                                     // Sort
                                     portfolio.sort(function(a, b) {
@@ -959,7 +955,7 @@ Meteor.methods({
                                     }
 
                                     // Get total
-                                    var total = HTTP.get('https://' + integration.url + '/api/total').data;
+                                    var total = HTTP.get('https://' + Meteor.settings.portfolio.url + '/api/total').data;
 
                                     console.log(total);
 
@@ -981,14 +977,12 @@ Meteor.methods({
 
                             if (Meteor.call('hasElement', post._id, 'portfoliodetail')) {
 
-                                if (Integrations.findOne({ type: 'pureportfolio' })) {
-
-                                    var integration = Integrations.findOne({ type: 'pureportfolio' });
+                                if (Meteor.settings.portfolio) {
 
                                     // Build individual positions
-                                    var p2p = HTTP.get('https://' + integration.url + '/api/positions?type=p2p&platforms=true').data;
-                                    var stock = HTTP.get('https://' + integration.url + '/api/positions?type=stock').data;
-                                    var realestate = HTTP.get('https://' + integration.url + '/api/positions?type=realestate&platforms=true').data;
+                                    var p2p = HTTP.get('https://' + Meteor.settings.portfolio.url + '/api/positions?type=p2p&platforms=true').data;
+                                    var stock = HTTP.get('https://' + Meteor.settings.portfolio.url + '/api/positions?type=stock').data;
+                                    var realestate = HTTP.get('https://' + Meteor.settings.portfolio.url + '/api/positions?type=realestate&platforms=true').data;
 
                                     var positions = {
                                         p2p: p2p,
@@ -1047,15 +1041,15 @@ Meteor.methods({
 
                             // Latest posts
                             if (Meteor.call('hasElement', post._id, 'latestposts')) {
-                                var posts = Posts.find({ userId: parameters.userId }, { sort: { creationDate: -1 }, limit: 3 });
+                                var posts = Posts.find({ brandId: parameters.brandId }, { sort: { creationDate: -1 }, limit: 3 });
                             }
 
                             // Best posts
                             if (Meteor.call('hasElement', post._id, 'bestposts')) {
-                                if (Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId })) {
+                                if (Statistics.findOne({ type: 'visitedPosts', brandId: parameters.brandId })) {
 
                                     // Get best posts
-                                    var bestPostsStats = Statistics.findOne({ type: 'visitedPosts', userId: parameters.userId }).value;
+                                    var bestPostsStats = Statistics.findOne({ type: 'visitedPosts', brandId: parameters.brandId }).value;
                                     if (bestPostsStats.length > 6) {
                                         bestPostsStats = bestPostsStats.slice(0, 6);
                                     } else {
@@ -1666,8 +1660,8 @@ Meteor.methods({
                             }
 
                             // Add disqus?
-                            if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId })) {
-                                if (Metas.findOne({ type: 'disqus', brandId: parameters.brandId }).value != "") {
+                            if (brand.disqus) {
+                                if (brand.disqus != "") {
                                     parameters = {
                                         url: post.url,
                                         websiteUrl: websiteUrl,

@@ -131,6 +131,14 @@ Meteor.publish("userGraphs", function() {
     return Graphs.find({});
 });
 
+Meteor.publish("userEntries", function() {
+    return Entries.find({});
+});
+
+Meteor.publish("userEntryCategories", function() {
+    return EntryCategories.find({});
+});
+
 // Meteor.publish('files.images.all', function() {
 //     return Images.find().cursor;
 // });

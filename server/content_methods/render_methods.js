@@ -592,7 +592,7 @@ Meteor.methods({
 
                 if (parameters.categoryId !== undefined) {
 
-                    return url;
+                    return parameters.url;
 
                 } else if (brand.blogPage) {
 
@@ -1387,7 +1387,6 @@ Meteor.methods({
 
                                 // Get investment report
                                 var investmentReport = Meteor.call('getInvestmentReport', post.month, post.year);
-                                console.log(investmentReport);
 
                                 // Helpers
                                 Template.postTemplate.helpers({

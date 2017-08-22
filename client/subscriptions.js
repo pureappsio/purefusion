@@ -48,6 +48,9 @@ Tracker.autorun(function() {
     Meteor.subscribe('userGraphs');
     Meteor.subscribe('userStatistics');
 
+    Meteor.subscribe('userEntries');
+    Meteor.subscribe('userEntryCategories');
+
     Meteor.subscribe('allUsers');
     // Meteor.subscribe('userIntegrations');
 });

@@ -1,0 +1,32 @@
+<template name="entries">
+    <h3>Add Entry</h3> {{#autoForm collection="Entries" id="insertEntryForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='brandId'}}
+        {{> afQuickField name='type'}} {{> afQuickField name='categoryId'}} {{> afQuickField name='amount'}} {{> afQuickField name='date'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Insert Entry</button>
+    {{/autoForm}}
+    <h3>Revenues</h3> {{#each revenues}} {{> entry}} {{/each}}
+    <h3>Expenses</h3> {{#each expenses}} {{> entry}} {{/each}}
+    <h3>Categories</h3> {{#autoForm collection="EntryCategories" id="insertCategoryEntryForm" type="insert"}}
+    <fieldset>
+        {{> afQuickField name='name'}} {{> afQuickField name='brandId' value=selectedBrand type='hidden'}}
+    </fieldset>
+    <button type="submit" class="btn btn-block btn-primary">Insert Category</button>
+    {{/autoForm}}
+    <!-- <div class='row'>
+        <div class='col-md-3'>
+            <input type="text" id='category-name' class="form-control">
+        </div>
+        <div class='col-md-2'>
+            <button id='add-category' class='btn btn-block btn-primary'>Add Category</button>
+        </div>
+    </div> -->
+    {{#each category in categories}}
+    <div class='row'>
+        <div class='col-md-4'>
+            {{category.name}}
+        </div>
+    </div>
+    {{/each}}
+</template>

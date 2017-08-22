@@ -1,3 +1,6 @@
+import FacebookAPI from 'fbgraph';
+Future = Npm.require('fibers/future');
+
 Meteor.methods({
 
     buildMonthlyReport: function(query) {
@@ -48,78 +51,78 @@ Meteor.methods({
 
             // Website data
             websiteData = {
-                name: websites[i].name
+                name: brands[i].name
             }
 
             // Get sales
-            if (websites[i].salesIntegrationId) {
+            var currentEarnings = Meteor.call('getEarnings', brands[i]._id, {
+                from: pastDate,
+                to: currentDate
+            });
 
-                var currentEarnings = Meteor.call('getEarnings', websites[i].salesIntegrationId, {
-                    from: pastDate,
-                    to: currentDate
-                });
+            var pastEarnings = Meteor.call('getEarnings', brands[i]._id, {
+                from: pastPastDate,
+                to: pastDate
+            });
 
-                var pastEarnings = Meteor.call('getEarnings', websites[i].salesIntegrationId, {
-                    from: pastPastDate,
-                    to: pastDate
-                });
-
-                var earnings = {
-                    current: currentEarnings.toFixed(2),
-                    variation: (currentEarnings - pastEarnings).toFixed(2),
-                    variation_percent: ((currentEarnings - pastEarnings) / pastEarnings * 100).toFixed(2)
-                }
-
-                currentTotal += currentEarnings;
-                pastTotal += pastEarnings;
-
-                websiteTotalCurrent += currentEarnings;
-                websiteTotalPast += pastEarnings;
-
-                if (earnings.current > 5) {
-                    websiteData.earnings = earnings;
-                }
-
+            var earnings = {
+                current: currentEarnings.toFixed(2),
+                variation: (currentEarnings - pastEarnings).toFixed(2),
+                variation_percent: ((currentEarnings - pastEarnings) / pastEarnings * 100).toFixed(2)
             }
 
-            // Get Amazon earnings
-            if (websites[i].siteId) {
+            currentTotal += currentEarnings;
+            pastTotal += pastEarnings;
 
-                var currentEarnings = Meteor.call('getAmazonEarnings', {
-                    siteId: websites[i].siteId,
-                    from: Meteor.call('standardizedDate', pastDate),
-                    to: Meteor.call('standardizedDate', currentDate)
-                });
+            websiteTotalCurrent += currentEarnings;
+            websiteTotalPast += pastEarnings;
 
-                var pastEarnings = Meteor.call('getAmazonEarnings', {
-                    siteId: websites[i].siteId,
-                    from: Meteor.call('standardizedDate', pastPastDate),
-                    to: Meteor.call('standardizedDate', pastDate)
-                });
+            if (earnings.current > 5) {
+                websiteData.earnings = earnings;
+            }
 
-                var earnings = {
-                    current: currentEarnings.toFixed(2),
-                    variation: (currentEarnings - pastEarnings).toFixed(2),
-                    variation_percent: ((currentEarnings - pastEarnings) / pastEarnings * 100).toFixed(2)
-                }
+            var currentEarnings = Meteor.call('getAmazonEarnings', {
+                brandId: brands[i]._id,
+                from: Meteor.call('standardizedDate', pastDate),
+                to: Meteor.call('standardizedDate', currentDate)
+            });
 
-                websiteTotalCurrent += currentEarnings;
-                websiteTotalPast += pastEarnings;
+            var pastEarnings = Meteor.call('getAmazonEarnings', {
+                brandId: brands[i]._id,
+                from: Meteor.call('standardizedDate', pastPastDate),
+                to: Meteor.call('standardizedDate', pastDate)
+            });
 
-                currentTotal += currentEarnings;
-                pastTotal += pastEarnings;
+            var earnings = {
+                current: currentEarnings.toFixed(2),
+                variation: (currentEarnings - pastEarnings).toFixed(2),
+                variation_percent: ((currentEarnings - pastEarnings) / pastEarnings * 100).toFixed(2)
+            }
 
-                if (earnings.current > 5) {
-                    websiteData.amazonEarnings = earnings;
-                }
+            websiteTotalCurrent += currentEarnings;
+            websiteTotalPast += pastEarnings;
 
+            currentTotal += currentEarnings;
+            pastTotal += pastEarnings;
+
+            if (earnings.current > 5) {
+                websiteData.amazonEarnings = earnings;
             }
 
             // Check for additional revenue
-            if (Entries.find({ websiteId: websites[i]._id, type: 'revenue', date: { $lte: currentDate, $gte: pastDate } }).count() > 0) {
+            if (Entries.find({ brandId: brands[i]._id, type: 'revenue', date: { $lte: currentDate, $gte: pastDate } }).count() > 0) {
 
-                var entries = Entries.find({ websiteId: websites[i]._id, type: 'revenue', date: { $lte: currentDate, $gte: pastDate } }).fetch();
-                var pastEntries = Entries.find({ websiteId: websites[i]._id, type: 'revenue', date: { $lte: pastDate, $gte: pastPastDate } }).fetch();
+                var entries = Entries.find({
+                    brandId: brands[i]._id,
+                    type: 'revenue',
+                    date: { $lte: currentDate, $gte: pastDate }
+                }).fetch();
+
+                var pastEntries = Entries.find({
+                    brandId: brands[i]._id,
+                    type: 'revenue',
+                    date: { $lte: pastDate, $gte: pastPastDate }
+                }).fetch();
 
                 // Get categories
                 var categories = [];
@@ -133,7 +136,7 @@ Meteor.methods({
                 for (i in categories) {
 
                     additionalRevenue = {
-                        name: Categories.findOne(categories[i]).name,
+                        name: EntryCategories.findOne(categories[i]).name,
                         current: 0
                     }
 
@@ -199,7 +202,7 @@ Meteor.methods({
         report.revenue = total;
 
         // Expenses
-        var user = Meteor.users.findOne(websites[0].userId);
+        var user = Meteor.users.findOne(brands[0].userId);
 
         // FB ads
         var currentExpenses = Meteor.call('calculateAdsCosts', {
@@ -231,8 +234,15 @@ Meteor.methods({
         // Check for additional expenses
         if (Entries.find({ type: 'expense', date: { $lte: currentDate, $gte: pastDate } }).count() > 0) {
 
-            var entries = Entries.find({ type: 'expense', date: { $lte: currentDate, $gte: pastDate } }).fetch();
-            var pastEntries = Entries.find({ type: 'expense', date: { $lte: pastDate, $gte: pastPastDate } }).fetch();
+            var entries = Entries.find({
+                type: 'expense',
+                date: { $lte: currentDate, $gte: pastDate }
+            }).fetch();
+
+            var pastEntries = Entries.find({
+                type: 'expense',
+                date: { $lte: pastDate, $gte: pastPastDate }
+            }).fetch();
 
             // Get categories
             var categories = [];
@@ -245,7 +255,7 @@ Meteor.methods({
             for (i in categories) {
 
                 additionalExpense = {
-                    name: Categories.findOne(categories[i]).name,
+                    name: EntryCategories.findOne(categories[i]).name,
                     current: 0
                 }
 
@@ -299,6 +309,198 @@ Meteor.methods({
 
         return report;
 
+    },
+    getEarnings: function(brandId, parameters) {
+
+        // Query
+        var query = { success: true, brandId: brandId };
+
+        if (parameters.from && parameters.to) {
+
+            // Parameters
+            from = new Date(parameters.from)
+            to = new Date(parameters.to)
+
+            // Set to date to end of day
+            to.setHours(23);
+            to.setMinutes(59);
+            to.setSeconds(59);
+
+            // Query
+            query.date = { $gte: from, $lte: to };
+
+        }
+
+        // Product ?
+        if (parameters.product) {
+            query.products = parameters.product;
+        }
+
+        // Origin
+        if (parameters.origin) {
+            query.origin = parameters.origin;
+        }
+
+        // Medium
+        if (parameters.medium) {
+            query.medium = parameters.medium;
+        }
+
+        // Affiliate code
+        if (parameters.ref) {
+            query.affiliateCode = parameters.ref;
+        }
+
+        console.log(query);
+
+        // Get sales
+        var sales = Sales.find(query).fetch();
+
+        console.log(sales);
+
+        // Calculate earnings
+        earnings = 0;
+        for (i = 0; i < sales.length; i++) {
+            if (sales[i].currency == 'USD') {
+                earnings = earnings + parseFloat(sales[i].amount);
+            } else {
+                earnings = earnings + parseFloat(sales[i].amount) / 1.06415;
+            }
+
+        }
+
+        earnings = parseFloat(earnings.toFixed(2));
+
+        return earnings;
+
+    },
+    getAmazonEarnings: function(parameters) {
+
+        var query = {
+            type: 'affiliateClick',
+            earnings: {$exists: true}
+        };
+
+        // From & to?
+        if (parameters.from && parameters.to) {
+
+            // Parameters
+            from = new Date(parameters.from)
+            to = new Date(parameters.to)
+
+            // Set to date to end of day
+            to.setHours(23);
+            to.setMinutes(59);
+            to.setSeconds(59);
+
+            // Query
+            query.date = { $gte: from, $lte: to };
+
+        }
+
+        // Get events
+        var result = Events.find(query).fetch();
+
+        var earnings = 0;
+
+        for (e in result) {
+            earnings += parseFloat(result[e].earnings);
+        }
+
+        return earnings;
+
+    },
+    calculateAdsCosts: function(parameters) {
+
+        // Check if Facebook Ads ID
+        if (Metas.findOne({ userId: parameters.user._id, type: 'facebookAdsId' })) {
+
+            // Find token
+            var token = parameters.user.services.facebook.accessToken;
+
+            // Get Ads ID
+            var facebookAdsId = Metas.findOne({ userId: parameters.user._id, type: 'facebookAdsId' }).value;
+
+            // Set token
+            FacebookAPI.setAccessToken(token);
+
+            // Set version
+            FacebookAPI.setVersion("2.8");
+
+            console.log(parameters.from);
+            console.log(parameters.to);
+
+            // Date range
+            from = Meteor.call('googleDate', new Date(parameters.from));
+            to = Meteor.call('googleDate', new Date(parameters.to));
+
+            console.log(from);
+            console.log(to);
+
+            // Parameters
+            var parameters = {
+                time_range: {
+                    "since": from,
+                    "until": to
+                }
+            };
+
+            // Get insights
+            var myFuture = new Future();
+            FacebookAPI.get('act_' + facebookAdsId + '/insights', parameters, function(err, res) {
+                // returns the post id
+                console.log(res);
+                myFuture.return(res.data);
+
+            });
+
+            var data = myFuture.wait();
+
+            // Build value
+            return data[0].spend;
+        } else {
+            return 0;
+        }
+
+    },
+    googleDate: function(date) {
+
+        current_month = date.getMonth() + 1;
+        current_year = date.getFullYear();
+        current_day = date.getDate();
+
+        current_month = current_month.toString();
+        current_day = current_day.toString();
+
+        if (current_month.length < 2) current_month = '0' + current_month;
+        if (current_day.length < 2) { current_day = '0' + current_day };
+
+        // Build date objects
+        date = current_year + '-' + current_month + '-' + current_day;
+
+        return date;
+
+    },
+    standardizedDate: function(date) {
+
+        current_month = date.getMonth() + 1;
+        current_year = date.getFullYear();
+        current_day = date.getDate();
+
+        current_month = current_month.toString();
+        current_day = current_day.toString();
+
+        if (current_month.length < 2) current_month = '0' + current_month;
+        if (current_day.length < 2) { current_day = '0' + current_day };
+
+        // Build date objects
+        date = current_month + '-' + current_day + '-' + current_year;
+
+        return date;
+
+    },
+    deleteEntry: function(entryId) {
+        Entries.remove(entryId);
     }
 
-})
+});

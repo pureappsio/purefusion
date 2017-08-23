@@ -34,6 +34,9 @@ Tracker.autorun(function() {
 
     Meteor.subscribe('userGateways');
 
+    // Social
+    Meteor.subscribe('userServices');
+
     // Audience
     Meteor.subscribe('userSequences');
     Meteor.subscribe('userAutomations');

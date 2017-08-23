@@ -1141,9 +1141,7 @@ Meteor.methods({
 
                                 },
                                 listId: function(element) {
-                                    if (element.type == 'emailsignup' || element.type == 'signupbox') {
-                                        return Integrations.findOne({ type: 'puremail' }).list;
-                                    }
+                                    return brand._id
                                 },
                                 sequenceId: function(element) {
                                     if (element.type == 'emailsignup' || element.type == 'signupbox') {

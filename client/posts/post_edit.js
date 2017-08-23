@@ -12,7 +12,9 @@ Template.postEdit.helpers({
         if (this.category == 'recipe') {
             return true;
         }
+    },
+    imgLink: function() {
+        return Session.get('imgLink');
     }
-
 
 });

@@ -11,9 +11,19 @@
         {{> afQuickField name='content'}}
     </fieldset>
 {{/autoForm}} -->
-    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update"}}
 
-  <!--   {{#if isRecipe}}
+    <div class='row'>
+        <div class='col-md-12'>
+            {{> uploadForm}}
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            {{imgLink}}
+        </div>
+    </div>
+    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update"}}
+    <!--   {{#if isRecipe}}
   
 
     {{/if}}

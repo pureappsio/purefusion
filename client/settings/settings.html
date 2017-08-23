@@ -13,14 +13,23 @@
             <button id='set-pixel' class='btn btn-block btn-primary'>Set Facebook Pixel</button>
         </div>
     </div>
+    <h3>Facebook Accounts</h3>
+    <div class='row'>
+        <div class="col-md-3">
+            <button id='link-facebook' class='btn btn-block btn-primary'>Link Your Facebook Account</button>
+        </div>
+        <div class="col-md-3">
+            <input value='{{getMeta "facebookAdsId"}}' class='form-control' id='ads-id'>
+        </div>
+        <div class="col-md-3">
+            <button id='set-ads-id' class='btn btn-block btn-primary'>Set Facebook Ads Id</button>
+        </div>
+    </div>
     <h3>Render All Posts</h3>
     <div class='row'>
         <div class='col-md-3'>
             <button id='localise' class='btn btn-block btn-primary'>Render</button>
         </div>
     </div>
-    {{> paymentProcessor}}
-
-    {{> importData}}
-
+    {{> paymentProcessor}} {{> importData}}
 </template>

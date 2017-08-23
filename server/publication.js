@@ -139,6 +139,10 @@ Meteor.publish("userEntryCategories", function() {
     return EntryCategories.find({});
 });
 
+Meteor.publish("userServices", function() {
+    return Services.find({});
+});
+
 // Meteor.publish('files.images.all', function() {
 //     return Images.find().cursor;
 // });

@@ -262,7 +262,13 @@ Meteor.methods({
                 console.log('Existing user');
             } else {
                 console.log(users[i]);
-                Meteor.users.insert(users[i]);
+
+                if (Meteor.users.findOne({ "emails.0.address": users[i].emails[0].address })) {
+                    console.log('Existing email user');
+                } else {
+                    Meteor.users.insert(users[i]);
+                }
+
             }
 
         }
@@ -382,7 +388,14 @@ Meteor.methods({
 
             // Fix unwanted
             delete products[i].userId;
-            products[i].price = products[i].price.USD;
+
+            if (products[i].price) {
+                if (products[i].price.USD) {
+                    products[i].price = products[i].price.USD;
+                } else {
+                    products[i].price = products[i].price;
+                }
+            }
 
             if (!products[i].shortName) {
                 url = (products[i].name).replace(/ /g, "-");
@@ -405,8 +418,12 @@ Meteor.methods({
                 console.log('Existing product');
 
             } else {
-                // Products.insert(products[i]);
+
                 console.log(products[i]);
+
+                if (products[i].type != 'course') {
+                    Products.insert(products[i])
+                }
             }
 
         }
@@ -454,28 +471,31 @@ Meteor.methods({
 
         for (i in elements) {
 
-            // Set brand
-            elements[i].brandId = data.brandId;
+            if (elements[i].type != 'salesElement') {
 
-            // Fix unwanted
-            delete elements[i].userId;
-            if (elements[i].type == 'additionalPicture') {
-                elements[i].type = 'productPictures';
-            }
+                // Set brand
+                elements[i].brandId = data.brandId;
 
-            // Replace product ID
-            if (table[elements[i].productId]) {
-                console.log('Updating product ID')
-                elements[i].productId = table[elements[i].productId];
-            }
+                // Fix unwanted
+                delete elements[i].userId;
+                if (elements[i].type == 'additionalPicture') {
+                    elements[i].type = 'productPictures';
+                }
 
-            // Insert
-            if (Elements.findOne(elements[i]._id)) {
-                console.log('Existing element');
-                Elements.update(elements[i]._id, { $set: { productId: elements[i].productId } }, { selector: { type: 'productPictures' } });
-            } else {
-                console.log(elements[i]);
-                Elements.insert(elements[i]);
+                // Replace product ID
+                if (table[elements[i].productId]) {
+                    console.log('Updating product ID')
+                    elements[i].productId = table[elements[i].productId];
+                }
+
+                // Insert
+                if (Elements.findOne(elements[i]._id)) {
+                    console.log('Existing element');
+                    Elements.update(elements[i]._id, { $set: { productId: elements[i].productId } }, { selector: { type: 'productPictures' } });
+                } else {
+                    Elements.insert(elements[i]);
+                }
+
             }
 
         }
@@ -506,50 +526,50 @@ Meteor.methods({
 
         }
 
-        // console.log('Importing sales');
-        // var sales = Meteor.call('getPureData', integration, 'sales');
-        // console.log(sales.length);
+        console.log('Importing sales');
+        var sales = Meteor.call('getPureData', integration, 'sales');
+        console.log(sales.length);
 
-        // for (i in sales) {
+        for (i in sales) {
 
-        //     // Set brand
-        //     sales[i].brandId = data.brandId;
+            // Set brand
+            sales[i].brandId = data.brandId;
 
-        //     // Fix unwanted
-        //     delete sales[i].userId;
-        //     if (sales[i].variants) {
-        //         if (sales[i].variants[0] == null) {
-        //             delete sales[i].variants;
-        //         }
-        //     }
+            // Fix unwanted
+            delete sales[i].userId;
+            if (sales[i].variants) {
+                if (sales[i].variants[0] == null) {
+                    delete sales[i].variants;
+                }
+            }
 
-        //     // Replace products
-        //     if (sales[i].products) {
-        //         for (p in sales[i].products) {
-        //             for (s in products) {
-        //                 if (sales[i].products[p] == products[s]._id) {
+            // Replace products
+            if (sales[i].products) {
+                for (p in sales[i].products) {
+                    for (s in products) {
+                        if (sales[i].products[p] == products[s]._id) {
 
-        //                     console.log('Replacing product in sales');
-        //                     if (Array.isArray(products[s].courses)) {
-        //                         sales[i].products[p] = products[s].courses[0];
-        //                     } else {
-        //                         sales[i].products[p] = products[s].courses;
-        //                     }
+                            console.log('Replacing product in sales');
+                            if (Array.isArray(products[s].courses)) {
+                                sales[i].products[p] = products[s].courses[0];
+                            } else {
+                                sales[i].products[p] = products[s].courses;
+                            }
 
-        //                 }
-        //             }
-        //         }
-        //     }
+                        }
+                    }
+                }
+            }
 
-        //     // Insert
-        //     if (Sales.findOne(sales[i]._id)) {
-        //         console.log('Existing sale');
-        //     } else {
-        //         // console.log(sales[i]);
-        //         Sales.insert(sales[i]);
-        //     }
+            // Insert
+            if (Sales.findOne(sales[i]._id)) {
+                console.log('Existing sale');
+            } else {
+                // console.log(sales[i]);
+                Sales.insert(sales[i]);
+            }
 
-        // }
+        }
 
         // console.log('Importing sessions');
         // var sessions = Meteor.call('getPureData', integration, 'sessions');
@@ -655,7 +675,8 @@ Meteor.methods({
                 elements[i].type = 'affiliate';
             }
 
-            if (elements[i].type != 'store') {
+            if (elements[i].type != 'store' && elements[i].type != 'pricing') {
+
                 if (Elements.findOne(elements[i]._id)) {
                     console.log('Existing element');
                     Elements.update(elements[i]._id, { $set: { brandId: data.brandId } }, { selector: { type: elements[i].type } });
@@ -736,7 +757,13 @@ Meteor.methods({
         var pricing = Meteor.call('getPureData', integration, 'pricing');
         for (i in pricing) {
             pricing[i].brandId = data.brandId;
-            Pricing.insert(pricing[i]);
+
+            if (Pricing.findOne(pricing[i]._id)) {
+                console.log('Existing pricing');
+            } else {
+                console.log(pricing[i]);
+                Pricing.insert(pricing[i]);
+            }
         }
 
         // Tags

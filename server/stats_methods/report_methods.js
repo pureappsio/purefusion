@@ -378,7 +378,7 @@ Meteor.methods({
 
         var query = {
             type: 'affiliateClick',
-            earnings: {$exists: true}
+            earnings: { $exists: true }
         };
 
         // From & to?
@@ -416,7 +416,7 @@ Meteor.methods({
         if (Metas.findOne({ userId: parameters.user._id, type: 'facebookAdsId' })) {
 
             // Find token
-            var token = parameters.user.services.facebook.accessToken;
+            var token = Services.findOne({ type: 'facebook', userId: parameters.user._id }).accessToken;
 
             // Get Ads ID
             var facebookAdsId = Metas.findOne({ userId: parameters.user._id, type: 'facebookAdsId' }).value;
@@ -425,7 +425,7 @@ Meteor.methods({
             FacebookAPI.setAccessToken(token);
 
             // Set version
-            FacebookAPI.setVersion("2.8");
+            FacebookAPI.setVersion("2.9");
 
             console.log(parameters.from);
             console.log(parameters.to);
@@ -448,16 +448,28 @@ Meteor.methods({
             // Get insights
             var myFuture = new Future();
             FacebookAPI.get('act_' + facebookAdsId + '/insights', parameters, function(err, res) {
-                // returns the post id
-                console.log(res);
-                myFuture.return(res.data);
+
+                if (err) {
+                    myFuture.return({ message: 'Error' });
+                } else {
+                    console.log(res);
+                    myFuture.return(res.data);
+                }
+
 
             });
 
             var data = myFuture.wait();
 
             // Build value
-            return data[0].spend;
+            if (data.message) {
+                return 0;
+            }
+            else {
+                return data[0].spend;
+            }
+            
+
         } else {
             return 0;
         }

@@ -27,7 +27,7 @@ Meteor.methods({
         // Check for referer
         if (!query.origin) {
             if (httpHeaders.referer) {
-                console.log('Referer: ' + httpHeaders.referer);
+                // console.log('Referer: ' + httpHeaders.referer);
                 query.origin = Meteor.call('getOrigin', httpHeaders.referer);
                 query.medium = Meteor.call('getMedium', httpHeaders.referer);
             }
@@ -59,16 +59,15 @@ Meteor.methods({
         }
 
         // Check if already logged
-        if (Visitors.findOne({ ip: visitor.ip, userId: parameters.userId })) {
+        if (Visitors.findOne({ ip: visitor.ip, brandId: parameters.brandId })) {
 
-            console.log('Already existing visitor')
-            Visitors.update({ ip: visitor.ip, userId: parameters.userId }, { $set: { date: new Date() } });
-            console.log(Visitors.findOne({ ip: visitor.ip, userId: parameters.userId }));
+            Visitors.update({ ip: visitor.ip, brandId: parameters.brandId }, { $set: { date: new Date() } });
+            // var visitor = Visitors.findOne({ ip: visitor.ip, brandId: parameters.brandId });
 
         } else {
 
-            // console.log(visitor);
             Visitors.insert(visitor);
+
         }
 
     },

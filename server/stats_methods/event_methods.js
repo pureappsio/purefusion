@@ -27,9 +27,94 @@ Meteor.methods({
     insertStat: function(stat) {
 
         // Insert
-        console.log('New event: ');
-        console.log(stat);
+        // console.log('New event: ');
+        // console.log(stat);
+        console.log(Meteor.call('formatMessage', stat));
+        
         Events.insert(stat);
+
+    },
+    formatMessage: function(stat) {
+
+        var message = "";
+
+        if (stat.type == 'visit') {
+
+            if (stat.postId) {
+                message = 'New visit on post ' + Posts.findOne(stat.postId).title;
+            } else if (stat.pageId) {
+                message = 'New visit on page ' + Pages.findOne(stat.pageId).title;
+            } else if (stat.productId) {
+                message = 'New visit on product page ' + Products.findOne(stat.productId).name;
+            }
+
+        }
+        if (stat.type == 'affiliateClick') {
+            if (stat.postId) {
+                message = 'New affiliate click on post ' + Posts.findOne(stat.postId).title;
+            }
+        }
+        if (stat.type == 'subscribed') {
+            message = 'New subscriber for sequence ' + Sequences.findOne(stat.sequenceId).name;
+        }
+
+        if (stat.type == 'store') {
+            message = 'New visit on the store';
+        }
+
+        if (stat.type == 'cart') {
+            message = 'Added product ' + Products.findOne(stat.productId).name + ' to cart';
+        }
+
+        if (stat.type == 'checkout') {
+            message = 'Visited checkout for product ' + Products.findOne(stat.productId).name;
+        }
+
+        if (stat.type == 'sale') {
+
+            var sale = Sales.findOne(stat.saleId);
+            message = 'New sale of $' + sale.amount;
+            
+        }
+
+        if (stat.type == 'open') {
+
+            if (stat.ruleId) {
+                message = 'Opened email ' + Automations.findOne(stat.ruleId).emailName;
+            }
+
+            if (stat.broadcastId) {
+                message = 'Opened broadcast ' + Broadcasts.findOne(stat.broadcastId).subject;
+            }
+
+        }
+
+        if (stat.type == 'delivered') {
+
+            if (stat.ruleId) {
+                message = 'Delivered email ' + Automations.findOne(stat.ruleId).emailName;
+            }
+
+            if (stat.broadcastId) {
+                message = 'Delivered broadcast ' + Broadcasts.findOne(stat.broadcastId).subject;
+            }
+        }
+
+        if (stat.type == 'click') {
+
+            if (stat.ruleId) {
+                message = 'Clicked email ' + Automations.findOne(stat.ruleId).emailName;
+            }
+
+            if (stat.broadcastId) {
+                message = 'Clicked broadcast ' + Broadcasts.findOne(stat.broadcastId).subject;
+            }
+        }
+
+        var brand = Brands.findOne(stat.brandId);
+        message = '[' + brand.name + '] ' + message;
+
+        return message;
 
     },
     insertSession: function(parameters) {

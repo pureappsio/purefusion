@@ -853,12 +853,11 @@ Meteor.methods({
                             // Add disqus?
                             if (brand.disqus) {
                                 if (brand.disqus != "") {
-                                    parameters = {
+                                    var commentHtml = Meteor.call('renderDisqus', {
                                         url: post.url,
                                         websiteUrl: websiteUrl,
                                         brandId: parameters.brandId
-                                    };
-                                    var commentHtml = Meteor.call('renderDisqus', parameters);
+                                    });
                                     postHtml += commentHtml;
                                 }
                             }
@@ -1659,12 +1658,11 @@ Meteor.methods({
                             // Add disqus?
                             if (brand.disqus) {
                                 if (brand.disqus != "") {
-                                    parameters = {
+                                    var commentHtml = Meteor.call('renderDisqus', {
                                         url: post.url,
                                         websiteUrl: websiteUrl,
-                                        userId: parameters.userId
-                                    };
-                                    var commentHtml = Meteor.call('renderDisqus', parameters);
+                                        brandId: parameters.brandId
+                                    });
                                     postHtml += commentHtml;
                                 }
                             }

@@ -19,8 +19,8 @@ Meteor.methods({
 
         var hostnameArray = document.location.hostname.split(".");
 
-        console.log('HostnameArray: ');
-        console.log(hostnameArray);
+        // console.log('HostnameArray: ');
+        // console.log(hostnameArray);
 
         if (hostnameArray.length == 2 || hostnameArray.length == 3) {
 
@@ -34,8 +34,8 @@ Meteor.methods({
             var domain = "admin"
         }
 
-        console.log('Domain: ');
-        console.log(domain);
+        // console.log('Domain: ');
+        // console.log(domain);
 
         var brand = Meteor.call('getBrandDomain', domain);
 
@@ -47,7 +47,7 @@ Meteor.methods({
         var host = headers.host;
         var hostnameArray = host.split(".");
 
-        console.log(hostnameArray);
+        // console.log(hostnameArray);
 
         if (hostnameArray.length == 2 || hostnameArray.length == 3) {
 

@@ -119,40 +119,40 @@ setDiscount = function(query) {
 
 }
 
-getSessionData = function(parameters) {
+// getSessionData = function(parameters) {
 
-    // Insert session
-    session = {
-        date: new Date(),
-        type: parameters.type,
-        country: Session.get('countryCode'),
-        userId: Session.get('sellerId')
-    };
+//     // Insert session
+//     session = {
+//         date: new Date(),
+//         type: parameters.type,
+//         country: Session.get('countryCode'),
+//         userId: Session.get('sellerId')
+//     };
 
-    if (parameters.productId) {
-        session.productId = parameters.productId;
-    }
+//     if (parameters.productId) {
+//         session.productId = parameters.productId;
+//     }
 
-    // Mobile or Desktop
-    if (/Mobi/.test(navigator.userAgent)) {
-        session.browser = 'mobile';
-    } else {
-        session.browser = 'desktop';
-    }
+//     // Mobile or Desktop
+//     if (/Mobi/.test(navigator.userAgent)) {
+//         session.browser = 'mobile';
+//     } else {
+//         session.browser = 'desktop';
+//     }
 
-    // Origin & medium
-    if (Session.get('origin')) {
-        session.origin = Session.get('origin');
-    } else {
-        session.origin = 'organic';
-    }
-    if (Session.get('medium')) {
-        session.medium = Session.get('medium');
-    }
+//     // Origin & medium
+//     if (Session.get('origin')) {
+//         session.origin = Session.get('origin');
+//     } else {
+//         session.origin = 'organic';
+//     }
+//     if (Session.get('medium')) {
+//         session.medium = Session.get('medium');
+//     }
 
-    return session;
+//     return session;
 
-}
+// }
 
 computePrice = function(price) {
 

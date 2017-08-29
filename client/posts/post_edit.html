@@ -22,15 +22,38 @@
             {{imgLink}}
         </div>
     </div>
-    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update"}}
-    <!--   {{#if isRecipe}}
+    {{> quickForm collection="Posts" doc=this id="updatePostForm" type="update" autosave=true}}
+    
+    {{#if isAffiliate}}
+
+        <h3>Insert New Element</h3>
+
+        {{> quickForm collection="Elements" doc=defaultElement id="insertAffForm" type="insert"}}
+
+        <h3>Affiliate Elements</h3>
+
+        <div class='row'>
   
+        {{#each elements}} 
+
+            <div class='col-md-4'>
+
+                {{> genericElementEdit}}
+
+            </div>
+
+        {{/each}}
+
+        </div>
 
     {{/if}}
-     -->
+    
     <div class='row'>
         <div class="col-md-4">
-            <a class='btn btn-secondary btn-block' href='/admin/posts'>Come Back</a>
+            <button id='render' class='btn btn-warning btn-block'>Save & Render Post</button>
+        </div>
+        <div class="col-md-4">
+            <a class='btn btn-primary btn-block' href='/admin/posts'>Come Back</a>
         </div>
     </div>
 </template>

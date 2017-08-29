@@ -756,21 +756,31 @@ Meteor.methods({
             console.log('Changing order');
 
             if (orderChange == 1) {
-                var pastElement = Elements.findOne({ productId: element.productId, type: element.type, order: currentOrder + 1 });
+
+                var pastElement = Elements.findOne({
+                    productId: element.productId,
+                    type: element.type,
+                    order: currentOrder + 1
+                });
             }
             if (orderChange == -1) {
-                var pastElement = Elements.findOne({ productId: element.productId, type: element.type, order: currentOrder - 1 });
+
+                var pastElement = Elements.findOne({
+                    productId: element.productId,
+                    type: element.type,
+                    order: currentOrder - 1
+                });
             }
 
             // Current element
-            Elements.update(elementId, { $inc: { order: orderChange } });
+            Elements.update(elementId, { $inc: { order: orderChange } }, { selector: { type: element.type } });
 
             // Past
             if (orderChange == 1) {
-                Elements.update(pastElement._id, { $inc: { order: -1 } });
+                Elements.update(pastElement._id, { $inc: { order: -1 } }, { selector: { type: pastElement.type } });
             }
             if (orderChange == -1) {
-                Elements.update(pastElement._id, { $inc: { order: 1 } });
+                Elements.update(pastElement._id, { $inc: { order: 1 } }, { selector: { type: pastElement.type } });
             }
         }
 

@@ -107,11 +107,27 @@ Template.registerHelper("getDiscountPrice", function(price, location, productId)
     // Rates
     var rates = Metas.findOne({ type: 'rates' }).value;
 
+    // console.log('Rates:');
+    // console.log(rates);
+
+    // console.log('Price:');
+    // console.log(price);
+
+    // console.log('Location:');
+    // console.log(location);
+
+    // console.log('productId:');
+    // console.log(productId);
+
     // Brand
     var brand = Brands.findOne(Session.get('selectedBrand'));
 
+    // console.log('Brand: ' + brand.name);
+
     // If currency is defined
     if (Session.get('currency')) {
+
+        // console.log('Currency defined');
 
         // Price
         if (Session.get('currency') == brand.store.baseCurrency) {
@@ -121,9 +137,25 @@ Template.registerHelper("getDiscountPrice", function(price, location, productId)
         }
         else {
 
+            // console.log('Calculating price');
+
+            // console.log(brand.store.baseCurrency);
+            // console.log(rates[brand.store.baseCurrency]);
+            // console.log(price);
+
             // Get EUR price
             var eurPrice = price / rates[brand.store.baseCurrency];
-            var currencyPrice = price * rates[Session.get('currency')];
+
+            // console.log('EUR price:' + eurPrice);
+
+            if (Session.get('currency') == 'EUR') {
+                var currencyPrice = price;
+            }
+            else {
+                var currencyPrice = price * rates[Session.get('currency')];
+            }
+
+            // console.log('currencyPrice:' + currencyPrice);
 
         }
 
@@ -154,6 +186,9 @@ Template.registerHelper("getDiscountPrice", function(price, location, productId)
         if (Session.get('currency') == brand.store.baseCurrency) {
             return currencyPrice.toFixed(2);
         }
+        else if (Session.get('currency') == 'EUR') {
+            return currencyPrice.toFixed(2);
+        }
         else {
             if (currencyPrice == 0) {
                 return 0;
@@ -165,6 +200,8 @@ Template.registerHelper("getDiscountPrice", function(price, location, productId)
         }
 
     } else {
+
+        // console.log('Unknown currency');
 
         // Price
         var finalPrice = price;

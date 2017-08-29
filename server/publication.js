@@ -112,7 +112,7 @@ Meteor.publish("userSubscribers", function() {
 });
 
 Meteor.publish("userEvents", function() {
-    return Events.find({}, { sort: { date: -1 }, limit: 200 });
+    return Events.find({ }, { sort: { date: -1 }, limit: 50 });
 });
 
 // Meteor.publish("userIntegrations", function() {

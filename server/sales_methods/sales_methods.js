@@ -1018,13 +1018,13 @@ Meteor.methods({
         var httpHeaders = headers.get(this);
 
         if (httpHeaders['cf-ipcountry']) {
-            console.log('Using CloudFlare location')
+            // console.log('Using CloudFlare location')
             var data = {};
             data.country_code = httpHeaders['cf-ipcountry'];
         } else {
-            console.log('Using direct IP location')
+            // console.log('Using direct IP location')
             data = Meteor.call('UserLocation/get');
-            console.log(data);
+            // console.log(data);
         }
 
         // IP
@@ -1035,8 +1035,8 @@ Meteor.methods({
         }
         data.ip = ip;
 
-        console.log('Location data: ');
-        console.log(data);
+        // console.log('Location data: ');
+        // console.log(data);
 
         return data;
 
@@ -1094,8 +1094,8 @@ Meteor.methods({
             }
         }
 
-        console.log('Origin data: ');
-        console.log(answer);
+        // console.log('Origin data: ');
+        // console.log(answer);
 
         return answer;
 

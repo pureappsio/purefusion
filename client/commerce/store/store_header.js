@@ -1,7 +1,12 @@
 Template.storeHeader.helpers({
 
     emailContact: function() {
-        return 'mailto:' + Metas.findOne({ type: 'brandEmail', userId: Session.get('sellerId')  }).value;
+
+        if (Session.get('selectedBrand')) {
+            var brand = Brands.findOne(Session.get('selectedBrand'));
+            return 'mailto:' + brand.email;
+        }
+
     },
     mainPicture: function() {
         return Session.get('mainPicture');

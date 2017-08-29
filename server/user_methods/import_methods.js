@@ -302,9 +302,17 @@ Meteor.methods({
             delete subscribers[i].nb_products;
             subscribers[i].confirmed = true;
 
+
             // Insert
-            if (subscribers[i].email != "") {
-                Subscribers.insert(subscribers[i]);
+            if (subscribers[i].email != "" && subscribers[i].email != null) {
+
+                if (Subscribers.findOne(subscribers[i]._id)) {
+                    console.log('Existing subscriber');
+                } else {
+                    // console.log(subscribers[i]);
+                    Subscribers.insert(subscribers[i]);
+                }
+
             }
         }
 
@@ -381,49 +389,54 @@ Meteor.methods({
         console.log('Importing products');
         var products = Meteor.call('getPureData', integration, 'products');
         console.log(products.length);
+
         for (i in products) {
 
-            // Set brand
-            products[i].brandId = data.brandId;
+            if (products[i].name != '') {
 
-            // Fix unwanted
-            delete products[i].userId;
+                // Set brand
+                products[i].brandId = data.brandId;
 
-            if (products[i].price) {
-                if (products[i].price.USD) {
-                    products[i].price = products[i].price.USD;
+                // Fix unwanted
+                delete products[i].userId;
+
+                if (products[i].price) {
+                    if (products[i].price.USD) {
+                        products[i].price = products[i].price.USD;
+                    } else {
+                        products[i].price = products[i].price;
+                    }
+                }
+
+                if (!products[i].shortName) {
+                    url = (products[i].name).replace(/ /g, "-");
+                    url = url.replace(/:/g, "");
+                    products[i].shortName = url.toLowerCase();
+                }
+
+                if (products[i].type == 'api') {
+                    products[i].type = 'course';
+                }
+
+                if (!products[i].type) {
+                    products[i].type = 'download';
+                }
+
+                products[i].show = true;
+
+                // Insert
+                if (Products.findOne(products[i]._id)) {
+                    console.log('Existing product');
+
                 } else {
-                    products[i].price = products[i].price;
+
+                    console.log(products[i]);
+
+                    if (products[i].type != 'course') {
+                        Products.insert(products[i])
+                    }
                 }
-            }
 
-            if (!products[i].shortName) {
-                url = (products[i].name).replace(/ /g, "-");
-                url = url.replace(/:/g, "");
-                products[i].shortName = url.toLowerCase();
-            }
-
-            if (products[i].type == 'api') {
-                products[i].type = 'course';
-            }
-
-            if (!products[i].type) {
-                products[i].type = 'download';
-            }
-
-            products[i].show = true;
-
-            // Insert
-            if (Products.findOne(products[i]._id)) {
-                console.log('Existing product');
-
-            } else {
-
-                console.log(products[i]);
-
-                if (products[i].type != 'course') {
-                    Products.insert(products[i])
-                }
             }
 
         }

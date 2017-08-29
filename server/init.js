@@ -1,7 +1,7 @@
 Meteor.startup(function() {
 
     // console.log(Elements.find({ type: 'text' }).fetch());
-    console.log(Entries.find({}).fetch());
+    // console.log(Entries.find({}).fetch());
     // console.log(Sales.find({}).fetch());
     // console.log(Meteor.users.findOne({ "emails.0.address": "marcolivier.schwartz@gmail.com" }));
 

@@ -144,18 +144,22 @@ Meteor.methods({
         // Load css
         var css = Assets.getText('main.css');
 
-        if (brand.navbarTheme) {
+        if (brand) {
+            if (brand.navbarTheme) {
 
-            var value = brand.navbarTheme;
+                var value = brand.navbarTheme;
 
-            if (value == 'black') {
-                var navStyle = Assets.getText('nav_dark.css');
+                if (value == 'black') {
+                    var navStyle = Assets.getText('nav_dark.css');
+
+                } else {
+                    var navStyle = Assets.getText('nav_light.css');
+
+                }
 
             } else {
                 var navStyle = Assets.getText('nav_light.css');
-
             }
-
         } else {
             var navStyle = Assets.getText('nav_light.css');
         }
@@ -299,9 +303,13 @@ Meteor.methods({
             },
             favicon: function() {
 
-                if (brand.favicon) {
-                    var image = Images.findOne(brand.favicon);
-                    return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                if (brand) {
+                    if (brand.favicon) {
+                        var image = Images.findOne(brand.favicon);
+                        return '/cdn/storage/Images/' + image._id + '/original/' + image._id + '.' + image.ext;
+                    } else {
+                        return '';
+                    }
                 } else {
                     return '';
                 }
@@ -816,7 +824,7 @@ Meteor.methods({
 
                         } else {
 
-                            console.log('Post cached, returning cached version');
+                            // console.log('Post cached, returning cached version');
 
                             // Return cached HTML
                             var postHtml = Meteor.call('getLocalisedHtml', post, location);
@@ -1701,7 +1709,7 @@ Meteor.methods({
         } else {
 
             // Render header & navbar
-            headerHtml = Meteor.call('returnHeader', {});
+            headerHtml = Meteor.call('returnHeader', {brandId: parameters.brandId});
             navbarHtml = Meteor.call('returnNavbar', parameters.brandId);
             footerHtml = Meteor.call('returnFooter', parameters.brandId);
 

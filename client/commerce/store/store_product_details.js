@@ -60,7 +60,9 @@ Template.storeProductDetails.onRendered(function() {
             var player = this;
             if (media.ext == 'mp4') {
                 $('#product-video-' + productId).show();
-                videojs.getPlayers()['product-video-' + productId].src({ type: "video/mp4", src: media.link() });
+                videojs.getPlayers()['product-video-' + productId].src({ 
+                    type: "video/mp4", 
+                    src: getFileLink(element.imageId) });
             } else {
                 $('#product-video-' + productId).hide();
             }
@@ -192,11 +194,10 @@ Template.storeProductDetails.helpers({
     mainImageLink: function() {
 
         if (Session.get('selectedPicture_' + this._id)) {
-            console.log('Link: ' + Images.findOne(Session.get('selectedPicture_' + this._id)).link());
-            return Images.findOne(Session.get('selectedPicture_' + this._id)).link();
+            return getFileLink(Session.get('selectedPicture_' + this._id));
         } else if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
             var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
-            return Images.findOne(pictureId).link();
+            return getFileLink(pictureId);
         }
     },
     imageLink: function(imageId) {

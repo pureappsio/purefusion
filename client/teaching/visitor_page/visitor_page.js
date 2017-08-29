@@ -21,7 +21,8 @@ Template.visitorPage.helpers({
     courses: function() {
         return Products.find({
             brandId: Session.get('selectedBrand'),
-            show: true
+            show: true,
+            type: 'course'
         }, { limit: 6 });
     },
     isTitle: function() {

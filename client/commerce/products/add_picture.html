@@ -8,19 +8,23 @@
         <img src='{{imageLink}}' class='img-fluid'> {{/if}}
         <div class='row justify-content-center'>
             <div class="btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary minus">-</button>
-                <button type="button" class="btn btn-danger pic-delete">Delete</button>
-                <button type="button" class="btn btn-secondary plus">+</button>
+                <button type="button" class="btn btn-primary minus">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-danger pic-delete">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-primary plus">
+                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <div class='row justify-content-center'>
-            {{#if isVideo}} {{else}}
-	            {{#if storePicture}}
-	            	<button type="button" class="btn btn-success disabled">Current Store Picture</button>
-	            {{else}}
-	            	<button type="button" class="btn btn-secondary set-store">Set as Store Picture</button>
-	            {{/if}}
-            {{/if}}
+            {{#if isVideo}} {{else}} {{#if storePicture}}
+            <button type="button" class="btn btn-success disabled">Current Store Picture</button>
+            {{else}}
+            <button type="button" class="btn btn-secondary set-store">Set as Store Picture</button>
+            {{/if}} {{/if}}
         </div>
     </div>
 </template>

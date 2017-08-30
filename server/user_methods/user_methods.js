@@ -13,9 +13,11 @@ Meteor.methods({
             Meteor.call('localisteAllPosts', brands[i]._id);
             Meteor.call('flushCache');
         }
-        
+
     },
     getVisitorBrand: function(document) {
+
+        console.log(document.location);
 
         var hostnameArray = document.location.hostname.split(".");
 
@@ -114,18 +116,23 @@ Meteor.methods({
 
         Meteor.users.update(Meteor.user()._id, { $set: { domain: domain } });
 
-        console.log(Meteor.user());
+        // console.log(Meteor.user());
 
     },
 
     updateConversionRates: function() {
 
-        var answer = HTTP.get('http://api.fixer.io/latest');
+        try {
+            var answer = HTTP.get('http://api.fixer.io/latest');
 
-        Meteor.call('insertMeta', {
-            type: 'rates',
-            value: answer.data.rates
-        });
+            Meteor.call('insertMeta', {
+                type: 'rates',
+                value: answer.data.rates
+            });
+            
+        } catch (err) {
+            console.log('Cannot get conversion rates');
+        }
 
     },
 
@@ -257,7 +264,7 @@ Meteor.methods({
             if (Meteor.call('isAmazonLink', $(elem)[0].attribs.href)) {
 
                 var asin = Meteor.call('extractAsin', $(elem)[0].attribs.href);
-                
+
                 console.log(asin);
 
                 var answer = HTTP.get('https://localizer.schwartzindustries.com/links/' + asin);
@@ -787,7 +794,7 @@ Meteor.methods({
             if (data.brandId) {
                 Meteor.users.update(userId, { $set: { brandId: data.brandId } });
             }
- 
+
         }
 
         return userId;

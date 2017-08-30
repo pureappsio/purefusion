@@ -1276,6 +1276,11 @@ Meteor.methods({
                                             return false;
                                         }
                                     },
+                                    formatDateFR: function(date) {
+                                        var localLocale = moment(date);
+                                        localLocale.locale('fr');
+                                        return localLocale.format('LL');
+                                    },
                                     steps: function() {
                                         return Elements.find({ postId: this._id, type: 'step' }, { sort: { order: 1 } });
                                     },

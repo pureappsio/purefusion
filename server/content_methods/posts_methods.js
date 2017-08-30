@@ -24,6 +24,8 @@ Meteor.methods({
             var url = 'https://' + Meteor.settings.portfolio.url + '/api/report';
             url += '?month=' + month + '&year=' + year;
 
+            console.log(url);
+
             var report = HTTP.get(url).data;
 
             return report;

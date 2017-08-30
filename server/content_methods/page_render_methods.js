@@ -83,7 +83,7 @@ Meteor.methods({
         css += Assets.getText('tripwire_page.css');
         css += Assets.getText('webinar_page.css');
 
-        console.log('Rendering header');
+        // console.log('Rendering header');
 
         if (options.lead) {
             var trackLead = options.lead;
@@ -109,7 +109,7 @@ Meteor.methods({
         // Act according to timer
         if (timer.timerExpired == true) {
 
-            console.log('Timer expired');
+            // console.log('Timer expired');
 
             // Reload page
             var page = Pages.findOne(page.timer.page);
@@ -176,7 +176,7 @@ Meteor.methods({
     returnCachedPage: function(page, query) {
 
         // Get render
-        console.log('Page cached, returning cached version');
+        // console.log('Page cached, returning cached version');
 
         var html = page.html;
 
@@ -219,7 +219,7 @@ Meteor.methods({
         // Get URL
         var absoluteURL = Meteor.absoluteUrl();
 
-        console.log('Page not cached, rendering');
+        // console.log('Page not cached, rendering');
 
         // console.log(page);
 
@@ -838,7 +838,7 @@ Meteor.methods({
         var html = SSR.render('pageTemplate', page);
 
         // Save if no affiliate code
-        console.log('Caching page');
+        // console.log('Caching page');
         Pages.update(page._id, { $set: { cached: true, html: html } }, { selector: { type: page.type } })
 
         // Timer
@@ -862,7 +862,7 @@ Meteor.methods({
         // Find post or page
         if (Pages.findOne({ url: postUrl })) {
 
-            console.log(query);
+            // console.log(query);
 
             // Query
             var page = Pages.findOne({ url: postUrl });
@@ -877,7 +877,7 @@ Meteor.methods({
             }
 
             var endDate = new Date();
-            console.log('Time to render page: ' + (endDate.getTime() - startDate.getTime()) + ' ms');
+            // console.log('Time to render page: ' + (endDate.getTime() - startDate.getTime()) + ' ms');
             return result;
 
         } else {

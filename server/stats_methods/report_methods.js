@@ -351,22 +351,22 @@ Meteor.methods({
             query.affiliateCode = parameters.ref;
         }
 
-        console.log(query);
+        // console.log(query);
 
         // Get sales
         var sales = Sales.find(query).fetch();
 
-        console.log(sales);
+        // console.log(sales);
+        var rates = Metas.findOne({type: 'rates'}).value;
 
         // Calculate earnings
         earnings = 0;
-        for (i = 0; i < sales.length; i++) {
-            if (sales[i].currency == 'USD') {
-                earnings = earnings + parseFloat(sales[i].amount);
+        for (s = 0; s < sales.length; s++) {
+            if (sales[s].currency == 'EUR') {
+                earnings = earnings + parseFloat(sales[s].amount);
             } else {
-                earnings = earnings + parseFloat(sales[i].amount) / 1.06415;
+                earnings = earnings + parseFloat(sales[s].amount) / rates[sales[s].currency];
             }
-
         }
 
         earnings = parseFloat(earnings.toFixed(2));
@@ -427,15 +427,15 @@ Meteor.methods({
             // Set version
             FacebookAPI.setVersion("2.9");
 
-            console.log(parameters.from);
-            console.log(parameters.to);
+            // console.log(parameters.from);
+            // console.log(parameters.to);
 
             // Date range
             from = Meteor.call('googleDate', new Date(parameters.from));
             to = Meteor.call('googleDate', new Date(parameters.to));
 
-            console.log(from);
-            console.log(to);
+            // console.log(from);
+            // console.log(to);
 
             // Parameters
             var parameters = {
@@ -452,7 +452,7 @@ Meteor.methods({
                 if (err) {
                     myFuture.return({ message: 'Error' });
                 } else {
-                    console.log(res);
+                    // console.log(res);
                     myFuture.return(res.data);
                 }
 

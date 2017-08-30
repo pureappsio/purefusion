@@ -4,8 +4,8 @@ Meteor.methods({
 
     calculateSalesPrice: function(productData, discount, currency) {
 
-        console.log('Product data: ');
-        console.log(productData);
+        // console.log('Product data: ');
+        // console.log(productData);
 
         if (currency == 'USD') {
             var price = parseFloat(productData.price);
@@ -25,7 +25,7 @@ Meteor.methods({
             price = price.toFixed(2) + ' €';
         }
 
-        console.log(price);
+        // console.log(price);
 
         return price;
 
@@ -72,7 +72,7 @@ Meteor.methods({
             var offerFound = false;
             for (o in offers) {
                 if (offers[o].productId == page.productId) {
-                    console.log('Offer found');
+                    // console.log('Offer found');
                     offerFound = true;
                     var offer = offers[o];
                 }
@@ -169,13 +169,13 @@ Meteor.methods({
 
             // Get offers
             offers = Meteor.call('getOffers', query.subscriber);
-            console.log(offers);
+            // console.log(offers);
 
             // Check if offer match product
             var offerFound = false;
             for (o in offers) {
                 if (offers[o].productId == page.productId) {
-                    console.log('Offer found');
+                    // console.log('Offer found');
                     offerFound = true;
                     var offer = offers[o];
                 }
@@ -202,11 +202,11 @@ Meteor.methods({
 
             // Verify discount
             discount = Meteor.call('getDiscount', query.discount, page.brandId);
-            console.log(discount);
+            // console.log(discount);
 
             if (discount._id) {
 
-                console.log('Valid discount code')
+                // console.log('Valid discount code')
 
                 if (discount.expiryDate) {
 
@@ -236,7 +236,7 @@ Meteor.methods({
 
         }
 
-        console.log(timer);
+        // console.log(timer);
 
         return timer;
 

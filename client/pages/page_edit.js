@@ -19,7 +19,7 @@ Template.pageEdit.helpers({
         return element;
     },
     elements: function() {
-        return Elements.find({ pageId: this._id });
+        return Elements.find({ pageId: this._id }, { sort: { order: 1 } });
     }
 
 });

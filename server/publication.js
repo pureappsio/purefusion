@@ -108,11 +108,11 @@ Meteor.publish("userGateways", function() {
 });
 
 Meteor.publish("userSubscribers", function() {
-    return Subscribers.find({}, { sort: { date_added: -1 }, limit: 50 });
+    return Subscribers.find({}, { sort: { date_added: -1 }, limit: 200 });
 });
 
 Meteor.publish("userEvents", function() {
-    return Events.find({ }, { sort: { date: -1 }, limit: 50 });
+    return Events.find({ }, { sort: { date: -1 }, limit: 200 });
 });
 
 // Meteor.publish("userIntegrations", function() {

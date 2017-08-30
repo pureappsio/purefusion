@@ -1,5 +1,18 @@
 Template.notification.helpers({
 
+    brand: function() {
+
+        if (Session.get('selectedBrand')) {
+
+            if (Session.get('selectedBrand') == 'all') {
+                return '[' + Brands.findOne(this.brandId).name + '] ';
+            }
+
+        } else {
+            return '[' + Brands.findOne(this.brandId).name + '] ';
+        }
+
+    },
     formatType: function() {
 
         if (this.type == 'sale') {
@@ -136,7 +149,7 @@ Template.notification.helpers({
 
             var sale = Sales.findOne(this.saleId);
             return 'New sale of $' + sale.amount;
-            
+
         }
 
         if (this.type == 'open') {

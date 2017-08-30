@@ -954,6 +954,7 @@ Meteor.methods({
                                         'cash': 'Cash',
                                         'equity': 'Private Equity'
                                     };
+
                                     for (s in portfolio) {
                                         portfolio[s].type = translation[portfolio[s].type];
                                         portfolio[s].value = portfolio[s].value.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");

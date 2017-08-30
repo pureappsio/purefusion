@@ -2,7 +2,7 @@ Template.events.helpers({
 
     events: function() {
 
-        return Events.find({ brandId: Session.get('selectedBrand') }, { sort: { date: -1 } });
+        return Events.find({ brandId: getBrandId() }, { sort: { date: -1 } });
     }
 
 });

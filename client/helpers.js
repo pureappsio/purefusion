@@ -32,6 +32,20 @@ Template.registerHelper("langEN", function() {
 
 });
 
+
+Template.registerHelper("langFR", function() {
+
+    var brand = Brands.findOne(Session.get('selectedBrand'));
+
+    if (brand.language == 'fr') {
+        return true;
+    } else {
+        return false;
+    }
+
+});
+
+
 Template.registerHelper("isAdmin", function() {
 
     if (Session.get('preview')) {

@@ -72,6 +72,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{pathFor 'social'}}">Social</a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="{{pathFor 'support'}}">Support</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="{{pathFor 'stats'}}" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stats</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -109,10 +112,10 @@
                 </li>
                 {{/if}} {{#if notUser}}
                 <li class="nav-item">
-                    <a href="/users/login" class="form-nav nav-link">{{#if langEN}}Login{{else}}Se Connecter{{/if}}</a>
+                    <a href="/users/login" class="form-nav nav-link">{{#if langFR}}Se Connecter{{else}}Login{{/if}}</a>
                 </li>
                 <form class="form-inline ">
-                    <a href="/users/signup" class="btn-nav btn btn-warning">{{#if langEN}}Sign Up{{else}}Créer un Compte{{/if}}</a>
+                    <a href="/users/signup" class="btn-nav btn btn-warning">{{#if langFR}}Créer un Compte{{else}}Sign Up{{/if}}</a>
                 </form>
                 {{/if}}
             </ul>

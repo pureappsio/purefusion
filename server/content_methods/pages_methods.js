@@ -74,10 +74,11 @@ Meteor.methods({
             console.log('Changing order of page element');
 
             // Update element
-            Elements.update(elementId, { $inc: { order: change } });
+            Elements.update(elementId, { $inc: { order: change } }, { selector: { type: pageElement.type } });
 
             // Update other element
-            Elements.update({ pageId: pageElement.pageId, order: pageElement.order + change }, { $inc: { order: -1 * change } });
+            otherElement = Elements.findOne({ pageId: pageElement.pageId, order: pageElement.order + change });
+            Elements.update({ pageId: pageElement.pageId, order: pageElement.order + change }, { $inc: { order: -1 * change } }, { selector: { type: otherElement.type } });
 
             // Flush cache
             Meteor.call('flushCache');
@@ -365,7 +366,8 @@ Meteor.methods({
         Elements.remove(elementId);
 
         // Set page as not cached anymore
-        Pages.update(element.pageId, { $set: { cached: false } });
+        page = Pages.findOne(element.pageId);
+        Pages.update(element.pageId, { $set: { cached: false } }, { selector: { type: page.type } });
 
     },
     editPageElement: function(element) {

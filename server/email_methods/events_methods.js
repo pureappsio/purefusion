@@ -2,103 +2,109 @@ Meteor.methods({
 
     processEvents: function(events) {
 
+        // console.log(events);
+
         // Go through events
         for (i = 0; i < events.length; i++) {
 
-            if (events[i].subscriberId) {
+            if (events[i].event != 'processed') {
 
-                if (Subscribers.findOne(events[i].subscriberId)) {
+                if (events[i].subscriberId) {
 
-                    // Find subscriber
-                    subscriber = Subscribers.findOne(events[i].subscriberId);
-                    console.log("New event received for subscriber: ");
-                    console.log(subscriber);
+                    if (Subscribers.findOne(events[i].subscriberId)) {
 
-                    // Init stat object
-                    var stat = {
-                        date: new Date(),
-                        subscriberId: events[i].subscriberId,
-                        brandId: subscriber.brandId
-                    }
+                        // Find subscriber
+                        subscriber = Subscribers.findOne(events[i].subscriberId);
+                        // console.log("New event received for subscriber: ");
+                        // console.log(subscriber);
 
-                    if (subscriber.origin) {
-                        stat.origin = subscriber.origin;
-                    }
+                        // Init stat object
+                        var stat = {
+                            date: new Date(),
+                            subscriberId: events[i].subscriberId,
+                            brandId: subscriber.brandId
+                        }
 
-                    // Delivered
-                    if (events[i].event == 'delivered') {
+                        if (subscriber.origin) {
+                            stat.origin = subscriber.origin;
+                        }
 
-                        // Update
-                        stat.type = 'delivered';
+                        // Delivered
+                        if (events[i].event == 'delivered') {
 
-                    }
-
-                    // Opened
-                    if (events[i].event == 'open') {
-
-                        // Update
-                        stat.type = 'open';
-                        // Subscribers.update(events[i].subscriberId, { $set: { 'lastOpen': new Date() } });
-                        // Subscribers.update(events[i].subscriberId, { $inc: { 'opened': 1 } });
-
-                    }
-
-                    // Click
-                    if (events[i].event == 'click') {
-
-                        // Update
-                        stat.type = 'click';
-                        // Subscribers.update(events[i].subscriberId, { $set: { 'lastClick': new Date() } });
-                        // Subscribers.update(events[i].subscriberId, { $inc: { 'clicked': 1 } });
-
-                    }
-
-                    // Broadcast status
-                    if (events[i].broadcastId) {
-
-                        // Exists?
-                        if (Broadcasts.findOne(events[i].broadcastId)) {
-
-                            // Update stat
-                            stat.broadcastId = events[i].broadcastId;
+                            // Update
+                            stat.type = 'delivered';
 
                         }
 
-                    }
+                        // Opened
+                        if (events[i].event == 'open') {
 
-                    // Rules status
-                    if (events[i].ruleId) {
-
-                        // Exists?
-                        if (Automations.findOne(events[i].ruleId)) {
-
-                            // Update state
-                            stat.ruleId = events[i].ruleId;
+                            // Update
+                            stat.type = 'open';
+                            // Subscribers.update(events[i].subscriberId, { $set: { 'lastOpen': new Date() } });
+                            // Subscribers.update(events[i].subscriberId, { $inc: { 'opened': 1 } });
 
                         }
 
-                    }
+                        // Click
+                        if (events[i].event == 'click') {
 
-                    // Sequence status
-                    if (events[i].sequenceId) {
-
-                        // Exists?
-                        if (Sequences.findOne(events[i].sequenceId)) {
-
-                            // Update state
-                            stat.sequenceId = events[i].sequenceId;
+                            // Update
+                            stat.type = 'click';
+                            // Subscribers.update(events[i].subscriberId, { $set: { 'lastClick': new Date() } });
+                            // Subscribers.update(events[i].subscriberId, { $inc: { 'clicked': 1 } });
 
                         }
 
-                    }
+                        // Broadcast status
+                        if (events[i].broadcastId) {
 
-                    // Insert stat
-                    console.log(stat);
-                    Stats.insert(stat);
+                            // Exists?
+                            if (Broadcasts.findOne(events[i].broadcastId)) {
+
+                                // Update stat
+                                stat.broadcastId = events[i].broadcastId;
+
+                            }
+
+                        }
+
+                        // Rules status
+                        if (events[i].ruleId) {
+
+                            // Exists?
+                            if (Automations.findOne(events[i].ruleId)) {
+
+                                // Update state
+                                stat.ruleId = events[i].ruleId;
+
+                            }
+
+                        }
+
+                        // Sequence status
+                        if (events[i].sequenceId) {
+
+                            // Exists?
+                            if (Sequences.findOne(events[i].sequenceId)) {
+
+                                // Update state
+                                stat.sequenceId = events[i].sequenceId;
+
+                            }
+
+                        }
+
+                        // Insert stat
+                        Meteor.call('insertStat', stat);
+
+                    }
 
                 }
 
             }
+
 
         }
 
